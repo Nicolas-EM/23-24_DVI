@@ -58,8 +58,11 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
 
         if(this._health <= 0) {
             // TODO: Kill / Destroy entity
+            this.dieOrDestroy();
         }
     }
+
+    protected abstract dieOrDestroy();
 
     onEntityClicked(pointer: Phaser.Input.Pointer): void {
         if (pointer.leftButtonDown()) {

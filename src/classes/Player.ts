@@ -48,12 +48,22 @@ export default class Player {
     return this.npcs;
   }
 
+  removeNPC(npcToRemove: NPC) {
+    this.entityMap[npcToRemove.getId()] = undefined;
+    this.npcs = this.npcs.filter(npc => npc.getId() !== npcToRemove.getId());
+  }
+
   getNPCById(id: string): NPC | undefined {
     return this.entityMap[id];
   }
 
   getBuildingById(id: string): Building | undefined {
     return this.entityMap[id];
+  }
+
+  removeBuilding(buildingToRemove: Building) {
+    this.entityMap[buildingToRemove.getId()] = undefined;
+    this.buildings = this.buildings.filter(building => building.getId() !== buildingToRemove.getId());
   }
 
   addBuilding(building: Building) {

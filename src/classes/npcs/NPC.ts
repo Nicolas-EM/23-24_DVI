@@ -46,6 +46,11 @@ export default abstract class NPC extends PlayerEntity {
         this.y += velocityY;
     }
 
+    dieOrDestroy() {
+        this._owner.removeNPC(this);
+        this.destroy();
+    }
+
     update(time: number, deltaTime: number) {
         if (!this.body) return;
 
@@ -57,7 +62,7 @@ export default abstract class NPC extends PlayerEntity {
                 if (this._path.length > 0) this._currentTarget = this._path.shift();
                 else this._currentTarget = null;
             }
-            
+
             if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
         }
     }
