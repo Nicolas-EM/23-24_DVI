@@ -12,8 +12,6 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     protected _health: number;
     protected _totalHealth: number;
     protected _visionRange: number;
-    protected _path;
-    protected _currentTarget;
     protected _iconInfo: IconInfo;
     protected _spawningTime: number;
     protected _spawningCost: Resources;
@@ -59,7 +57,7 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         }).health = this._health;
 
         if(this._health <= 0) {
-            // Kill / Destroy entity
+            // TODO: Kill / Destroy entity
         }
     }
 

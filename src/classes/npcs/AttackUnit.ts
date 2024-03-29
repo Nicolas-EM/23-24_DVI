@@ -6,7 +6,6 @@ import Client from '../../client';
 import PlayerEntity from '../PlayerEntity';
 
 export default abstract class AttackUnit extends NPC {
-    
     protected _attackRange: number;
     protected _damage: number;
     protected _attackTargetId: string;
@@ -22,7 +21,7 @@ export default abstract class AttackUnit extends NPC {
         },
         actions: []
     };
-    
+
     /**
      * @summary constructor for attacking class (must have offensive abilities)
      * @returns instance of attackUnit
@@ -47,24 +46,22 @@ export default abstract class AttackUnit extends NPC {
     onAttackReceived(damage: number, attackUnit: AttackUnit): void {
         super.onAttackReceived(damage, attackUnit);
 
-        if(!this._attackTargetId) {
+        if (!this._attackTargetId) {
             this.setAttackTarget(attackUnit.getId());
         }
     }
 
     update(time: number, delta: number) {
-        super.update(time, delta);
-
-        if(this._attackTargetId) {
+        if (this._attackTargetId) {
             const target = (this.scene as Game).getEntityById(this._attackTargetId);
 
-            if(target && !this.entityIsWithinRange(target)) {
+            if (target && !this.entityIsWithinRange(target)) {
                 // Not within range - move towards target
                 Client.setNpcTarget(this._id, new Phaser.Math.Vector2(target.x, target.y));
             } else {
                 // Within range - stop moving
                 Client.setNpcTarget(this._id, new Phaser.Math.Vector2(this.x, this.y));
-                
+
                 // If target still alive
                 if (target) {
                     // Check if enough time has passed since the last attack or if have never attacked
@@ -79,5 +76,7 @@ export default abstract class AttackUnit extends NPC {
                 }
             }
         }
+
+        super.update(time, delta);
     }
 }

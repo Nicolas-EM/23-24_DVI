@@ -219,10 +219,12 @@ export default class Game extends Phaser.Scene {
     let npc = this.p1.getNPCById(npcId);
     if(npc && npc instanceof AttackUnit) {
       npc.setAttackTarget(targetId);
+      return;
     }
     npc = this.p2.getNPCById(npcId);
     if(npc && npc instanceof AttackUnit) {
       npc.setAttackTarget(targetId);
+      return;
     }
   }
 

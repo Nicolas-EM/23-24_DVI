@@ -4,10 +4,10 @@ import PlayerEntity from '../PlayerEntity';
 import Game from '../../scenes/Game';
 import { PhaserNavMesh } from "phaser-navMesh";
 import { IconInfo, Resources } from '../../utils';
-import Client from '../../client';
 
 export default abstract class NPC extends PlayerEntity {
-    
+    protected _path;
+    protected _currentTarget;
     protected _movementSpeed: number;
 
     /**
