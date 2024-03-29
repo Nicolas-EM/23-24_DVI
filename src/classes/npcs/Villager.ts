@@ -8,7 +8,7 @@ import NPCsData from "../../magic_numbers/npcs_data";
 export default class Villager extends NPC {
     static readonly COST: Resources = NPCsData.Villager.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Villager.SPAWNING_TIME;
-
+    private _currentAnimation: string = "idle";
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Villager.ICON_INFO };
         iconInfo.name += owner.getColor();
@@ -46,5 +46,20 @@ export default class Villager extends NPC {
     gather(){
 
     }
-    
+
+    doMoveAnimation(isLeft?: boolean) {
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `villagerWalk${this._owner.getColor()}`){
+                this.anims.stop();
+            }
+        }
+        if(isLeft){
+            this.flipX = true;
+        }
+        if(!isLeft && this.flipX){
+            this.flipX = false;
+        }
+        this.playAnimation(`villagerWalk${this._owner.getColor()}`);
+    }
+
 }

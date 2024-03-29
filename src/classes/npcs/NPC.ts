@@ -7,7 +7,7 @@ import { IconInfo, Resources } from '../../utils';
 import Client from '../../client';
 
 export default abstract class NPC extends PlayerEntity {
-    
+
     protected _movementSpeed: number;
 
     /**
@@ -39,7 +39,16 @@ export default abstract class NPC extends PlayerEntity {
     }
 
     moveToTarget(elapsedSeconds: number) {
+
+
         const { x, y } = this._currentTarget;
+
+        if(x < this.x){
+            this.doMoveAnimation(true);
+        }
+        else{
+            this.doMoveAnimation();
+        }
         const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
         const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
         const targetSpeed = distance / elapsedSeconds;
@@ -69,5 +78,11 @@ export default abstract class NPC extends PlayerEntity {
             }
             if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
         }
+    }
+
+    abstract doMoveAnimation(isLeft?: boolean): void;
+    //second attribute is optional, means that if this exact animation is already playing, ignores the call.
+    public playAnimation(key: string) {
+        this.anims.play(key, true);
     }
 }

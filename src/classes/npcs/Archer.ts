@@ -24,4 +24,19 @@ export default class Archer extends AttackUnit {
         throw new Error("Method not implemented.");
     }
 
+    doMoveAnimation(isLeft?: boolean) {
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `archerWalkRight${this._owner.getColor()}`){
+                this.anims.stop();
+            }
+        }
+        if(isLeft){
+            this.flipX = true;
+        }
+        if(!isLeft && this.flipX){
+            this.flipX = false;
+        }
+        this.playAnimation(`archerWalkRight${this._owner.getColor()}`);
+    }
+
 }

@@ -24,4 +24,20 @@ export default class Soldier extends AttackUnit {
         throw new Error("Method not implemented.");
     }
 
+
+    doMoveAnimation(isLeft?: boolean) {
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `soldierWalkRight${this._owner.getColor()}`){
+                this.anims.stop();
+            }
+        }
+        if(isLeft){
+            this.flipX = true;
+        }
+        if(!isLeft && this.flipX){
+            this.flipX = false;
+        }
+        this.playAnimation(`soldierWalkRight${this._owner.getColor()}`);
+    }
+
 }
