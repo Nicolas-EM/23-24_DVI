@@ -10,9 +10,16 @@ const port = 8081;
 const maxPlayers = 2;
 
 // Define CORS options
+const whitelist = ['http://localhost', 'http://127.0.0.1', 'https://nicolas-em.github.io']
 const corsOptions = {
-    origin: ['http://localhost', 'http://127.0.0.1', 'https://nicolas-em.github.io'],
-};
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 
 // Allow CORS for specified origins
 app.use(cors(corsOptions));
