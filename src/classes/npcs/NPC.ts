@@ -19,7 +19,7 @@ export default abstract class NPC extends PlayerEntity {
         super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, iconInfo, frame);
         this._movementSpeed = movementSpeed;
 
-        this._id = `${owner.getColor()}_NPC_${owner.getNPCs().length}`;
+        this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);
     }
 
