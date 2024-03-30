@@ -14,7 +14,6 @@ export default class Townhall extends NPCSpawner {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
         iconInfo.name += owner.getColor();
-        console.log(iconInfo.name);
         super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, BuildingsData.Townhall.VISION_RANGE, iconInfo, frame);
     }
 

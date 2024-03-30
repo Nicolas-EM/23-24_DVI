@@ -2,10 +2,12 @@ import Building from './buildings/Building';
 import NPC from './npcs/NPC';
 import { Resources } from "../utils";
 import VillagerHouse from './buildings/VillagerHouse';
+import PlayerEntity from './PlayerEntity';
 
 export default class Player {
   private buildings: Building[] = [];
   private npcs: NPC[] = [];
+  private entityMap: Map<string, PlayerEntity> = new Map();
   // TODO: Default starting resources
   private resources: Resources = {
     wood: 100,
@@ -33,20 +35,41 @@ export default class Player {
     return this.color;
   }
 
+  getPlayerEntityById(id: string): PlayerEntity | undefined {
+    return this.entityMap[id];
+  }
+
   addNPC(npc: NPC) {
     this.npcs.push(npc);
+    this.entityMap[npc.getId()] = npc;
   }
 
   getNPCs(): NPC[] {
     return this.npcs;
   }
 
+  removeNPC(npcToRemove: NPC) {
+    this.entityMap[npcToRemove.getId()] = undefined;
+    this.npcs = this.npcs.filter(npc => npc.getId() !== npcToRemove.getId());
+  }
+
   getNPCById(id: string): NPC | undefined {
-    return this.npcs.find((npc) => npc.getId() === id);
+    return this.entityMap[id];
+  }
+
+  getBuildingById(id: string): Building | undefined {
+    return this.entityMap[id];
+  }
+
+  removeBuilding(buildingToRemove: Building) {
+    this.entityMap[buildingToRemove.getId()] = undefined;
+    this.buildings = this.buildings.filter(building => building.getId() !== buildingToRemove.getId());
   }
 
   addBuilding(building: Building) {
     this.buildings.push(building);
+    this.entityMap[building.getId()] = building;
+
     if(typeof building === typeof VillagerHouse) {
       this.maxPopulation += 5;
     }

@@ -29,6 +29,12 @@ export default class Client {
                 (<Game>(Client.scene)).spawnNPC(npcType, x, y, ownerColor);
             }
         });
+
+        Client.socket.on('attack', (npcId: string, targetId: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).setNPCAttackTarget(npcId, targetId);
+            }
+        });
     }
 
     static setScene(scene: Phaser.Scene) {
@@ -74,6 +80,10 @@ export default class Client {
 
     static spawnNpc(npcType: string, x: number, y: number, ownerColor: string) {
         Client.socket.emit('spawnNPC', Client.lobby.code, npcType, x, y, ownerColor);
+    }
+
+    static attackOrder(npcId: string, targetId: string) {
+        Client.socket.emit('attack', Client.lobby.code, npcId, targetId);
     }
 }
 

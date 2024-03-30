@@ -12,4 +12,8 @@ export default abstract class Building extends PlayerEntity {
         owner.addBuilding(this);
     }
 
+    dieOrDestroy() {
+        this._owner.removeBuilding(this);
+        this.destroy();
+    }
 }

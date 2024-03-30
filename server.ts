@@ -199,7 +199,12 @@ io.on('connection', socket => {
     // Spawn NPC
     socket.on('spawnNPC', (lobbyCode, npcType: any, x: number, y: number, ownerColor: string) => {
         io.to(lobbyCode).emit('spawnNPC', npcType, x, y, ownerColor);
-    })
+    });
+
+    // NPC Attack order
+    socket.on('attack', (lobbyCode: string, npcId: string, targetId: string) => {
+        io.to(lobbyCode).emit('attack', npcId, targetId);
+    });
 });
 
 http.listen(port, () => {

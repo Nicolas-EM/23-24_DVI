@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 import { HudInfo } from '../utils';
 import Player from '../classes/Player';
+import ResourceSpawner from '../classes/resources/ResourceSpawner';
+import PlayerEntity from '../classes/PlayerEntity';
 
 export default class Hud extends Phaser.Scene {
     // Attributes
@@ -9,7 +11,8 @@ export default class Hud extends Phaser.Scene {
     private foodCounter: Phaser.GameObjects.Text;
     private populationCounter: Phaser.GameObjects.Text;
 
-    private displayedEntity: Phaser.GameObjects.Sprite;
+    private displayedEntity: PlayerEntity | ResourceSpawner;
+
     // UI
     private selectedContainer: Phaser.GameObjects.Container;
     private infoContainer: Phaser.GameObjects.Container;
@@ -21,7 +24,7 @@ export default class Hud extends Phaser.Scene {
 
     // Player
     private player: Player;
-    
+
     // Constructor
     constructor() {
         super({ key: 'hud' });
@@ -53,7 +56,7 @@ export default class Hud extends Phaser.Scene {
 
         // Resources
         this.woodCounter = this.addResourceBanner(120, "Wood", this.player.getWood());
-        this.foodCounter = this.addResourceBanner(222, "Food", this.player.getFood());      
+        this.foodCounter = this.addResourceBanner(222, "Food", this.player.getFood());
         this.goldCounter = this.addResourceBanner(324, "Gold", this.player.getGold());
 
         // Population
@@ -110,7 +113,7 @@ export default class Hud extends Phaser.Scene {
         infoBox.scale = 0.95;
         this.infoContainer = this.add.container(0, 0);
         let infoAreaContainer = this.add.container(midX - 145, botY + 25);
-        infoAreaContainer.add(infoBox);        
+        infoAreaContainer.add(infoBox);
         infoAreaContainer.add(this.infoContainer);
 
         // Selected Entity
@@ -132,60 +135,28 @@ export default class Hud extends Phaser.Scene {
         actionBox.scale = 0.95;
         this.actionsContainer = this.add.container(0, 0);
         let actionAreaContainer = this.add.container(midX + 145, botY + 25);
-        actionAreaContainer.add(actionBox);        
+        actionAreaContainer.add(actionBox);
         actionAreaContainer.add(this.actionsContainer);
 
         let entityIcon;
 
-        this.events.on('entityClicked', (hudInfo: HudInfo) => {
-            
+        this.events.on('entityClicked', (entity: PlayerEntity | ResourceSpawner) => {
             // -----------------------------------------------
             // TODO - Move to Game onclick
             this.flushHud();
             // -----------------------------------------------
-           
+
+            const hudInfo = entity.getHudInfo();
+            this.displayedEntity = entity;
+
             // ----- Selected entity -----
             entityIcon = this.add.image(0, 0, hudInfo.entity.name);
             entityIcon.setDisplaySize(hudInfo.entity.width, hudInfo.entity.height);
             entityIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             this.selectedContainer.add(entityIcon);
-            
-            // ----- Info -----
-            // ResourceSpawner
-            if ("remainingResources" in hudInfo.info) {
-                let resourceIcon = this.add.image(-58, 0, hudInfo.info.resource);
-                resourceIcon.setDisplaySize(60, 60);
-                resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                let resourceAmount = this.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000' });
-                this.infoContainer.add(resourceIcon);
-                this.infoContainer.add(resourceAmount);
-            }
-            // PlayerEntity
-            else {
-                // Health
-                let healthAmount = this.add.text(-45, -15, `${hudInfo.info.health}/${hudInfo.info.totalHealth}`, { color: '#000000' });
-                healthAmount.setFontSize(13);
-                let healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(hudInfo.info.health, hudInfo.info.totalHealth));
-                healthBar.setDisplaySize(80, 30);
-                healthBar.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                this.infoContainer.add(healthAmount);
-                this.infoContainer.add(healthBar);
-                // if AttackUnit, show damage
-                if ("damage" in hudInfo.info) {
-                    // Sword
-                    let sword = this.add.image(35, 0, 'Sword');
-                    sword.setDisplaySize(30, 30);
-                    sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                    sword.setFlipX(true);
-                    this.infoContainer.add(sword);
-                    // Damage
-                    let damageAmount = this.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000' });
-                    this.infoContainer.add(damageAmount);
-                }                
-            }
-            
+
             // ----- Actions -----
-            if("isMine" in hudInfo.info && hudInfo.info.isMine) {
+            if ("isMine" in hudInfo.info && hudInfo.info.isMine) {
                 let startX = -45;
                 hudInfo.actions.forEach((action, i) => {
                     let actionIcon = this.add.image(startX + 45 * i, 0, "Icons", action.actionFrame);
@@ -202,6 +173,16 @@ export default class Hud extends Phaser.Scene {
             }
         });
 
+    }
+
+    createHealthBar(health: number, totalHealth: number) {
+        let healthAmount = this.add.text(-45, -15, `${health}/${totalHealth}`, { color: '#000000' });
+        healthAmount.setFontSize(13);
+        let healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(health, totalHealth));
+        healthBar.setDisplaySize(80, 30);
+        healthBar.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+        this.infoContainer.add(healthAmount);
+        this.infoContainer.add(healthBar);
     }
 
     createOptionsMenu() {
@@ -226,7 +207,7 @@ export default class Hud extends Phaser.Scene {
 
         // Silence button
         let silenceBtnImg = this.add.image(32, 80, "Button_Yellow");
-        silenceBtnImg.scale = 0.8;        
+        silenceBtnImg.scale = 0.8;
         silenceBtnImg.setOrigin(0);
         let silenceIcon = this.add.image(57, 104, "Sound_On");
         silenceIcon.setDisplaySize(45, 45);
@@ -283,7 +264,7 @@ export default class Hud extends Phaser.Scene {
             if (pointer.leftButtonReleased()) {
                 closeBtnImg.setTexture("Button_Red");
                 closeIcon.setTexture("X");
-                this.closeOptionsMenu();            
+                this.closeOptionsMenu();
             }
         });
 
@@ -369,5 +350,39 @@ export default class Hud extends Phaser.Scene {
         this.goldCounter.setText(`${this.player.getGold()}`);
 
         this.populationCounter.setText(`${this.player.getNPCs().length}/${this.player.getMaxPopulation()}`);
+
+        if (this.displayedEntity) {
+            const hudInfo = this.displayedEntity.getHudInfo();
+
+            this.infoContainer.removeAll(true);
+
+            // ----- Info -----
+            // ResourceSpawner
+            if ("remainingResources" in hudInfo.info) {
+                let resourceIcon = this.add.image(-58, 0, hudInfo.info.resource);
+                resourceIcon.setDisplaySize(60, 60);
+                resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                let resourceAmount = this.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000' });
+                this.infoContainer.add(resourceIcon);
+                this.infoContainer.add(resourceAmount);
+            }
+            // PlayerEntity
+            else {
+                // Health
+                this.createHealthBar(hudInfo.info.health, hudInfo.info.totalHealth);
+                // if AttackUnit, show damage
+                if ("damage" in hudInfo.info) {
+                    // Sword
+                    let sword = this.add.image(35, 0, 'Sword');
+                    sword.setDisplaySize(30, 30);
+                    sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                    sword.setFlipX(true);
+                    this.infoContainer.add(sword);
+                    // Damage
+                    let damageAmount = this.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000' });
+                    this.infoContainer.add(damageAmount);
+                }
+            }
+        }
     }
 }
