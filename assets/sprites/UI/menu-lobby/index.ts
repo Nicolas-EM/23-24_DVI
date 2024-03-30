@@ -1,0 +1,1 @@
+export { default as Clouds } from './clouds.png';
