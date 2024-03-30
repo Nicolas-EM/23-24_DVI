@@ -6,7 +6,8 @@
         "start": "rm -rf .parcel-cache && npx parcel index.html",
         "build": "npx parcel build index.html --public-url ./ --dist-dir docs",
         "watch": "concurrently \"npm start\" \"set NODE_ENV=dev&& nodemon server.ts\"",
-        "serve": "set NODE_ENV=prod&& nodemon server.ts"
+        "serve": "set NODE_ENV=prod&& nodemon server.ts",
+        "build:digitalocean": "npm install --production=false"
     },
     "repository": {
         "type": "git",
