@@ -1,12 +1,21 @@
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
+
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 const port = 8081;
-
 const maxPlayers = 2;
+
+// Define CORS options
+const corsOptions = {
+    origin: ['http://localhost', 'http://127.0.0.1', 'https://nicolas-em.github.io'],
+};
+
+// Allow CORS for specified origins
+app.use(cors(corsOptions));
 
 interface Lobby {
     code: string,
@@ -28,7 +37,7 @@ function createDefaultLobby(): Lobby {
         players: [],
         availableColors: ['Red', 'Blue', 'Purple', 'Yellow'],
         readyPlayers: 0
-    };    
+    };
 }
 
 const lobbies: { [code: string]: Lobby } = {};
@@ -80,7 +89,7 @@ io.on('connection', socket => {
             const lobbyCode = generateLobbyCode(); // Function to generate a unique lobby code
             lobbies[lobbyCode] = createDefaultLobby();
             lobbies[lobbyCode].code = lobbyCode;
-            
+
             socket.emit('lobbyCreated', lobbyCode);
         }
     });
@@ -91,7 +100,7 @@ io.on('connection', socket => {
         lobbies[lobbyCode].code = lobbyCode;
         // Make lobby private
         lobbies[lobbyCode].isPrivate = true;
-        
+
         socket.emit('lobbyCreated', lobbyCode);
     });
 

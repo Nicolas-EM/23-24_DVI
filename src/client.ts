@@ -5,7 +5,7 @@ import Game from './scenes/Game';
 import Menu from './scenes/Menu';
 
 export default class Client {
-    static socket: Socket = io();
+    static socket: Socket = io(process.env.NODE_ENV == "production" ? "https://troops-prod-yadfj.ondigitalocean.app/": "http://localhost:8081");
     static lobby: lobbyData;
     static scene: Phaser.Scene;
 

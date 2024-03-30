@@ -5,7 +5,7 @@
     "scripts": {
         "start": "rm -rf .parcel-cache && npx parcel index.html",
         "build": "npx parcel build index.html --public-url ./ --dist-dir docs",
-        "watch": "concurrently \"npm start\" \"set NODE_ENV=dev&& nodemon server.ts\"",
+        "watch": "concurrently \"set NODE_ENV=dev&& npm start\" \"set NODE_ENV=dev&& nodemon server.ts\"",
         "serve": "set NODE_ENV=prod&& nodemon server.ts",
         "build:digitalocean": "npm install --production=false"
     },
@@ -35,6 +35,7 @@
         "ts-node": "^10.9.2"
     },
     "dependencies": {
+        "cors": "^2.8.5",
         "express": "^4.18.3",
         "phaser": "^3.70.0",
         "phaser-navmesh": "^2.3.1",
@@ -46,7 +47,7 @@
         "hashing": "always",
         "disable": false,
         "rules": {
-          "icons.(.*)": "icons.$1"
+            "icons.(.*)": "icons.$1"
         }
-      }
+    }
 }
