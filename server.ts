@@ -1,12 +1,14 @@
 const path = require('path');
 const express = require('express');
-
+const cors = require('cors');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 const port = 8081;
 const maxPlayers = 2;
+
+app.use(cors());
 
 interface Lobby {
     code: string,
