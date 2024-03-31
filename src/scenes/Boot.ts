@@ -26,13 +26,17 @@ export default class Boot extends Phaser.Scene {
 
   // Carga de los assets del juego
   preload() {
-    // Maps
+
+    // -------- FONT --------
+    this.load.script("webfont", "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
+
+    // -------- MAPS --------
     this.load.tilemapTiledJSON('test', map_test);
     this.load.tilemapTiledJSON('desert', map_desert);
     this.load.tilemapTiledJSON('mountain', map_mountain);
     this.load.tilemapTiledJSON('river', map_river);
 
-    // Fondo
+    // Background
     this.load.image('Ground', Sprites.Terrain.Ground.Ground);
     this.load.image('Water', Sprites.Terrain.Water.Water);
     // Foam
@@ -43,7 +47,8 @@ export default class Boot extends Phaser.Scene {
     // Decoration
     this.load.image('Decoration', Sprites.Decoration.Decoration);
 
-    // Resources
+    // -------- SPRITES --------
+    // -- Resources --
     // Gold
     this.load.spritesheet('GoldMine', Sprites.Resources.Spawners.Gold.GoldMine, { frameWidth: 192, frameHeight: 128 });
     this.load.image('Gold', Sprites.Resources.Gold);
@@ -55,7 +60,7 @@ export default class Boot extends Phaser.Scene {
     this.load.spritesheet('Sheep', Sprites.Resources.Spawners.Food.Sheep, { frameWidth: 128, frameHeight: 128 });
     this.load.image('Food', Sprites.Resources.Food);
 
-    // Buildings
+    // -- Buildings --
     // Hut
     this.load.image('Hut_Blue', Sprites.Buildings.Hut.Blue);
     this.load.image('Hut_Red', Sprites.Buildings.Hut.Red);
@@ -85,7 +90,7 @@ export default class Boot extends Phaser.Scene {
     this.load.image('House_Destroyed', Sprites.Buildings.House.Destroyed);
     this.load.image('House_Construction', Sprites.Buildings.House.Construction);
 
-    // NPCs
+    // -- NPCs --
     // Archer
     this.load.spritesheet('Archer_Blue', Sprites.NPCs.Archer.Blue, { frameWidth: 192, frameHeight: 192 });
     this.load.spritesheet('Archer_Red', Sprites.NPCs.Archer.Red, { frameWidth: 192, frameHeight: 192 });
@@ -141,7 +146,11 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Button_Yellow_Big', Sprites.UI.Buttons.Yellow_Big);
     this.load.image('Button_Yellow_Pressed', Sprites.UI.Buttons.Yellow_Pressed);
     this.load.image('Button_Yellow_Slides', Sprites.UI.Buttons.Yellow_Slides);
+    this.load.image('Button_Yellow_Slides_Pressed', Sprites.UI.Buttons.Yellow_Slides_Pressed);
     this.load.image('Button_Yellow', Sprites.UI.Buttons.Yellow);
+    this.load.image('Button_Green_Slides', Sprites.UI.Buttons.Green_Slides);
+    this.load.image('Button_Green_Slides_Pressed', Sprites.UI.Buttons.Green_Slides_Pressed);
+    this.load.image('Button_Green_Slides_Disable', Sprites.UI.Buttons.Green_Slides_Disable);
 
     // UI - Icons
     this.load.image('Disable_1', Sprites.UI.Icons.Disable_1);
@@ -176,6 +185,13 @@ export default class Boot extends Phaser.Scene {
     this.load.image('X_Pressed', Sprites.UI.Icons.X_Pressed);
     this.load.image('X', Sprites.UI.Icons.X);
     this.load.multiatlas('Icons');
+
+    // UI - Menu&Lobby
+    this.load.spritesheet('Clouds', Sprites.UI.MenuLobby.Clouds, { frameWidth: 512, frameHeight: 256 });
+    this.load.image('Texture', Sprites.UI.MenuLobby.Texture);
+    this.load.image('Book', Sprites.UI.MenuLobby.Book);
+    this.load.image('Book_Pressed', Sprites.UI.MenuLobby.Book_Pressed);
+    this.load.image('Exit', Sprites.UI.MenuLobby.Exit);
 
     // UI - Pointers
     this.load.image('Axe', Sprites.UI.Pointers.Axe);

@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
-import { HudInfo } from '../utils';
 import Player from '../classes/Player';
+import ResourceSpawner from '../classes/resources/ResourceSpawner';
+import PlayerEntity from '../classes/PlayerEntity';
+import { FontLoader } from '../utils';
 
 export default class Hud extends Phaser.Scene {
     // Attributes
@@ -9,19 +11,21 @@ export default class Hud extends Phaser.Scene {
     private foodCounter: Phaser.GameObjects.Text;
     private populationCounter: Phaser.GameObjects.Text;
 
-    private displayedEntity: Phaser.GameObjects.Sprite;
+    private displayedEntity: PlayerEntity | ResourceSpawner;
+
     // UI
     private selectedContainer: Phaser.GameObjects.Container;
     private infoContainer: Phaser.GameObjects.Container;
     private actionsContainer: Phaser.GameObjects.Container;
-    private optionsContainer: Phaser.GameObjects.Container;
-    // Options menu
-    private optionsBackground: Phaser.GameObjects.Rectangle;
-    private optionsButton: Phaser.GameObjects.Image;
+
+    // Queue
+    private queueContainer: Phaser.GameObjects.Container;
+    private queueIcon: Phaser.GameObjects.Image;
+    private queueTime: Phaser.GameObjects.Text;
 
     // Player
     private player: Player;
-    
+
     // Constructor
     constructor() {
         super({ key: 'hud' });
@@ -34,7 +38,6 @@ export default class Hud extends Phaser.Scene {
     create() {
         this.createTopHud();
         this.createBottomHud();
-        this.createOptionsMenu();
     }
 
     createTopHud() {
@@ -51,54 +54,32 @@ export default class Hud extends Phaser.Scene {
         teamContainer.add(squareTeam);
         teamContainer.add(king);
 
-        // Resources
-        this.woodCounter = this.addResourceBanner(120, "Wood", this.player.getWood());
-        this.foodCounter = this.addResourceBanner(222, "Food", this.player.getFood());      
-        this.goldCounter = this.addResourceBanner(324, "Gold", this.player.getGold());
+        // Load font
+        FontLoader.loadFonts(this, (self) => {
+            // Resources
+            self.woodCounter = self.addResourceBanner(120, "Wood", self.player.getWood());
+            self.foodCounter = self.addResourceBanner(222, "Food", self.player.getFood());
+            self.goldCounter = self.addResourceBanner(324, "Gold", self.player.getGold());
 
-        // Population
-        let soldierIcon = this.add.image(-35, 0, `Soldier_${this.player.getColor()}`);
-        soldierIcon.setDisplaySize(60, 60);
-        soldierIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let villagerIcon = this.add.image(-20, 2, `Villager_${this.player.getColor()}`);
-        villagerIcon.setDisplaySize(60, 60);
-        villagerIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        this.populationCounter = this.add.text(-5, -10, `0/${this.player.getMaxPopulation()}`, { color: '#000000' });
+            // Population
+            let soldierIcon = self.add.image(-35, 0, `Soldier_${self.player.getColor()}`);
+            soldierIcon.setDisplaySize(60, 60);
+            soldierIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let villagerIcon = self.add.image(-20, 2, `Villager_${self.player.getColor()}`);
+            villagerIcon.setDisplaySize(60, 60);
+            villagerIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            self.populationCounter = self.add.text(0, -13, `0/${self.player.getMaxPopulation()}`,
+                { color: '#000000', fontFamily: "Quattrocento", fontSize: 18 });
 
-        let populationContainer = this.add.container(midX, 45);
-        let populationBanner = this.add.nineslice(0, 0, 'Connection_Up', undefined, 450, 198, 35, 35, 0, 10);
-        populationBanner.setDisplaySize(170, 66);
-        populationBanner.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        populationContainer.add(populationBanner);
-        populationContainer.add(soldierIcon);
-        populationContainer.add(villagerIcon);
-        populationContainer.add(this.populationCounter);
-
-        // Options button
-        let optionsContainer = this.add.container(this.cameras.main.width - 55, 45);
-        this.optionsButton = this.add.image(0, 0, 'Button_Yellow');
-        this.optionsButton.setDisplaySize(55, 55);
-        this.optionsButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        optionsContainer.add(this.optionsButton);
-        let settingsIcon = this.add.image(0, 0, 'Settings');
-        settingsIcon.setDisplaySize(55, 55);
-        settingsIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        optionsContainer.add(settingsIcon);
-        this.optionsButton.setInteractive();
-        this.optionsButton.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonDown()) {
-                this.optionsButton.setTexture("Button_Yellow_Pressed");
-                settingsIcon.setTexture("Settings_Pressed");
-            }
+            let populationContainer = self.add.container(midX, 45);
+            let populationBanner = self.add.nineslice(0, 0, 'Connection_Up', undefined, 450, 198, 35, 35, 0, 10);
+            populationBanner.setDisplaySize(170, 66);
+            populationBanner.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            populationContainer.add(populationBanner);
+            populationContainer.add(soldierIcon);
+            populationContainer.add(villagerIcon);
+            populationContainer.add(self.populationCounter);
         });
-        this.optionsButton.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonReleased()) {
-                this.optionsButton.setTexture("Button_Yellow");
-                settingsIcon.setTexture("Settings");
-                this.openOptionsMenu();
-            }
-        });
-
     }
 
     createBottomHud() {
@@ -110,7 +91,7 @@ export default class Hud extends Phaser.Scene {
         infoBox.scale = 0.95;
         this.infoContainer = this.add.container(0, 0);
         let infoAreaContainer = this.add.container(midX - 145, botY + 25);
-        infoAreaContainer.add(infoBox);        
+        infoAreaContainer.add(infoBox);
         infoAreaContainer.add(this.infoContainer);
 
         // Selected Entity
@@ -132,168 +113,89 @@ export default class Hud extends Phaser.Scene {
         actionBox.scale = 0.95;
         this.actionsContainer = this.add.container(0, 0);
         let actionAreaContainer = this.add.container(midX + 145, botY + 25);
-        actionAreaContainer.add(actionBox);        
+        actionAreaContainer.add(actionBox);
         actionAreaContainer.add(this.actionsContainer);
 
-        let entityIcon;
+        // Queue area
+        let queueBox = this.add.image(0, 0, "Carved_Rectangle_Shadow");
+        queueBox.scale = 0.78;
+        this.queueContainer = this.add.container(midX + 161, botY - 28);
+        this.queueContainer.add(queueBox);
+        // Queue icon
+        this.queueIcon = this.add.image(-35, 0, "X");
+        this.queueIcon.setDisplaySize(26, 26);
+        this.queueIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+        // Load fonts
+        FontLoader.loadFonts(this, (self) => {
+            // Queue time
+            self.queueTime = self.add.text(-10, -8, `0s`, { color: '#000000', fontFamily: "Quattrocento" });
+            self.queueTime.setSize(20, 20);
+            // Close button
+            let closeBtnImg = self.add.image(0, 0, "Button_Red");
+            closeBtnImg.scale = 0.5;
+            let closeIcon = self.add.image(-0.5, -0.8, "X");
+            closeIcon.setDisplaySize(25, 25);
+            closeIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let closeBtnContainer = self.add.container(45, 3);
+            closeBtnContainer.add(closeBtnImg);
+            closeBtnContainer.add(closeIcon);
+            // Add all to container and set it invisible
+            self.queueContainer.add(self.queueIcon);
+            self.queueContainer.add(self.queueTime);
+            self.queueContainer.add(closeBtnContainer);
+            self.queueContainer.setVisible(false);
 
-        this.events.on('entityClicked', (hudInfo: HudInfo) => {
-            
-            // -----------------------------------------------
-            // TODO - Move to Game onclick
-            this.flushHud();
-            // -----------------------------------------------
-           
-            // ----- Selected entity -----
-            entityIcon = this.add.image(0, 0, hudInfo.entity.name);
-            entityIcon.setDisplaySize(hudInfo.entity.width, hudInfo.entity.height);
-            entityIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-            this.selectedContainer.add(entityIcon);
-            
-            // ----- Info -----
-            // ResourceSpawner
-            if ("remainingResources" in hudInfo.info) {
-                let resourceIcon = this.add.image(-58, 0, hudInfo.info.resource);
-                resourceIcon.setDisplaySize(60, 60);
-                resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                let resourceAmount = this.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000' });
-                this.infoContainer.add(resourceIcon);
-                this.infoContainer.add(resourceAmount);
-            }
-            // PlayerEntity
-            else {
-                // Health
-                let healthAmount = this.add.text(-45, -15, `${hudInfo.info.health}/${hudInfo.info.totalHealth}`, { color: '#000000' });
-                healthAmount.setFontSize(13);
-                let healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(hudInfo.info.health, hudInfo.info.totalHealth));
-                healthBar.setDisplaySize(80, 30);
-                healthBar.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                this.infoContainer.add(healthAmount);
-                this.infoContainer.add(healthBar);
-                // if AttackUnit, show damage
-                if ("damage" in hudInfo.info) {
-                    // Sword
-                    let sword = this.add.image(35, 0, 'Sword');
-                    sword.setDisplaySize(30, 30);
-                    sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                    sword.setFlipX(true);
-                    this.infoContainer.add(sword);
-                    // Damage
-                    let damageAmount = this.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000' });
-                    this.infoContainer.add(damageAmount);
-                }                
-            }
-            
-            // ----- Actions -----
-            if("isMine" in hudInfo.info && hudInfo.info.isMine) {
-                let startX = -45;
-                hudInfo.actions.forEach((action, i) => {
-                    let actionIcon = this.add.image(startX + 45 * i, 0, "Icons", action.actionFrame);
-                    actionIcon.setDisplaySize(35, 35);
-                    actionIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                    // Funcionalidad acción
-                    actionIcon.setInteractive();
-                    actionIcon.on("pointerdown", () => {
-                        console.log(`Nueva acción pulsada: ${action.run}`);
-                        action.run();
+
+            let entityIcon;
+
+            self.events.on('entityClicked', (selectedEntity: PlayerEntity | ResourceSpawner) => {
+
+                // Save selectedEntity
+                this.displayedEntity = selectedEntity;
+
+                // -----------------------------------------------
+                // TODO - Move to Game onclick
+                this.flushHud();
+                // -----------------------------------------------
+
+                let hudInfo = this.displayedEntity.getHudInfo();
+
+                // ----- Selected entity -----
+                entityIcon = this.add.image(0, 0, hudInfo.entity.name);
+                entityIcon.setDisplaySize(hudInfo.entity.width, hudInfo.entity.height);
+                entityIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                this.selectedContainer.add(entityIcon);
+
+                // ----- Actions -----
+                if ("isMine" in hudInfo.info && hudInfo.info.isMine) {
+                    let startX = -45;
+                    hudInfo.actions.forEach((action, i) => {
+                        let actionIcon = this.add.image(startX + 45 * i, 0, "Icons", action.actionFrame);
+                        actionIcon.setDisplaySize(35, 35);
+                        actionIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                        // Funcionalidad acción
+                        actionIcon.setInteractive();
+                        actionIcon.on("pointerdown", () => {
+                            console.log(`Nueva acción pulsada: ${action.run}`);
+                            action.run();
+                        });
+                        this.actionsContainer.add(actionIcon);
                     });
-                    this.actionsContainer.add(actionIcon);
-                });
-            }
+                }
+            });
+
         });
 
     }
 
-    createOptionsMenu() {
-        // Darken background
-        this.optionsBackground = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.6);
-        this.optionsBackground.setOrigin(0);
-        this.optionsBackground.setVisible(false);
-
-        const midX = this.cameras.main.width / 2;
-        const midY = this.cameras.main.height / 2;
-
-        // Menu
-        let menu = this.add.nineslice(0, 0, "Vertical", undefined, 385, 400, 75, 75, 75, 75);
-        // Surrender button
-        let surrenderBtnImg = this.add.image(-125, 85, "Button_Red_Slide");
-        surrenderBtnImg.scale = 0.7;
-        surrenderBtnImg.setOrigin(0);
-        let surrenderBtnText = this.add.text(-102, 95, "SURRENDER");
-        let surrenderBtnContainer = this.add.container(0, 0);
-        surrenderBtnContainer.add(surrenderBtnImg);
-        surrenderBtnContainer.add(surrenderBtnText);
-
-        // Silence button
-        let silenceBtnImg = this.add.image(32, 80, "Button_Yellow");
-        silenceBtnImg.scale = 0.8;        
-        silenceBtnImg.setOrigin(0);
-        let silenceIcon = this.add.image(57, 104, "Sound_On");
-        silenceIcon.setDisplaySize(45, 45);
-        silenceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let silenceBtnContainer = this.add.container(0, 0);
-        silenceBtnContainer.add(silenceBtnImg);
-        silenceBtnContainer.add(silenceIcon);
-
-        // Fullscreen button
-        let fullscreenBtnImg = this.add.image(80, 80, "Button_Yellow");
-        fullscreenBtnImg.scale = 0.8;
-        fullscreenBtnImg.setOrigin(0);
-        let fullscreenIcon = this.add.image(105, 100, "Selected");
-        fullscreenIcon.setDisplaySize(22, 22);
-        fullscreenIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let fullscreenBtnContainer = this.add.container(0, 0);
-        fullscreenBtnContainer.add(fullscreenBtnImg);
-        fullscreenBtnContainer.add(fullscreenIcon);
-        // Fullscreen function
-        fullscreenBtnImg.setInteractive();
-        fullscreenBtnImg.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonDown()) {
-                fullscreenIcon.setPosition(105, 102);
-                fullscreenBtnImg.setTexture("Button_Yellow_Pressed");
-            }
-        });
-        fullscreenBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonReleased()) {
-                fullscreenIcon.setPosition(105, 100);
-                fullscreenBtnImg.setTexture("Button_Yellow");
-                this.changeFullscreen();
-            }
-        });
-
-        // Close button
-        let closeBtnImg = this.add.image(80, -140, "Button_Red");
-        closeBtnImg.scale = 0.8;
-        closeBtnImg.setOrigin(0);
-        let closeIcon = this.add.image(105, -115, "X");
-        closeIcon.setDisplaySize(40, 40);
-        closeIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let closeBtnContainer = this.add.container(0, 0);
-        closeBtnContainer.add(closeBtnImg);
-        closeBtnContainer.add(closeIcon);
-        // Close function
-        closeBtnImg.setInteractive();
-        closeBtnImg.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonDown()) {
-                closeBtnImg.setTexture("Button_Red_Pressed");
-                closeIcon.setTexture("X_Pressed");
-            }
-        });
-        closeBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonReleased()) {
-                closeBtnImg.setTexture("Button_Red");
-                closeIcon.setTexture("X");
-                this.closeOptionsMenu();            
-            }
-        });
-
-        this.optionsContainer = this.add.container(midX, midY);
-        this.optionsContainer.add(menu);
-        this.optionsContainer.add(surrenderBtnContainer);
-        this.optionsContainer.add(silenceBtnContainer);
-        this.optionsContainer.add(fullscreenBtnContainer);
-        this.optionsContainer.add(closeBtnContainer);
-        this.optionsContainer.setVisible(false);
+    createHealthBar(health: number, totalHealth: number) {
+        let healthAmount = this.add.text(-45, -15, `${health}/${totalHealth}`, { color: '#000000', fontFamily: "Quattrocento" });
+        healthAmount.setFontSize(13);
+        let healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(health, totalHealth));
+        healthBar.setDisplaySize(80, 30);
+        healthBar.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+        this.infoContainer.add(healthAmount);
+        this.infoContainer.add(healthBar);
     }
 
     // Add banner of a resource to TopHud
@@ -306,7 +208,7 @@ export default class Hud extends Phaser.Scene {
         let icon = this.add.image(-20, -3, resource);
         icon.setDisplaySize(60, 60);
         icon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let amountText = this.add.text(0, -10, `${amount}`, { color: '#000000' });
+        let amountText = this.add.text(0, -10, `${amount}`, { color: '#000000', fontFamily: "Quattrocento" });
 
         container.add(banner);
         container.add(icon);
@@ -331,36 +233,12 @@ export default class Hud extends Phaser.Scene {
         }
     }
 
-    changeFullscreen() {
-        console.log("here");
-        if (document.fullscreenElement) {
-            // exitFullscreen is only available on the Document object.
-            document.exitFullscreen();
-        } else {
-            const el = document.getElementById("game")!;
-            el.requestFullscreen();
-        }
-    }
-
-    openOptionsMenu() {
-        this.optionsButton.disableInteractive();
-        this.optionsBackground.setVisible(true);
-        this.optionsContainer.setVisible(true);
-        this.scene.get('game').events.emit('menuOpened');
-    }
-
-    closeOptionsMenu() {
-        this.optionsButton.setInteractive();
-        this.optionsBackground.setVisible(false);
-        this.optionsContainer.setVisible(false);
-        this.scene.get('game').events.emit('menuClosed');
-    }
-
     // Remove all elements from hud
     flushHud() {
         this.selectedContainer.removeAll(true);
         this.infoContainer.removeAll(true);
         this.actionsContainer.removeAll(true);
+        this.queueContainer.setVisible(false);
     }
 
     update(time: number, delta: number) {
@@ -369,5 +247,55 @@ export default class Hud extends Phaser.Scene {
         this.goldCounter.setText(`${this.player.getGold()}`);
 
         this.populationCounter.setText(`${this.player.getNPCs().length}/${this.player.getMaxPopulation()}`);
+
+        if (this.displayedEntity) {
+            const hudInfo = this.displayedEntity.getHudInfo();
+
+            this.infoContainer.removeAll(true);
+
+            // Load fonts
+            FontLoader.loadFonts(this, (self) => {
+                // ----- Info -----
+                // ResourceSpawner
+                if ("remainingResources" in hudInfo.info) {
+                    let resourceIcon = self.add.image(-58, 0, hudInfo.info.resource);
+                    resourceIcon.setDisplaySize(60, 60);
+                    resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                    let resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Quattrocento" });
+                    self.infoContainer.add(resourceIcon);
+                    self.infoContainer.add(resourceAmount);
+                }
+                // PlayerEntity
+                else {
+                    // Health
+                    self.createHealthBar(hudInfo.info.health, hudInfo.info.totalHealth);
+                    // if AttackUnit, show damage
+                    if ("damage" in hudInfo.info) {
+                        // Sword
+                        let sword = self.add.image(30, 0, 'Sword');
+                        sword.setDisplaySize(30, 30);
+                        sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                        sword.setFlipX(true);
+                        self.infoContainer.add(sword);
+                        // Damage
+                        let damageAmount = self.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Quattrocento" });
+                        self.infoContainer.add(damageAmount);
+                    }
+                    // if Building with queue, show queue data
+                    if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
+                        self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
+                        self.queueTime.text = `${hudInfo.info.queueTime}s`;
+                        // If not visible, set visible
+                        if (!self.queueContainer.visible) {
+                            self.queueContainer.setVisible(true);
+                        }
+                    }
+                    // Queue empty
+                    else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
+                        self.queueContainer.setVisible(false);
+                    }
+                }
+            });
+        }
     }
 }

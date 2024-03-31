@@ -5,6 +5,7 @@ import Lobby from './scenes/Lobby';
 import Game from './scenes/Game';
 import { PhaserNavMeshPlugin } from "phaser-navmesh";
 import Hud from './scenes/Hud';
+import Settings from './scenes/Settings';
 
 /**
  * Inicio del juego en Phaser. Creamos el archivo de configuración del juego y creamos
@@ -32,7 +33,7 @@ let config: Phaser.Types.Core.GameConfig = {
       },
     ],
   },
-  scene: [Boot, Menu, Lobby, Game, Hud],
+  scene: [Boot, Menu, Lobby, Game, Hud, Settings],
   physics: {
     default: 'arcade',
     arcade: {

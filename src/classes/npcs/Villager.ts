@@ -1,6 +1,6 @@
 import Client from '../../client';
 import Game from '../../scenes/Game';
-import { HudInfo, Resources } from '../../utils';
+import { Resources } from '../../utils';
 import Player from '../Player';
 import NPC from './NPC';
 import NPCsData from "../../magic_numbers/npcs_data";
@@ -8,23 +8,24 @@ import NPCsData from "../../magic_numbers/npcs_data";
 export default class Villager extends NPC {
     static readonly COST: Resources = NPCsData.Villager.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Villager.SPAWNING_TIME;
-    private _currentAnimation: string = "idle";
+    private _currentAnimation: string = "idle";    static readonly ICON: string = NPCsData.Villager.ICON_INFO.name;
+
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Villager.ICON_INFO };
         iconInfo.name += owner.getColor();
-        console.log(iconInfo.name);
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Villager.HEALTH, NPCsData.Villager.HEALTH, NPCsData.Villager.SPAWNING_TIME, NPCsData.Villager.SPAWNING_COST, NPCsData.Villager.VISION_RANGE, NPCsData.Villager.SPEED, iconInfo, frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Villager.HEALTH, NPCsData.Villager.HEALTH, NPCsData.Villager.SPAWNING_TIME, NPCsData.Villager.SPAWNING_COST, NPCsData.Villager.VISION_RANGE, NPCsData.Villager.SPEED, frame);
+    
+        // Build hud info
+        this._hudInfo = {
+            entity: iconInfo,
+            info: {
+                isMine: this._owner.getColor() === Client.getMyColor(),
+                health: this._health,
+                totalHealth: this._totalHealth,
+            },
+            actions: [{run: () => {}, actionFrame: `House_${this._owner.getColor()}`}, {run: () => {}, actionFrame: `Tower_${this._owner.getColor()}`}, {run: () => {}, actionFrame: `Hut_${this._owner.getColor()}`}] // TODO: set build functions
+        };
     }
-
-    _hudInfo: HudInfo = {
-        entity: this._iconInfo,
-        info: {
-            isMine: this._owner.getColor() === Client.getMyColor(),
-            health: this._health,
-            totalHealth: this._totalHealth,
-        },
-        actions: [{run: () => {}, actionFrame: `House_${this._owner.getColor()}`}, {run: () => {}, actionFrame: `Tower_${this._owner.getColor()}`}, {run: () => {}, actionFrame: `Hut_${this._owner.getColor()}`}] // TODO: set build functions
-    };
 
     /**
      * @param buildingId id of the building (town hall, hut, etc...)

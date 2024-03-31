@@ -5,7 +5,7 @@ import Game from './scenes/Game';
 import Menu from './scenes/Menu';
 
 export default class Client {
-    static socket: Socket = io();
+    static socket: Socket = io(process.env.NODE_ENV == "production" ? "https://troops-prod-yadfj.ondigitalocean.app/": "http://localhost:8081");
     static lobby: lobbyData;
     static scene: Phaser.Scene;
 
@@ -27,6 +27,12 @@ export default class Client {
         Client.socket.on('spawnNPC', (npcType: string, x: number, y: number, ownerColor: string) => {
             if (Client.scene.scene.isActive('game')) {
                 (<Game>(Client.scene)).spawnNPC(npcType, x, y, ownerColor);
+            }
+        });
+
+        Client.socket.on('attack', (npcId: string, targetId: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).setNPCAttackTarget(npcId, targetId);
             }
         });
     }
@@ -74,6 +80,10 @@ export default class Client {
 
     static spawnNpc(npcType: string, x: number, y: number, ownerColor: string) {
         Client.socket.emit('spawnNPC', Client.lobby.code, npcType, x, y, ownerColor);
+    }
+
+    static attackOrder(npcId: string, targetId: string) {
+        Client.socket.emit('attack', Client.lobby.code, npcId, targetId);
     }
 }
 

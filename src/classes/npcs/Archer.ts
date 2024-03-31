@@ -9,11 +9,12 @@ import NPCsData from "../../magic_numbers/npcs_data";
 export default class Archer extends AttackUnit {
     static readonly COST: Resources = NPCsData.Archer.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Archer.SPAWNING_TIME;
+    static readonly ICON: string = NPCsData.Archer.ICON_INFO.name;
 
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Archer.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Archer.HEALTH, NPCsData.Archer.HEALTH, NPCsData.Archer.SPAWNING_TIME, NPCsData.Archer.SPAWNING_COST, NPCsData.Archer.VISION_RANGE, NPCsData.Archer.SPEED, iconInfo, NPCsData.Archer.ATTACK_RANGE, NPCsData.Archer.DAMAGE, frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Archer.HEALTH, NPCsData.Archer.HEALTH, NPCsData.Archer.SPAWNING_TIME, NPCsData.Archer.SPAWNING_COST, NPCsData.Archer.VISION_RANGE, NPCsData.Archer.SPEED, iconInfo, NPCsData.Archer.ATTACK_RANGE, NPCsData.Archer.DAMAGE, NPCsData.Archer.ATTACK_COOLDOWN ,frame);
     }
 
     protected attack(attackedEntity: NPC) {
