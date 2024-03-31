@@ -3,21 +3,25 @@ import Player from '../Player';
 import Game from '../../scenes/Game';
 import { IconInfo, Resources } from '../../utils';
 import Client from '../../client';
+import PlayerEntity from '../PlayerEntity';
 
 export default abstract class AttackUnit extends NPC {
-    
     protected _attackRange: number;
     protected _damage: number;
+    protected _attackTargetId: string;
+    protected _lastAttackTime: number;
+    protected _attackCooldown: number;
 
     /**
      * @summary constructor for attacking class (must have offensive abilities)
      * @returns instance of attackUnit
      */
-    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, frame?: string | number) {
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, attackCooldown: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, movementSpeed, frame);
 
         this._attackRange = attackRange;
         this._damage = damage;
+        this._attackCooldown = attackCooldown;
 
         this._hudInfo = {
             entity: iconInfo,
@@ -31,14 +35,50 @@ export default abstract class AttackUnit extends NPC {
         }
     }
 
-    /**
-     * @summary this is the attack order, it does NOT guarantee a hit on the opponent
-     * (must take into account range of unit, since archers stop order when in range by default)
-     */
-    protected abstract attack(attackedEntity: NPC);
+    setAttackTarget(entityId: string) {
+        this._attackTargetId = entityId;
+    }
 
-    /**
-     * @summary attack confirmed, hit sends onHitReceived to target unit
-     */
-    protected abstract hit(damage: number);
+    private entityIsWithinRange(entity: PlayerEntity): boolean {
+        const distance = Phaser.Math.Distance.Between(this.x, this.y, entity.x, entity.y);
+        return distance <= this._attackRange * 64;
+    }
+
+    onAttackReceived(damage: number, attackUnit: AttackUnit): void {
+        super.onAttackReceived(damage, attackUnit);
+
+        if (!this._attackTargetId) {
+            this.setAttackTarget(attackUnit.getId());
+        }
+    }
+
+    update(time: number, delta: number) {
+        if (this._attackTargetId) {
+            const target = (this.scene as Game).getEntityById(this._attackTargetId);
+
+            if (target && !this.entityIsWithinRange(target)) {
+                // Not within range - move towards target
+                Client.setNpcTarget(this._id, new Phaser.Math.Vector2(target.x, target.y));
+            } else {
+                // Within range - stop moving
+                Client.setNpcTarget(this._id, new Phaser.Math.Vector2(this.x, this.y));
+
+                // If target still alive
+                if (target) {
+                    // Check if enough time has passed since the last attack or if have never attacked
+                    const timeSinceLastAttack = (time - this._lastAttackTime) / 1000;   // in seconds
+                    if (this._lastAttackTime === undefined || timeSinceLastAttack >= this._attackCooldown) {
+                        target.onAttackReceived(this._damage, this);
+                        // Update last attack time
+                        this._lastAttackTime = time;
+                    }
+                } else {
+                    this._attackTargetId = undefined;
+                }
+            }
+        }
+
+        super.update(time, delta);
+    }
+    
 }

@@ -4,10 +4,10 @@ import PlayerEntity from '../PlayerEntity';
 import Game from '../../scenes/Game';
 import { PhaserNavMesh } from "phaser-navMesh";
 import { Resources } from '../../utils';
-import Client from '../../client';
 
 export default abstract class NPC extends PlayerEntity {
-    
+    protected _path;
+    protected _currentTarget;
     protected _movementSpeed: number;
 
     /**
@@ -19,17 +19,11 @@ export default abstract class NPC extends PlayerEntity {
         super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
         this._movementSpeed = movementSpeed;
 
-        this._id = `${owner.getColor()}_NPC_${owner.getNPCs().length}`;
+        this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);
     }
 
-    getId(): string {
-        return this._id;
-    }
-
-    setTarget(targetPoint: Phaser.Math.Vector2, navMesh: PhaserNavMesh): void {
-        console.log("setting target");
-
+    setMovementTarget(targetPoint: Phaser.Math.Vector2, navMesh: PhaserNavMesh): void {
         // Find a path to the target
         this._path = navMesh.findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
         if (this._path && this._path.length > 0) {
@@ -52,10 +46,14 @@ export default abstract class NPC extends PlayerEntity {
         this.y += velocityY;
     }
 
+    dieOrDestroy() {
+        this._owner.removeNPC(this);
+        this.destroy();
+    }
+
     update(time: number, deltaTime: number) {
         if (!this.body) return;
 
-        // this.body.velocity.set(0);
         if (this._currentTarget) {
             const { x, y } = this._currentTarget;
             const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
@@ -64,9 +62,7 @@ export default abstract class NPC extends PlayerEntity {
                 if (this._path.length > 0) this._currentTarget = this._path.shift();
                 else this._currentTarget = null;
             }
-            if (this._path.length === 0 && distance < 50) {
-                // speed = map(distance, 50, 0, 400, 50);
-            }
+
             if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
         }
     }

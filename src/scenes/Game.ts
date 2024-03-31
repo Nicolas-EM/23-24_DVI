@@ -11,6 +11,8 @@ import Archer from '../classes/npcs/Archer';
 import Goblin from '../classes/npcs/Goblin';
 import Soldier from '../classes/npcs/Soldier';
 import Villager from '../classes/npcs/Villager';
+import AttackUnit from '../classes/npcs/AttackUnit';
+import Building from '../classes/buildings/Building';
 
 // MAGIC NUMBER
 const MIN_ZOOM = 0.1;
@@ -63,7 +65,7 @@ export default class Game extends Phaser.Scene {
     this.p2 = new Player(Client.lobby.players[1].color, Client.lobby.players[1].color, this);
 
     // Hud
-    this.scene.run('hud', {player: (this.p1.getColor() === Client.getMyColor() ? this.p1 : this.p2)});
+    this.scene.run('hud', { player: (this.p1.getColor() === Client.getMyColor() ? this.p1 : this.p2) });
     this.events.on('menuOpened', () => {
       this.optionsMenuOpened = true;
     });
@@ -90,13 +92,23 @@ export default class Game extends Phaser.Scene {
       'right': Phaser.Input.Keyboard.KeyCodes.D
     });
 
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, gameObject) => {
-      if (pointer.rightButtonDown() && this.pointerInMap && this._selectedEntity) {
-        const pointerPosition = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
+    this.input.on('gameobjectdown', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject, stopPropagation) => {
+      if(!this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+        return;
 
-        if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
-          Client.setNpcTarget(this._selectedEntity.getId(), pointerPosition);
-        }
+      if(this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
+        if(!(gameObject as PlayerEntity).belongsToMe())
+          Client.attackOrder(this._selectedEntity.getId(), gameObject.getId());
+      }
+    });
+
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if(!this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+        return;
+
+      if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
+        const pointerPosition = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
+        Client.setNpcTarget(this._selectedEntity.getId(), pointerPosition);
       }
     });
 
@@ -106,7 +118,7 @@ export default class Game extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.cameraPan(delta);
-    this.events.emit('update', time, delta);;
+    this.events.emit('update', time, delta);
 
     if (!this.optionsMenuOpened) { // Disable movement if menu opened 
       if (this.cursors.up.isDown) {
@@ -184,7 +196,7 @@ export default class Game extends Phaser.Scene {
   }
 
   getPlayerByColor(color: string): Player {
-    if(this.p1.getColor() === color)
+    if (this.p1.getColor() === color)
       return this.p1;
     else
       return this.p2;
@@ -203,12 +215,37 @@ export default class Game extends Phaser.Scene {
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {
-    this.p1.getNPCById(npcId)?.setTarget(position, this._map.navMesh);
-    this.p2.getNPCById(npcId)?.setTarget(position, this._map.navMesh);
+    this.p1.getNPCById(npcId)?.setMovementTarget(position, this._map.navMesh);
+    this.p2.getNPCById(npcId)?.setMovementTarget(position, this._map.navMesh);
+  }
+
+  setNPCAttackTarget(npcId: string, targetId: string) {
+    let npc = this.p1.getNPCById(npcId);
+    if(npc && npc instanceof AttackUnit) {
+      npc.setAttackTarget(targetId);
+      return;
+    }
+    npc = this.p2.getNPCById(npcId);
+    if(npc && npc instanceof AttackUnit) {
+      npc.setAttackTarget(targetId);
+      return;
+    }
   }
 
   spawnNPC(npcType: string, x: number, y: number, ownerColor: string) {
     console.log(npcConstructors[npcType]);
     new npcConstructors[npcType](this, x, y, this.getPlayerByColor(ownerColor));
+  }
+
+  getAllBuildings(): Building[] {
+    return this.p1.getBuildings().concat(this.p2.getBuildings());
+  }
+
+  getEntityById(entityId: string): PlayerEntity {
+    let entity = this.p1.getPlayerEntityById(entityId);
+    if(entity)
+      return entity;
+    else
+      return this.p2.getPlayerEntityById(entityId);
   }
 }
