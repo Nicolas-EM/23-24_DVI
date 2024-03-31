@@ -64,7 +64,11 @@ export default class Lobby extends Phaser.Scene {
     // Load font
     FontLoader.loadFonts(this, (self) => {
       // Display lobby UI elements (e.g., player list, color selection, ready button)
-      self.lobbyText = self.add.text(self.cameras.main.width / 2, 100, 'Lobby', { fontSize: 35, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+      let banner = this.add.nineslice(0, 0, 'Horizontal', undefined, 275, 99, 35, 35, 0, 10);
+      let lobbyContainer = this.add.container(self.cameras.main.width / 2, 80);
+      self.lobbyText = self.add.text(0, 0, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+      lobbyContainer.add(banner);
+      lobbyContainer.add(self.lobbyText);
 
       self.playerListText = self.add.text(self.cameras.main.width / 2, 200, '', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
 
@@ -114,7 +118,7 @@ export default class Lobby extends Phaser.Scene {
 
   update(time: number, delta: number) {
     if (Client.lobby?.code) {
-      this.lobbyText.setText(`Lobby - ${Client.lobby.code}`);
+      this.lobbyText.setText(`${Client.lobby.code}`);
       this.updatePlayers(Client.lobby.players);
       this.updateAvailableColors(Client.lobby.availableColors);
 
