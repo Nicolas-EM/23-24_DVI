@@ -88,7 +88,7 @@ export default class Lobby extends Phaser.Scene {
 
     // Buttons start disabled
     colors.forEach((color, index) => {
-      const button = this.add.sprite(startX + index * 100, 350, `Villager_${color}`).setInteractive();
+      const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
       button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonReleased()) {
           this.selectColor(color);

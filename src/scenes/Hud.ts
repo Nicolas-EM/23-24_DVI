@@ -17,7 +17,7 @@ export default class Hud extends Phaser.Scene {
     private selectedContainer: Phaser.GameObjects.Container;
     private infoContainer: Phaser.GameObjects.Container;
     private actionsContainer: Phaser.GameObjects.Container;
-    
+
     // Queue
     private queueContainer: Phaser.GameObjects.Container;
     private queueIcon: Phaser.GameObjects.Image;
@@ -62,10 +62,10 @@ export default class Hud extends Phaser.Scene {
             self.goldCounter = self.addResourceBanner(324, "Gold", self.player.getGold());
 
             // Population
-            let soldierIcon = this.add.image(-35, 0, `Soldier_${this.player.getColor()}`);
+            let soldierIcon = self.add.image(-35, 0, `Soldier_${self.player.getColor()}`);
             soldierIcon.setDisplaySize(60, 60);
             soldierIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-            let villagerIcon = this.add.image(-20, 2, `Villager_${this.player.getColor()}`);
+            let villagerIcon = self.add.image(-20, 2, `Villager_${self.player.getColor()}`);
             villagerIcon.setDisplaySize(60, 60);
             villagerIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             self.populationCounter = self.add.text(0, -13, `0/${self.player.getMaxPopulation()}`,
@@ -125,61 +125,65 @@ export default class Hud extends Phaser.Scene {
         this.queueIcon = this.add.image(-35, 0, "X");
         this.queueIcon.setDisplaySize(26, 26);
         this.queueIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        // Queue time
-        this.queueTime = this.add.text(-10, -8, `0s`, { color: '#000000' });
-        this.queueTime.setSize(20, 20);
-        // Close button
-        let closeBtnImg = this.add.image(0, 0, "Button_Red");
-        closeBtnImg.scale = 0.5;
-        let closeIcon = this.add.image(-0.5, -0.8, "X");
-        closeIcon.setDisplaySize(25, 25);
-        closeIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let closeBtnContainer = this.add.container(45, 3);
-        closeBtnContainer.add(closeBtnImg);
-        closeBtnContainer.add(closeIcon);
-        // Add all to container and set it invisible
-        this.queueContainer.add(this.queueIcon);
-        this.queueContainer.add(this.queueTime);
-        this.queueContainer.add(closeBtnContainer);
-        this.queueContainer.setVisible(false);
-        console.log("El container está visible:", this.queueContainer.visible);
+        // Load fonts
+        FontLoader.loadFonts(this, (self) => {
+            // Queue time
+            self.queueTime = self.add.text(-10, -8, `0s`, { color: '#000000', fontFamily: "Quattrocento" });
+            self.queueTime.setSize(20, 20);
+            // Close button
+            let closeBtnImg = self.add.image(0, 0, "Button_Red");
+            closeBtnImg.scale = 0.5;
+            let closeIcon = self.add.image(-0.5, -0.8, "X");
+            closeIcon.setDisplaySize(25, 25);
+            closeIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let closeBtnContainer = self.add.container(45, 3);
+            closeBtnContainer.add(closeBtnImg);
+            closeBtnContainer.add(closeIcon);
+            // Add all to container and set it invisible
+            self.queueContainer.add(self.queueIcon);
+            self.queueContainer.add(self.queueTime);
+            self.queueContainer.add(closeBtnContainer);
+            self.queueContainer.setVisible(false);
 
-        let entityIcon;
 
-        this.events.on('entityClicked', (selectedEntity: PlayerEntity | ResourceSpawner) => {
+            let entityIcon;
 
-            // Save selectedEntity
-            this.displayedEntity = selectedEntity;
-            
-            // -----------------------------------------------
-            // TODO - Move to Game onclick
-            this.flushHud();
-            // -----------------------------------------------
-           
-            let hudInfo = this.displayedEntity.getHudInfo();
+            self.events.on('entityClicked', (selectedEntity: PlayerEntity | ResourceSpawner) => {
 
-            // ----- Selected entity -----
-            entityIcon = this.add.image(0, 0, hudInfo.entity.name);
-            entityIcon.setDisplaySize(hudInfo.entity.width, hudInfo.entity.height);
-            entityIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-            this.selectedContainer.add(entityIcon);
-            
-            // ----- Actions -----
-            if ("isMine" in hudInfo.info && hudInfo.info.isMine) {
-                let startX = -45;
-                hudInfo.actions.forEach((action, i) => {
-                    let actionIcon = this.add.image(startX + 45 * i, 0, "Icons", action.actionFrame);
-                    actionIcon.setDisplaySize(35, 35);
-                    actionIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                    // Funcionalidad acción
-                    actionIcon.setInteractive();
-                    actionIcon.on("pointerdown", () => {
-                        console.log(`Nueva acción pulsada: ${action.run}`);
-                        action.run();
+                // Save selectedEntity
+                this.displayedEntity = selectedEntity;
+
+                // -----------------------------------------------
+                // TODO - Move to Game onclick
+                this.flushHud();
+                // -----------------------------------------------
+
+                let hudInfo = this.displayedEntity.getHudInfo();
+
+                // ----- Selected entity -----
+                entityIcon = this.add.image(0, 0, hudInfo.entity.name);
+                entityIcon.setDisplaySize(hudInfo.entity.width, hudInfo.entity.height);
+                entityIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                this.selectedContainer.add(entityIcon);
+
+                // ----- Actions -----
+                if ("isMine" in hudInfo.info && hudInfo.info.isMine) {
+                    let startX = -45;
+                    hudInfo.actions.forEach((action, i) => {
+                        let actionIcon = this.add.image(startX + 45 * i, 0, "Icons", action.actionFrame);
+                        actionIcon.setDisplaySize(35, 35);
+                        actionIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                        // Funcionalidad acción
+                        actionIcon.setInteractive();
+                        actionIcon.on("pointerdown", () => {
+                            console.log(`Nueva acción pulsada: ${action.run}`);
+                            action.run();
+                        });
+                        this.actionsContainer.add(actionIcon);
                     });
-                    this.actionsContainer.add(actionIcon);
-                });
-            }
+                }
+            });
+
         });
 
     }
@@ -278,19 +282,18 @@ export default class Hud extends Phaser.Scene {
                         self.infoContainer.add(damageAmount);
                     }
                     // if Building with queue, show queue data
-                if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
-                    self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
-                    self.queueTime.text = `${hudInfo.info.queueTime}s`;
-                    // If not visible, set visible
-                    if (!self.queueContainer.visible) {
-                        self.queueContainer.setVisible(true);
-                    }                
-                }
-                // Queue empty
-                else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
-                    self.queueContainer.setVisible(false);
-                }
-                }
+                    if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
+                        self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
+                        self.queueTime.text = `${hudInfo.info.queueTime}s`;
+                        // If not visible, set visible
+                        if (!self.queueContainer.visible) {
+                            self.queueContainer.setVisible(true);
+                        }
+                    }
+                    // Queue empty
+                    else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
+                        self.queueContainer.setVisible(false);
+                    }
                 }
             });
         }
