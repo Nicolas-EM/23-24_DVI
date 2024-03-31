@@ -2,6 +2,7 @@
 
 export namespace animationFactory {
     export function createAnimations(scene: Phaser.Scene) {
+        //note: we can create only the ones we need for the game (but they're small and no memory issues are expected)
         const colors = ['Blue', 'Red', 'Yellow', 'Purple'];
 
         colors.forEach((color) => {
@@ -23,6 +24,7 @@ export namespace animationFactory {
                 frameRate: 8,
 
             });
+
             scene.anims.create({
                 key: `villagerAxe${color}`,
                 frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
@@ -205,6 +207,14 @@ export namespace animationFactory {
                 frameRate: 8,
 
             });
+           
+        });
+        //same for all.. no duplicates here. 
+        scene.anims.create({
+            key: 'death',
+            frames: scene.anims.generateFrameNumbers('Death', {
+                frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+            }),
         });
     }
 }

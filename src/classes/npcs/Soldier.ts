@@ -19,25 +19,56 @@ export default class Soldier extends AttackUnit {
     protected attack(attackedEntity: NPC) {
         throw new Error("Method not implemented.");
     }
-    
+
     protected hit(damage: number) {
         throw new Error("Method not implemented.");
     }
 
-
-    doMoveAnimation(isLeft?: boolean) {
-        if(this.anims.isPlaying){
-            if(this.anims.currentAnim.key !== `soldierWalkRight${this._owner.getColor()}`){
+    doIdleAnimation() {
+        if (this.anims.isPlaying) {
+            if (this.anims.currentAnim.key !== `SoldierIdleRight${this._owner.getColor()}`) {
                 this.anims.stop();
             }
         }
-        if(isLeft){
+        //DO NOT handle flipX here
+        this.playAnimation(`SoldierIdleRight${this._owner.getColor()}`);
+    }
+
+    doMoveAnimation(isLeft?: boolean) {
+        if (this.anims.isPlaying) {
+            if (this.anims.currentAnim.key !== `soldierWalkRight${this._owner.getColor()}`) {
+                this.anims.stop();
+            }
+        }
+        if (isLeft) {
             this.flipX = true;
         }
-        if(!isLeft && this.flipX){
+        if (!isLeft && this.flipX) {
             this.flipX = false;
         }
         this.playAnimation(`soldierWalkRight${this._owner.getColor()}`);
     }
 
+    doAttackAnimation(isLeft?: boolean, pointer?: Phaser.Input.Pointer) {
+        if (isLeft) {
+            this.flipX = true;
+        } else {
+            this.flipX = false;
+        }
+
+        if (pointer) {
+            const { worldX, worldY } = pointer;
+            const { x, y } = this;
+
+            if (worldX < x ) {
+                this.playAnimation(`soldierAttackRight${this._owner.getColor()}`);
+            } else if (worldX > x) {
+                this.playAnimation(`soldierAttackRight${this._owner.getColor()}`);
+            } else if (worldY < y) {
+                this.playAnimation(`soldierAttackUp${this._owner.getColor()}`);
+            } else if (worldY > y) {
+                this.playAnimation(`soldierAttackDown${this._owner.getColor()}`);
+            }
+        }
+    }
 }

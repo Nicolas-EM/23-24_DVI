@@ -80,6 +80,14 @@ export default abstract class NPC extends PlayerEntity {
         }
     }
 
+    doDeathAnimation() {
+        this.playAnimation("death");
+        this.on("animationcomplete", () => {
+            this.destroy();
+            //TODO maybe launch the death event too?
+        });
+    }
+
     abstract doMoveAnimation(isLeft?: boolean): void;
     //second attribute is optional, means that if this exact animation is already playing, ignores the call.
     public playAnimation(key: string) {

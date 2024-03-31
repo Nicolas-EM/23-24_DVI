@@ -47,6 +47,15 @@ export default class Villager extends NPC {
 
     }
 
+    doIdleAnimation(){
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `villagerIdle${this._owner.getColor()}`){
+                this.anims.stop();
+            }
+        }
+        this.playAnimation(`villagerIdle${this._owner.getColor()}`);
+    }
+
     doMoveAnimation(isLeft?: boolean) {
         if(this.anims.isPlaying){
             if(this.anims.currentAnim.key !== `villagerWalk${this._owner.getColor()}`){
@@ -61,5 +70,45 @@ export default class Villager extends NPC {
         }
         this.playAnimation(`villagerWalk${this._owner.getColor()}`);
     }
+
+    doGatherAnimation(isLeft?: boolean){
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `villagerAxe${this._owner.getColor()}`){
+                this.anims.stop();
+            }
+        }
+        if(isLeft){
+            this.flipX = true;
+        }
+        if(!isLeft && this.flipX){
+            this.flipX = false;
+        }
+        this.playAnimation(`villagerAxe${this._owner.getColor()}`);
+    }
+
+    doBuildAnimation(isLeft?: boolean){
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `villagerHammer${this._owner.getColor()}`){
+                this.anims.stop();
+            }
+        }
+        if(isLeft){
+            this.flipX = true;
+        }
+        if(!isLeft && this.flipX){
+            this.flipX = false;
+        }
+        this.playAnimation(`villagerHammer${this._owner.getColor()}`);
+    }
+
+    // doLiftAnimation(){
+    //     if(this.anims.isPlaying){
+    //         if(this.anims.currentAnim.key !== `villagerLift${this._owner.getColor()}`){
+    //             this.anims.stop();
+    //         }
+    //     }
+    //     this.playAnimation(`villagerLift${this._owner.getColor()}`);
+    // }
+
 
 }
