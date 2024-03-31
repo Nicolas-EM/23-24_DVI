@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import Client from '../client';
+import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
 
 
@@ -20,6 +20,14 @@ export default class Settings extends Phaser.Scene {
     }
 
     create() {
+        // Cursor
+        this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+            this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
+        });
+        this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+            this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
+        });
+
         // Options button
         let optionsContainer = this.add.container(this.cameras.main.width - 55, 45);
         this.optionsButton = this.add.image(0, 0, 'Button_Yellow');
@@ -151,14 +159,14 @@ export default class Settings extends Phaser.Scene {
         this.optionsButton.disableInteractive();
         this.optionsBackground.setVisible(true);
         this.optionsContainer.setVisible(true);
-        this.scene.get('game').events.emit('menuOpened');
+        this.scene.get(this.sceneBase).events.emit('menuOpened');
     }
 
     closeOptionsMenu() {
         this.optionsButton.setInteractive();
         this.optionsBackground.setVisible(false);
         this.optionsContainer.setVisible(false);
-        this.scene.get('game').events.emit('menuClosed');
+        this.scene.get(this.sceneBase).events.emit('menuClosed');
     }
 
     changeFullscreen() {

@@ -30,6 +30,12 @@ export default class Lobby extends Phaser.Scene {
 
     // Settings button
     this.scene.run('settings', { scene: "lobby" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
+    });
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
+    });
 
     // Background
     const background = this.add.image(0, 0, 'Texture').setOrigin(0);
@@ -46,12 +52,6 @@ export default class Lobby extends Phaser.Scene {
     loreIcon.setDisplaySize(40, 40);
     loreIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     loreContainer.add(loreIcon);
-    this.events.on('menuOpened', () => {
-      loreButton.disableInteractive();
-    });
-    this.events.on('menuClosed', () => {
-      loreButton.setInteractive();
-    });
 
     // Leave lobby button
     let leaveContainer = this.add.container(this.cameras.main.width - 120, 45);
@@ -63,12 +63,6 @@ export default class Lobby extends Phaser.Scene {
     leaveIcon.setDisplaySize(30, 30);
     leaveIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     leaveContainer.add(leaveIcon);
-    this.events.on('menuOpened', () => {
-      leaveButton.disableInteractive();
-    });
-    this.events.on('menuClosed', () => {
-      leaveButton.setInteractive();
-    });
 
     // Load font
     FontLoader.loadFonts(this, (self) => {
@@ -126,9 +120,6 @@ export default class Lobby extends Phaser.Scene {
       readyContainer.add(self.readyButton);
       readyContainer.add(readyText);
     });
-
-    // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.5}).play();
 
   }
 
