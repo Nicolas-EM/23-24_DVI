@@ -16,7 +16,8 @@ export default class Player {
   };
   // TODO: magic number - starting population
   private maxPopulation: number = 10;
-  
+  private entityId = 0;
+
   /**
    * Creates a new player instance.
    * @param {string} id - The unique identifier for the player.
@@ -106,5 +107,9 @@ export default class Player {
 
   getMaxPopulation(): number {
     return this.maxPopulation;
+  }
+
+  getNextEntityId(): number {
+    return this.entityId++;
   }
 }

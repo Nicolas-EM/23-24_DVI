@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import Client from '../client';
+import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
 
 
@@ -10,6 +11,14 @@ export default class Menu extends Phaser.Scene {
 
   create() {
     Client.setScene(this);
+
+    // Cursor
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
+    });
+    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
+    });
 
     // Settings button
     this.scene.run('settings', { scene: "menu" });

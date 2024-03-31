@@ -22,7 +22,9 @@ export interface HudInfo {
         isMine: boolean,
         health: number,
         totalHealth: number,
-        damage?: number
+        damage?: number,
+        queueIcon?: string,
+        queueTime?: number
     } | {
         remainingResources: number,
         resource: string,

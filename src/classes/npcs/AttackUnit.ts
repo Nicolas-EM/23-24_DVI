@@ -1,7 +1,7 @@
 import NPC from './NPC';
 import Player from '../Player';
 import Game from '../../scenes/Game';
-import { HudInfo, IconInfo, Resources } from '../../utils';
+import { IconInfo, Resources } from '../../utils';
 import Client from '../../client';
 import PlayerEntity from '../PlayerEntity';
 
@@ -12,26 +12,27 @@ export default abstract class AttackUnit extends NPC {
     protected _lastAttackTime: number;
     protected _attackCooldown: number;
 
-    _hudInfo: HudInfo = {
-        entity: this._iconInfo,
-        info: {
-            isMine: this._owner.getColor() === Client.getMyColor(),
-            health: this._health,
-            totalHealth: this._totalHealth,
-        },
-        actions: []
-    };
-
     /**
      * @summary constructor for attacking class (must have offensive abilities)
      * @returns instance of attackUnit
      */
     constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, attackCooldown: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, movementSpeed, iconInfo, frame);
+        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, movementSpeed, frame);
 
         this._attackRange = attackRange;
         this._damage = damage;
         this._attackCooldown = attackCooldown;
+
+        this._hudInfo = {
+            entity: iconInfo,
+            info: {
+                isMine: this._owner.getColor() === Client.getMyColor(),
+                health: this._health,
+                totalHealth: this._totalHealth,
+                damage: this._damage
+            },
+            actions: []
+        }
     }
 
     setAttackTarget(entityId: string) {
@@ -79,4 +80,5 @@ export default abstract class AttackUnit extends NPC {
 
         super.update(time, delta);
     }
+    
 }

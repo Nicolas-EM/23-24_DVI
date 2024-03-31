@@ -1,11 +1,11 @@
 const path = require('path');
 const express = require('express');
+
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
 const port = 8081;
-
 const maxPlayers = 2;
 
 interface Lobby {
@@ -28,7 +28,7 @@ function createDefaultLobby(): Lobby {
         players: [],
         availableColors: ['Red', 'Blue', 'Purple', 'Yellow'],
         readyPlayers: 0
-    };    
+    };
 }
 
 const lobbies: { [code: string]: Lobby } = {};
@@ -80,7 +80,7 @@ io.on('connection', socket => {
             const lobbyCode = generateLobbyCode(); // Function to generate a unique lobby code
             lobbies[lobbyCode] = createDefaultLobby();
             lobbies[lobbyCode].code = lobbyCode;
-            
+
             socket.emit('lobbyCreated', lobbyCode);
         }
     });
@@ -91,7 +91,7 @@ io.on('connection', socket => {
         lobbies[lobbyCode].code = lobbyCode;
         // Make lobby private
         lobbies[lobbyCode].isPrivate = true;
-        
+
         socket.emit('lobbyCreated', lobbyCode);
     });
 

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Client from '../client';
+import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
 
 const colors = ['Red', 'Blue', 'Purple', 'Yellow'];
@@ -19,6 +20,14 @@ export default class Lobby extends Phaser.Scene {
   create() {
     Client.setScene(this);
     
+    // Cursor
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
+    });
+    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
+    });
+
     // Settings button
     this.scene.run('settings', { scene: "lobby" });
 
@@ -77,14 +86,18 @@ export default class Lobby extends Phaser.Scene {
       self.colorButtons = [];
       let startX = self.cameras.main.width / 2 - 150;
 
-      // Buttons start disabled
-      colors.forEach((color, index) => {
-        const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
-        button.on('pointerdown', () => this.selectColor(color));
-        button.disableInteractive();
-        button.setTint(0x808080); // Set grey tint
-        this.colorButtons.push(button);
+    // Buttons start disabled
+    colors.forEach((color, index) => {
+      const button = this.add.sprite(startX + index * 100, 350, `Villager_${color}`).setInteractive();
+      button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.leftButtonReleased()) {
+          this.selectColor(color);
+        }
       });
+      button.disableInteractive();
+      button.setTint(0x808080); // Set grey tint
+      this.colorButtons.push(button);
+    });
 
       // Ready button
       let readyContainer = self.add.container(self.cameras.main.width / 2, 450);
@@ -113,6 +126,9 @@ export default class Lobby extends Phaser.Scene {
       readyContainer.add(self.readyButton);
       readyContainer.add(readyText);
     });
+
+    // Sound
+    this.sound.add('TroopsTheme', { loop: true, volume: 0.5}).play();
 
   }
 
