@@ -68,7 +68,7 @@ export default class Hud extends Phaser.Scene {
             villagerIcon.setDisplaySize(60, 60);
             villagerIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             self.populationCounter = self.add.text(0, -13, `0/${self.player.getMaxPopulation()}`,
-                { color: '#000000', fontFamily: "Bellefair", fontSize: 18 });
+                { color: '#000000', fontFamily: "Quattrocento", fontSize: 18 });
 
             let populationContainer = self.add.container(midX, 45);
             let populationBanner = self.add.nineslice(0, 0, 'Connection_Up', undefined, 450, 198, 35, 35, 0, 10);
@@ -153,7 +153,7 @@ export default class Hud extends Phaser.Scene {
     }
 
     createHealthBar(health: number, totalHealth: number) {
-        let healthAmount = this.add.text(-45, -15, `${health}/${totalHealth}`, { color: '#000000', fontFamily: "Bellefair" });
+        let healthAmount = this.add.text(-45, -15, `${health}/${totalHealth}`, { color: '#000000', fontFamily: "Quattrocento" });
         healthAmount.setFontSize(13);
         let healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(health, totalHealth));
         healthBar.setDisplaySize(80, 30);
@@ -172,7 +172,7 @@ export default class Hud extends Phaser.Scene {
         let icon = this.add.image(-20, -3, resource);
         icon.setDisplaySize(60, 60);
         icon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        let amountText = this.add.text(0, -10, `${amount}`, { color: '#000000', fontFamily: "Bellefair" });
+        let amountText = this.add.text(0, -10, `${amount}`, { color: '#000000', fontFamily: "Quattrocento" });
 
         container.add(banner);
         container.add(icon);
@@ -224,7 +224,7 @@ export default class Hud extends Phaser.Scene {
                     let resourceIcon = self.add.image(-58, 0, hudInfo.info.resource);
                     resourceIcon.setDisplaySize(60, 60);
                     resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                    let resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Bellefair" });
+                    let resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Quattrocento" });
                     self.infoContainer.add(resourceIcon);
                     self.infoContainer.add(resourceAmount);
                 }
@@ -241,7 +241,7 @@ export default class Hud extends Phaser.Scene {
                         sword.setFlipX(true);
                         self.infoContainer.add(sword);
                         // Damage
-                        let damageAmount = self.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Bellefair" });
+                        let damageAmount = self.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Quattrocento" });
                         self.infoContainer.add(damageAmount);
                     }
                 }

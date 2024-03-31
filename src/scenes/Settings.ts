@@ -70,7 +70,7 @@ export default class Settings extends Phaser.Scene {
                 let surrenderBtnImg = self.add.image(-125, 85, "Button_Red_Slide");
                 surrenderBtnImg.scale = 0.7;
                 surrenderBtnImg.setOrigin(0);        
-                let surrenderBtnText = self.add.text(-102, 93, "SURRENDER", { fontFamily: "Bellefair" });
+                let surrenderBtnText = self.add.text(-105, 93, "SURRENDER", { fontFamily: "Bellefair" });
                 let surrenderBtnContainer = self.add.container(0, 0);
                 surrenderBtnContainer.add(surrenderBtnImg);
                 surrenderBtnContainer.add(surrenderBtnText);

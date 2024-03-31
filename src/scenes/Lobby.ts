@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Client from '../client';
+import { FontLoader } from '../utils';
 
 const colors = ['Red', 'Blue', 'Purple', 'Yellow'];
 
@@ -7,7 +8,9 @@ export default class Lobby extends Phaser.Scene {
   lobbyText: Phaser.GameObjects.Text;
   playerListText: Phaser.GameObjects.Text;
   colorButtons: Phaser.GameObjects.Sprite[];
-  readyButton: Phaser.GameObjects.Text;
+
+  readyButton: Phaser.GameObjects.Image;
+  isReady: boolean = false;
 
   constructor() {
     super('lobby');
@@ -24,31 +27,89 @@ export default class Lobby extends Phaser.Scene {
     background.displayWidth = this.sys.canvas.width;
     background.displayHeight = this.sys.canvas.height;
 
-    // Display lobby UI elements (e.g., player list, color selection, ready button)
-    this.lobbyText = this.add.text(this.cameras.main.width / 2, 100, 'Lobby', { fontSize: '32px' }).setOrigin(0.5);
-
-    this.playerListText = this.add.text(this.cameras.main.width / 2, 200, '', { fontSize: '24px' }).setOrigin(0.5);
-
-    this.add.text(this.cameras.main.width / 2, 300, 'Choose Color:', { fontSize: '24px' }).setOrigin(0.5);
-
-    this.colorButtons = [];
-    let startX = this.cameras.main.width / 2 - 150;
-
-    // Buttons start disabled
-    colors.forEach((color, index) => {
-      const button = this.add.sprite(startX + index * 100, 350, `Villager_${color}`).setInteractive();
-      button.on('pointerdown', () => this.selectColor(color));
-      button.disableInteractive();
-      button.setTint(0x808080); // Set grey tint
-      this.colorButtons.push(button);
+    // Lore button
+    let loreContainer = this.add.container(65, 60);
+    let loreButton = this.add.image(0, 0, 'Button_Yellow');
+    loreButton.setDisplaySize(80, 80);
+    loreButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    loreContainer.add(loreButton);
+    let loreIcon = this.add.image(0, -10, 'Book');
+    loreIcon.setDisplaySize(40, 40);
+    loreIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    loreContainer.add(loreIcon);
+    this.events.on('menuOpened', () => {
+      loreButton.disableInteractive();
+    });
+    this.events.on('menuClosed', () => {
+      loreButton.setInteractive();
     });
 
-    // Example code to handle ready button
-    this.readyButton = this.add.text(this.cameras.main.width / 2, 450, 'Ready', { fontSize: '24px' }).setOrigin(0.5).setInteractive();
-    this.readyButton.on('pointerdown', () => this.readyUp());
+    // Leave lobby button
+    let leaveContainer = this.add.container(this.cameras.main.width - 120, 45);
+    let leaveButton = this.add.image(0, 0, 'Button_Red');
+    leaveButton.setDisplaySize(55, 55);
+    leaveButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    leaveContainer.add(leaveButton);
+    let leaveIcon = this.add.image(0, -5, 'Exit');
+    leaveIcon.setDisplaySize(30, 30);
+    leaveIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    leaveContainer.add(leaveIcon);
+    this.events.on('menuOpened', () => {
+      leaveButton.disableInteractive();
+    });
+    this.events.on('menuClosed', () => {
+      leaveButton.setInteractive();
+    });
 
-    // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.5}).play();
+    // Load font
+    FontLoader.loadFonts(this, (self) => {
+      // Display lobby UI elements (e.g., player list, color selection, ready button)
+      self.lobbyText = self.add.text(self.cameras.main.width / 2, 100, 'Lobby', { fontSize: 35, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+
+      self.playerListText = self.add.text(self.cameras.main.width / 2, 200, '', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+
+      self.add.text(self.cameras.main.width / 2, 270, 'Choose Color:', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+
+      self.colorButtons = [];
+      let startX = self.cameras.main.width / 2 - 150;
+
+      // Buttons start disabled
+      colors.forEach((color, index) => {
+        const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
+        button.on('pointerdown', () => this.selectColor(color));
+        button.disableInteractive();
+        button.setTint(0x808080); // Set grey tint
+        this.colorButtons.push(button);
+      });
+
+      // Ready button
+      let readyContainer = self.add.container(self.cameras.main.width / 2, 450);
+      self.readyButton = self.add.image(0, 0, "Button_Yellow_Slides").setInteractive();
+      self.readyButton.scale = 0.85;
+      let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontWeigth: "bold" })
+      self.readyButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => { 
+        if (pointer.leftButtonDown()) {
+          if (!this.isReady)
+            self.readyButton.setTexture("Button_Yellow_Slides_Pressed");
+          else
+            self.readyButton.setTexture("Button_Green_Slides_Pressed");
+          readyText.setPosition(-35, -15);
+        }
+      });
+      self.readyButton.on('pointerup', (pointer: Phaser.Input.Pointer) => { 
+        if (pointer.leftButtonReleased()) {
+          if (this.isReady)
+            self.readyButton.setTexture("Button_Yellow_Slides");
+          else
+            self.readyButton.setTexture("Button_Green_Slides");
+          readyText.setPosition(-35, -20);
+          self.readyUp();
+        }
+      });
+      readyContainer.add(self.readyButton);
+      readyContainer.add(readyText);
+    });
+
   }
 
   update(time: number, delta: number) {
@@ -92,14 +153,8 @@ export default class Lobby extends Phaser.Scene {
   }
 
   readyUp() {
-    // Enable or disable the button accordingly
-    if (this.readyButton.tint == 0x00ff00) {
-      this.readyButton.clearTint(); // Remove any tint
-      Client.readyUp();
-    } else {
-      this.readyButton.setTint(0x00ff00); // Set grey tint
-      Client.readyUp();
-    }
+    this.isReady = !this.isReady;
+    Client.readyUp();
   }
 
   startGame() {

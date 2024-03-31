@@ -16,4 +16,7 @@ export { default as Red } from './red.png';
 export { default as Yellow_Big } from './yellow_big.png';
 export { default as Yellow_Pressed } from './yellow_pressed.png';
 export { default as Yellow_Slides } from './yellow_slides.png';
+export { default as Yellow_Slides_Pressed } from './yellow_slides_pressed.png';
 export { default as Yellow } from './yellow.png';
+export { default as Green_Slides } from './green_slides.png';
+export { default as Green_Slides_Pressed } from './green_slides_pressed.png';

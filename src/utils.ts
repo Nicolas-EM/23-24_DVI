@@ -42,7 +42,7 @@ export class FontLoader {
     static loadFonts(scene: Phaser.Scene, callback: (self) => void): void {
         WebFont.load({
             google: {
-                families: ['Bellefair', 'Quattrocento', 'Times New Roman']
+                families: ['Quattrocento', 'Times New Roman']
             },
             active: callback(scene)
         });

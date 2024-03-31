@@ -144,7 +144,10 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Button_Yellow_Big', Sprites.UI.Buttons.Yellow_Big);
     this.load.image('Button_Yellow_Pressed', Sprites.UI.Buttons.Yellow_Pressed);
     this.load.image('Button_Yellow_Slides', Sprites.UI.Buttons.Yellow_Slides);
+    this.load.image('Button_Yellow_Slides_Pressed', Sprites.UI.Buttons.Yellow_Slides_Pressed);
     this.load.image('Button_Yellow', Sprites.UI.Buttons.Yellow);
+    this.load.image('Button_Green_Slides', Sprites.UI.Buttons.Green_Slides);
+    this.load.image('Button_Green_Slides_Pressed', Sprites.UI.Buttons.Green_Slides_Pressed);
 
     // UI - Icons
     this.load.image('Disable_1', Sprites.UI.Icons.Disable_1);
@@ -183,6 +186,9 @@ export default class Boot extends Phaser.Scene {
     // UI - Menu&Lobby
     this.load.spritesheet('Clouds', Sprites.UI.MenuLobby.Clouds, { frameWidth: 512, frameHeight: 256 });
     this.load.image('Texture', Sprites.UI.MenuLobby.Texture);
+    this.load.image('Book', Sprites.UI.MenuLobby.Book);
+    this.load.image('Book_Pressed', Sprites.UI.MenuLobby.Book_Pressed);
+    this.load.image('Exit', Sprites.UI.MenuLobby.Exit);
 
     // UI - Pointers
     this.load.image('Axe', Sprites.UI.Pointers.Axe);
