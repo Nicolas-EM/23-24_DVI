@@ -39,7 +39,8 @@
         "phaser": "^3.70.0",
         "phaser-navmesh": "^2.3.1",
         "socket.io": "^4.7.4",
-        "socket.io-client": "^4.7.4"
+        "socket.io-client": "^4.7.4",
+        "webfontloader": "^1.6.28"
     },
     "parcel-namer-rewrite": {
         "chain": "@parcel/namer-default",
