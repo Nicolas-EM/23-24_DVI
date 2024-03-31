@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 import Client from '../client';
+import { FontLoader } from '../utils';
+
 
 export default class Menu extends Phaser.Scene {
   constructor() {
@@ -53,23 +55,30 @@ export default class Menu extends Phaser.Scene {
   addButton(textButton: string, posY: number, actionButton: Function): void {
     let menuButton = this.add.image(0, 0, "Button_Blue_Slide").setInteractive();
     menuButton.scale = 1.25;
-    let menuText = this.add.text(0, 0, textButton, { color: "#000000" }).setOrigin(0.5, 0.9).setFontSize(25);
-    let menuContainer = this.add.container(this.cameras.main.width / 2, posY)
-    menuContainer.add(menuButton);
-    menuContainer.add(menuText);
-    menuButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => { 
-      if (pointer.leftButtonDown()) {
-        menuButton.setTexture("Button_Blue_Slides_Pressed");
-        menuText.setPosition(0, 5);
-      }        
-    });
-    menuButton.on('pointerup', (pointer: Phaser.Input.Pointer) => { 
-      if (pointer.leftButtonReleased()) {
-        menuButton.setTexture("Button_Blue_Slide");
-        menuText.setPosition(0, 0);
-        actionButton();
-      }        
-    });
+
+    // Add text with font
+    FontLoader.loadFonts(this, (self) => {
+      let menuText = self.add.text(0, 0,
+        textButton, { fontFamily: "Bellefair", color: "#000000", fontSize: 25, fontWeigth: "bold" })
+        .setOrigin(0.5, 0.9);
+
+      let menuContainer = self.add.container(self.cameras.main.width / 2, posY)
+      menuContainer.add(menuButton);
+      menuContainer.add(menuText);
+      menuButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.leftButtonDown()) {
+          menuButton.setTexture("Button_Blue_Slides_Pressed");
+          menuText.setPosition(0, 5);
+        }
+      });
+      menuButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.leftButtonReleased()) {
+          menuButton.setTexture("Button_Blue_Slide");
+          menuText.setPosition(0, 0);
+          actionButton();
+        }
+      });
+    });   
   }
 
 }
