@@ -104,9 +104,11 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if(!this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+      if (!this.pointerInMap || !this._selectedEntity)
         return;
-
+      if (pointer.leftButtonDown()) {
+        this.setSelectedEntity(null);
+      }
       if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
         const pointerPosition = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
         Client.setNpcTarget(this._selectedEntity.getId(), pointerPosition);
@@ -209,9 +211,16 @@ export default class Game extends Phaser.Scene {
 
   setSelectedEntity(entity: PlayerEntity | ResourceSpawner) {
     if (!this.optionsMenuOpened) {
-      console.log("Game: Entity Selected");
       this._selectedEntity = entity;
-      this.scene.get('hud').events.emit('entityClicked', this._selectedEntity);
+      if (entity) {
+        console.log("Game: Entity Selected");        
+        this.scene.get('hud').events.emit('entityClicked', this._selectedEntity);
+      }
+      // Des-seleccionar
+      else {
+        console.log("Game: Entity Un-selected");  
+        this.scene.get('hud').events.emit('entityUnclicked');
+      }
     }
   }
 

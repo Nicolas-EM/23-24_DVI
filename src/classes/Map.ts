@@ -27,17 +27,25 @@ export default class Map {
         this._map = this.scene.make.tilemap({ key: this.mapId });
 
         // Fondo
-        let tileset = this._map.addTilesetImage("Water");
-        const waterLayer = this._map.createLayer("Fondo/Water", tileset!);
+        let waterTileset = this._map.addTilesetImage("Water");
+        const waterLayer = this._map.createLayer("Fondo/Water", waterTileset!);
         waterLayer?.setCollisionByProperty({ collides: true });
-        tileset = this._map.addTilesetImage("Ground");
-        const groundLayer = this._map.createLayer('Fondo/Ground', tileset!);
-        const grassLayer = this._map.createLayer('Fondo/Grass', tileset!);
+        // Foam
+        this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' });
+        // Rocks
+        this._map.createFromObjects('Fondo/Rocks', [{ type: 'Rock1', key: 'Rocks', frame: 0 }, { type: 'Rock2', key: 'Rocks', frame: 8 }, { type: 'Rock3', key: 'Rocks', frame: 16 }, { type: 'Rock4', key: 'Rocks', frame: 24 }]);
+        let groundTileset = this._map.addTilesetImage('Ground');
+        const groundLayer = this._map.createLayer('Fondo/Ground', groundTileset!);
+        const grassLayer = this._map.createLayer('Fondo/Grass', groundTileset!);
 
         // Resources
-        const foodSpawners = this._map.createFromObjects('Resources/Food', { type: "Sheep", key: 'Sheep', classType: Sheep });
+        this._map.createFromObjects('Resources/Food', { type: "Sheep", key: 'Sheep', classType: Sheep });
         this._map.createFromObjects('Resources/Wood', { type: "Tree", key: 'Tree', classType: Tree });
         this._map.createFromObjects('Resources/Gold', { type: "GoldMine", key: 'GoldMine', classType: GoldMine });
+
+        // Decoration
+        let decoTileset = this._map.addTilesetImage('Decoration');
+        this._map.createLayer('Decoration', [decoTileset!, groundTileset!]);
 
         this._map.getObjectLayer("Buildings")?.objects.forEach(obj => {
             if (obj.type === "Townhall_P1") {
