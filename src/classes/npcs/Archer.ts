@@ -29,24 +29,29 @@ export default class Archer extends AttackUnit {
         if(this.anims.isPlaying){
             if(this.anims.currentAnim.key !== `archerIdleRight${this._owner.getColor()}`){
                 this.anims.stop();
+                this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
             }
         }
-        //DO NOT handle flipX here
-        this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
+        else{
+            this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
+        }
     }
     doMoveAnimation(isLeft?: boolean) {
-        if(this.anims.isPlaying){
-            if(this.anims.currentAnim.key !== `archerWalkRight${this._owner.getColor()}`){
-                this.anims.stop();
-            }
-        }
         if(isLeft){
             this.flipX = true;
         }
         if(!isLeft && this.flipX){
             this.flipX = false;
         }
-        this.playAnimation(`archerWalkRight${this._owner.getColor()}`);
+        if(this.anims.isPlaying){
+            if(this.anims.currentAnim.key !== `archerWalkRight${this._owner.getColor()}`){
+                this.anims.stop();
+                this.playAnimation(`archerWalkRight${this._owner.getColor()}`);
+            }
+        }
+        else{
+            this.playAnimation(`archerWalkRight${this._owner.getColor()}`);
+        }
     }
 
     //me vine muy arriba con esta, cuidado
@@ -90,9 +95,7 @@ export default class Archer extends AttackUnit {
 
         if (this.anims.isPlaying && this.anims.currentAnim.key !== animationKey) {
             this.anims.stop();
+            this.playAnimation(animationKey);
         }
-
-        this.playAnimation(animationKey);
     }
-
 }

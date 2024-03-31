@@ -14,26 +14,30 @@ export default class Goblin extends AttackUnit {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Goblin.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Goblin.HEALTH, NPCsData.Goblin.HEALTH, NPCsData.Goblin.SPAWNING_TIME, NPCsData.Goblin.SPAWNING_COST, NPCsData.Goblin.VISION_RANGE, NPCsData.Goblin.SPEED, iconInfo, NPCsData.Goblin.ATTACK_RANGE, NPCsData.Goblin.DAMAGE, NPCsData.Goblin.ATTACK_COOLDOWN,frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Goblin.HEALTH, NPCsData.Goblin.HEALTH, NPCsData.Goblin.SPAWNING_TIME, NPCsData.Goblin.SPAWNING_COST, NPCsData.Goblin.VISION_RANGE, NPCsData.Goblin.SPEED, iconInfo, NPCsData.Goblin.ATTACK_RANGE, NPCsData.Goblin.DAMAGE, NPCsData.Goblin.ATTACK_COOLDOWN, frame);
     }
 
     protected attack(attackedEntity: NPC) {
         throw new Error("Method not implemented.");
     }
-    
+
     protected hit(damage: number) {
         throw new Error("Method not implemented.");
     }
 
 
-    doIdleAnimation(){
-        if(this.anims.isPlaying){
-            if(this.anims.currentAnim.key !== `goblinIdleRight${this._owner.getColor()}`){
+    doIdleAnimation() {
+        if (this.anims.isPlaying) {
+            if (this.anims.currentAnim.key !== `goblinIdleRight${this._owner.getColor()}`) {
                 this.anims.stop();
+
+                this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
             }
         }
+        else {
+            this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
+        }
         //DO NOT handle flipX here
-        this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
     }
 
 
@@ -88,19 +92,24 @@ export default class Goblin extends AttackUnit {
 
         this.playAnimation(animationKey);
     }
-    
+
     doMoveAnimation(isLeft?: boolean) {
-        if(this.anims.isPlaying){
-            if(this.anims.currentAnim.key !== `goblinWalkRight${this._owner.getColor()}`){
-                this.anims.stop();
-            }
-        }
-        if(isLeft){
+        if (isLeft) {
             this.flipX = true;
         }
-        if(!isLeft && this.flipX){
+        if (!isLeft && this.flipX) {
             this.flipX = false;
         }
-        this.playAnimation(`goblinWalkRight${this._owner.getColor()}`);
+        if (this.anims.isPlaying) {
+            if (this.anims.currentAnim.key !== `goblinWalkRight${this._owner.getColor()}`) {
+                this.anims.stop();
+                this.playAnimation(`goblinWalkRight${this._owner.getColor()}`);
+            }
+        }
+        else {
+            this.playAnimation(`goblinWalkRight${this._owner.getColor()}`);
+        }
+
+
     }
 }

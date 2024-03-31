@@ -116,7 +116,7 @@ export namespace animationFactory {
             scene.anims.create({
                 key: `archerWalkRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [6, 7, 8, 9, 10, 11],
+                    frames: [8,9,10,11,12,13],
                 }),
                 frameRate: 8,
 
@@ -125,7 +125,7 @@ export namespace animationFactory {
             scene.anims.create({
                 key: `archerShootUp${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [12, 13, 14, 15, 16, 17, 18, 19],
+                    frames: [16, 17, 18, 19, 20, 21, 22, 23],
                 }),
                 frameRate: 8,
 
@@ -134,7 +134,7 @@ export namespace animationFactory {
             scene.anims.create({
                 key: `archerShootDiagonalUpRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [20, 21, 22, 23, 24, 25, 26, 27],
+                    frames: [24, 25, 26, 27, 28, 29, 30, 31],
                 }),
                 frameRate: 8,
 
@@ -143,7 +143,7 @@ export namespace animationFactory {
             scene.anims.create({
                 key: `archerShootRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [28, 29, 30, 31, 32, 33, 34, 35],
+                    frames: [32, 33, 34, 35, 36, 37, 38, 39],
                 }),
                 frameRate: 8,
 
@@ -152,7 +152,7 @@ export namespace animationFactory {
             scene.anims.create({
                 key: `archerShootDiagonalDownRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [36, 37, 38, 39, 40, 41, 42, 43],
+                    frames: [40, 41, 42, 43, 44, 45, 46, 47],
                 }),
                 frameRate: 8,
 
@@ -161,7 +161,7 @@ export namespace animationFactory {
             scene.anims.create({
                 key: `archerShootDown${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [44, 45, 46, 47, 48, 49, 50, 51],
+                    frames: [48, 49, 50, 51, 52, 53, 54, 55],
                 }),
                 frameRate: 8,
 

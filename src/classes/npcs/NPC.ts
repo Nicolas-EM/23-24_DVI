@@ -57,6 +57,10 @@ export default abstract class NPC extends PlayerEntity {
 
     dieOrDestroy() {
         this._owner.removeNPC(this);
+        if(this.anims.isPlaying){
+            this.anims.stop();
+        }
+        this.doDeathAnimation();
         this.destroy();
     }
 
@@ -74,17 +78,21 @@ export default abstract class NPC extends PlayerEntity {
 
             if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
         }
+        else{//TODO provisional
+            this.doIdleAnimation();
+        }
     }
 
     doDeathAnimation() {
         this.playAnimation("death");
         this.on("animationcomplete", () => {
-            this.destroy();
+           // nada, ya estaba implementado.. this.destroy();
             //TODO maybe launch the death event too?
         });
     }
 
     abstract doMoveAnimation(isLeft?: boolean): void;
+    abstract doIdleAnimation() :void;
     //second attribute is optional, means that if this exact animation is already playing, ignores the call.
     public playAnimation(key: string) {
         this.anims.play(key, true);

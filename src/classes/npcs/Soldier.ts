@@ -14,7 +14,7 @@ export default class Soldier extends AttackUnit {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Soldier.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Soldier.HEALTH, NPCsData.Soldier.HEALTH, NPCsData.Soldier.SPAWNING_TIME, NPCsData.Soldier.SPAWNING_COST, NPCsData.Soldier.VISION_RANGE, NPCsData.Soldier.SPEED, iconInfo, NPCsData.Soldier.ATTACK_RANGE, NPCsData.Soldier.DAMAGE, NPCsData.Soldier.ATTACK_COOLDOWN,frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Soldier.HEALTH, NPCsData.Soldier.HEALTH, NPCsData.Soldier.SPAWNING_TIME, NPCsData.Soldier.SPAWNING_COST, NPCsData.Soldier.VISION_RANGE, NPCsData.Soldier.SPEED, iconInfo, NPCsData.Soldier.ATTACK_RANGE, NPCsData.Soldier.DAMAGE, NPCsData.Soldier.ATTACK_COOLDOWN, frame);
     }
 
     protected attack(attackedEntity: NPC) {
@@ -27,27 +27,35 @@ export default class Soldier extends AttackUnit {
 
     doIdleAnimation() {
         if (this.anims.isPlaying) {
-            if (this.anims.currentAnim.key !== `SoldierIdleRight${this._owner.getColor()}`) {
+            if (this.anims.currentAnim.key !== `soldierIdleRight${this._owner.getColor()}`) {
                 this.anims.stop();
+                this.playAnimation(`soldierIdleRight${this._owner.getColor()}`);
             }
         }
+        else {
+            this.playAnimation(`soldierIdleRight${this._owner.getColor()}`);
+        }
         //DO NOT handle flipX here
-        this.playAnimation(`SoldierIdleRight${this._owner.getColor()}`);
+
     }
 
     doMoveAnimation(isLeft?: boolean) {
-        if (this.anims.isPlaying) {
-            if (this.anims.currentAnim.key !== `soldierWalkRight${this._owner.getColor()}`) {
-                this.anims.stop();
-            }
-        }
         if (isLeft) {
             this.flipX = true;
         }
         if (!isLeft && this.flipX) {
             this.flipX = false;
         }
-        this.playAnimation(`soldierWalkRight${this._owner.getColor()}`);
+        if (this.anims.isPlaying) {
+            if (this.anims.currentAnim.key !== `soldierWalkRight${this._owner.getColor()}`) {
+                this.anims.stop();
+                this.playAnimation(`soldierWalkRight${this._owner.getColor()}`);
+            }
+        }
+        else {
+
+            this.playAnimation(`soldierWalkRight${this._owner.getColor()}`);
+        }
     }
 
     doAttackAnimation(isLeft?: boolean, pointer?: Phaser.Input.Pointer) {
@@ -61,7 +69,7 @@ export default class Soldier extends AttackUnit {
             const { worldX, worldY } = pointer;
             const { x, y } = this;
 
-            if (worldX < x ) {
+            if (worldX < x) {
                 this.playAnimation(`soldierAttackRight${this._owner.getColor()}`);
             } else if (worldX > x) {
                 this.playAnimation(`soldierAttackRight${this._owner.getColor()}`);
