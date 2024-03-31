@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Client from '../client';
+import * as Sprites from "../../assets/sprites";
 
 const colors = ['Red', 'Blue', 'Purple', 'Yellow'];
 
@@ -15,6 +16,14 @@ export default class Lobby extends Phaser.Scene {
 
   create() {
     Client.setScene(this);
+
+    // Cursor
+    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
+    });
+    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
+    });
     
     // Display lobby UI elements (e.g., player list, color selection, ready button)
     this.lobbyText = this.add.text(this.cameras.main.width / 2, 100, 'Lobby', { fontSize: '32px' }).setOrigin(0.5);
@@ -29,7 +38,11 @@ export default class Lobby extends Phaser.Scene {
     // Buttons start disabled
     colors.forEach((color, index) => {
       const button = this.add.sprite(startX + index * 100, 350, `Villager_${color}`).setInteractive();
-      button.on('pointerdown', () => this.selectColor(color));
+      button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.leftButtonReleased()) {
+          this.selectColor(color);
+        }
+      });
       button.disableInteractive();
       button.setTint(0x808080); // Set grey tint
       this.colorButtons.push(button);
@@ -37,7 +50,11 @@ export default class Lobby extends Phaser.Scene {
 
     // Example code to handle ready button
     this.readyButton = this.add.text(this.cameras.main.width / 2, 450, 'Ready', { fontSize: '24px' }).setOrigin(0.5).setInteractive();
-    this.readyButton.on('pointerdown', () => this.readyUp());
+    this.readyButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonReleased()) {
+        this.readyUp();
+      }
+    });
 
     // Sound
     this.sound.add('TroopsTheme', { loop: true, volume: 0.5}).play();

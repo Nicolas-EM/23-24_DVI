@@ -9,6 +9,7 @@ import NPCsData from "../../magic_numbers/npcs_data";
 export default class Goblin extends AttackUnit {
     static readonly COST: Resources = NPCsData.Goblin.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Goblin.SPAWNING_TIME;
+    static readonly ICON: string = NPCsData.Goblin.ICON_INFO.name;
 
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Goblin.ICON_INFO };

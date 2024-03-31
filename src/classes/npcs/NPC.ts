@@ -3,7 +3,7 @@ import Player from '../Player'
 import PlayerEntity from '../PlayerEntity';
 import Game from '../../scenes/Game';
 import { PhaserNavMesh } from "phaser-navMesh";
-import { IconInfo, Resources } from '../../utils';
+import { Resources } from '../../utils';
 
 export default abstract class NPC extends PlayerEntity {
     protected _path;
@@ -15,8 +15,8 @@ export default abstract class NPC extends PlayerEntity {
      * @param owner is the player who created the entity, not optional.
      * @returns NPC instance
      */
-    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, iconInfo, frame);
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, frame?: string | number) {
+        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
         this._movementSpeed = movementSpeed;
 
         this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
