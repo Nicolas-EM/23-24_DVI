@@ -16,6 +16,14 @@ export default class Lobby extends Phaser.Scene {
   create() {
     Client.setScene(this);
     
+    // Settings button
+    this.scene.run('settings', { scene: "lobby" });
+
+    // Background
+    const background = this.add.image(0, 0, 'Texture').setOrigin(0);
+    background.displayWidth = this.sys.canvas.width;
+    background.displayHeight = this.sys.canvas.height;
+
     // Display lobby UI elements (e.g., player list, color selection, ready button)
     this.lobbyText = this.add.text(this.cameras.main.width / 2, 100, 'Lobby', { fontSize: '32px' }).setOrigin(0.5);
 

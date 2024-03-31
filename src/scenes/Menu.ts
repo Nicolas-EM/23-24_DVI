@@ -11,6 +11,9 @@ export default class Menu extends Phaser.Scene {
   create() {
     Client.setScene(this);
 
+    // Settings button
+    this.scene.run('settings', { scene: "menu" });
+
     // Background
     this.cameras.main.setBackgroundColor("#47aba9");
 
