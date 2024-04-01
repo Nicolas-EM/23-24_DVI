@@ -27,7 +27,7 @@ export default class ResourceSpawner extends Phaser.GameObjects.Sprite {
             actions: []
         }
         
-        this.setInteractive();
+        this.setInteractive( {pixelPerfect: true} );
         this.on('pointerup', this.onClick, this);
     }
 

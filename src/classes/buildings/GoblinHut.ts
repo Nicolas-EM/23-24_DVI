@@ -26,7 +26,6 @@ export default class GoblinHut extends SpawnerBuilding {
             },
             actions: [{run: () => this.queueNPC(Goblin), actionFrame: `Goblin_${this._owner.getColor()}`}]
         };
-    
+        this.setSize(90, 130);
     }
-
 }

@@ -38,6 +38,10 @@ export default class Game extends Phaser.Scene {
   private _selectedEntity: PlayerEntity | ResourceSpawner;
   private cursors: any;
   private optionsMenuOpened = false;
+  private _topLeft: Phaser.GameObjects.Image;
+  private _topRight: Phaser.GameObjects.Image;
+  private _bottomLeft: Phaser.GameObjects.Image;
+  private _bottomRight: Phaser.GameObjects.Image;
 
   constructor() {
     super({ key: 'game' });
@@ -117,6 +121,14 @@ export default class Game extends Phaser.Scene {
 
     // Sound
     this.sound.removeAll();
+
+    // Corners Selected Entity
+    this._topLeft = this.add.image(0, 0, "Selected_Top_Left");
+    this._topRight = this.add.image(0, 0, "Selected_Top_Right");
+    this._bottomLeft = this.add.image(0, 0, "Selected_Bottom_Left");
+    this._bottomRight = this.add.image(0, 0, "Selected_Bottom_Right");
+
+    this.setCornersVisibility(false);
   }
 
   update(time: number, delta: number): void {
@@ -137,6 +149,10 @@ export default class Game extends Phaser.Scene {
       else if (this.cursors.right.isDown) {
         this.cameraMoveRight(delta);
       }
+    }
+
+    if (this._selectedEntity){
+      this.setCornersPosition();
     }
   }
 
@@ -215,13 +231,32 @@ export default class Game extends Phaser.Scene {
       if (entity) {
         console.log("Game: Entity Selected");        
         this.scene.get('hud').events.emit('entityClicked', this._selectedEntity);
+        this.setCornersPosition();
+        this.setCornersVisibility(true);
+        console.log("WIDTH", this._selectedEntity.width);
+        console.log("HEIGHT", this._selectedEntity.height);
       }
       // Des-seleccionar
       else {
         console.log("Game: Entity Un-selected");  
         this.scene.get('hud').events.emit('entityUnclicked');
+        this.setCornersVisibility(false);
       }
     }
+  }
+
+  setCornersVisibility(active: boolean) {
+    this._topLeft.setVisible(active);
+    this._topRight.setVisible(active);
+    this._bottomLeft.setVisible(active);
+    this._bottomRight.setVisible(active);
+  }
+
+  setCornersPosition() {
+    this._topLeft.setPosition(this._selectedEntity.x -(this._selectedEntity.width / 2), this._selectedEntity.y -(this._selectedEntity.height / 2));
+    this._topRight.setPosition(this._selectedEntity.x +(this._selectedEntity.width / 2), this._selectedEntity.y -(this._selectedEntity.height / 2));
+    this._bottomLeft.setPosition(this._selectedEntity.x -(this._selectedEntity.width / 2), this._selectedEntity.y +(this._selectedEntity.height / 2));
+    this._bottomRight.setPosition(this._selectedEntity.x +(this._selectedEntity.width / 2), this._selectedEntity.y +(this._selectedEntity.height / 2));
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {

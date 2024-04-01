@@ -19,6 +19,6 @@ export default class VillagerHouse extends Building {
             },
             actions: []
         };
-    }   
-
+        this.setSize(90, 140);
+    }
 }

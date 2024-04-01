@@ -5,6 +5,9 @@ import Building from './buildings/Building';
 import NPC from './npcs/NPC';
 
 import TownHall from "../classes/buildings/Townhall";
+import GoblinHut from "../classes/buildings/GoblinHut";
+import Tower from "../classes/buildings/Tower";
+import VillagerHouse from "../classes/buildings/VillagerHouse";
 import Tree from "./resources/Tree";
 import Sheep from "./resources/Sheep";
 import GoldMine from "./resources/GoldMine";
@@ -39,9 +42,23 @@ export default class Map {
         const grassLayer = this._map.createLayer('Fondo/Grass', groundTileset!);
 
         // Resources
-        this._map.createFromObjects('Resources/Food', { type: "Sheep", key: 'Sheep', classType: Sheep });
-        this._map.createFromObjects('Resources/Wood', { type: "Tree", key: 'Tree', classType: Tree });
-        this._map.createFromObjects('Resources/Gold', { type: "GoldMine", key: 'GoldMine', classType: GoldMine });
+        const sheeps = this._map.createFromObjects('Resources/Food', { type: "Sheep", key: 'Sheep', classType: Sheep });
+        const trees = this._map.createFromObjects('Resources/Wood', { type: "Tree", key: 'Tree', classType: Tree });
+        const mines = this._map.createFromObjects('Resources/Gold', { type: "GoldMine", key: 'GoldMine', classType: GoldMine });
+
+        sheeps.forEach( s => {
+            if(s instanceof Sheep)
+                s.setSize(50, 50);
+        });
+
+        trees.forEach( t => {
+            if(t instanceof Tree)
+                t.setSize(120, 150);
+        });
+        mines.forEach( m => {
+            if(m instanceof GoldMine)
+                m.setSize(160, 80);
+        });
 
         // Decoration
         let decoTileset = this._map.addTilesetImage('Decoration');
