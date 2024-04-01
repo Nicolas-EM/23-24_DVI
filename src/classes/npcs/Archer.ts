@@ -89,6 +89,22 @@ export default class Archer extends AttackUnit {
             this.flipX = true;
         }
 
+        this.anims.pause(this.anims.currentAnim.frames[5]);
+        //create arrow and do animation:
+        let arrow = this.scene.add.sprite(this.x, this.y, "Arrow",0);
+        arrow.angle = angleDeg;
+        this.scene.tweens.add({
+            targets: arrow,
+            x: position.x,
+            y: position.y,
+            delay: 150,
+            duration: 400,
+            onComplete: () => {
+                arrow.destroy();
+            }
+        });
+        this.anims.resume();
+
         if (this.anims.isPlaying && this.anims.currentAnim.key !== animationKey) {
             this.anims.stop();
         }
