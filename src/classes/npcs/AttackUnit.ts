@@ -60,6 +60,7 @@ export default abstract class AttackUnit extends NPC {
                 // Not within range - move towards target
                 Client.setNpcTarget(this._id, new Phaser.Math.Vector2(target.x, target.y));
             } else {
+                console.log("within range");
                 // Within range - stop moving
                 Client.setNpcTarget(this._id, new Phaser.Math.Vector2(this.x, this.y));
 
@@ -68,6 +69,7 @@ export default abstract class AttackUnit extends NPC {
                     // Check if enough time has passed since the last attack or if have never attacked
                     const timeSinceLastAttack = (time - this._lastAttackTime) / 1000;   // in seconds
                     if (this._lastAttackTime === undefined || timeSinceLastAttack >= this._attackCooldown) {
+                        this.doAttackAnimation(new Phaser.Math.Vector2(target.x, target.y), (this.x >= target.x));
                         target.onAttackReceived(this._damage, this);
                         // Update last attack time
                         this._lastAttackTime = time;
@@ -80,5 +82,5 @@ export default abstract class AttackUnit extends NPC {
 
         super.update(time, delta);
     }
-    
+    abstract doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean): void;
 }

@@ -113,7 +113,7 @@ export default class Boot extends Phaser.Scene {
     this.load.spritesheet('Villager_Yellow', Sprites.NPCs.Villager.Yellow, { frameWidth: 192, frameHeight: 192 });
 
     //UI -- Death spritesheet
-    this.load.spritesheet('Death', Sprites.NPCs.Dead, { frameWidth: 192, frameHeight: 192 });
+    this.load.spritesheet('Death', Sprites.NPCs.Dead, { frameWidth: 128, frameHeight: 128 });
     // UI - Banners
     this.load.image('Carved_Big_Shadow', Sprites.UI.Banners.Carved_Big_Shadow);
     this.load.image('Carved_Big', Sprites.UI.Banners.Carved_Big);

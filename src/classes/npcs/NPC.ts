@@ -23,14 +23,14 @@ export default abstract class NPC extends PlayerEntity {
         owner.addNPC(this);
     }
 
-    setMovementTarget(targetPoint: Phaser.Math.Vector2, navMesh: PhaserNavMesh): void {
+    setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
         if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
             this._currentTarget = null;
             return;
         }
 
         // Find a path to the target
-        this._path = navMesh.findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
+        this._path = (this.scene as Game).getNavmesh().findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
         if (this._path && this._path.length > 0) {
             this._currentTarget = this._path.shift();
         }
@@ -87,10 +87,12 @@ export default abstract class NPC extends PlayerEntity {
     }
 
     doDeathAnimation() {
-        this.playAnimation("death");
-        this.on("animationcomplete", () => {
+        let deathSprite = this.scene.add.sprite(this.x, this.y, "death");
+        deathSprite.anims.play("death");
+        deathSprite.on("animationcomplete", () => {
             // nada, ya estaba implementado.. this.destroy();
             //TODO maybe launch the death event too?
+            deathSprite.destroy();
         });
     }
 

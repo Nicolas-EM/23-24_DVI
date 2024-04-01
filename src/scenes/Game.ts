@@ -14,6 +14,7 @@ import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
 import { animationFactory } from '../animationFactory';
+import { PhaserNavMesh } from "phaser-navMesh";
 
 // MAGIC NUMBER
 const MIN_ZOOM = 0.1;
@@ -97,7 +98,7 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.on('gameobjectdown', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject, stopPropagation) => {
-      if(!this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+      if(this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
         return;
 
       if(this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
@@ -107,7 +108,7 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if(!this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+      if(this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
         return;
 
       if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
@@ -218,8 +219,8 @@ export default class Game extends Phaser.Scene {
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {
-    this.p1.getNPCById(npcId)?.setMovementTarget(position, this._map.navMesh);
-    this.p2.getNPCById(npcId)?.setMovementTarget(position, this._map.navMesh);
+    this.p1.getNPCById(npcId)?.setMovementTarget(position);
+    this.p2.getNPCById(npcId)?.setMovementTarget(position);
   }
 
   setNPCAttackTarget(npcId: string, targetId: string) {
@@ -250,5 +251,9 @@ export default class Game extends Phaser.Scene {
       return entity;
     else
       return this.p2.getPlayerEntityById(entityId);
+  }
+
+  getNavmesh(): PhaserNavMesh {
+    return this._map.navMesh;
   }
 }

@@ -43,47 +43,44 @@ export default class Goblin extends AttackUnit {
 
     //no se me ocurrio otra manera de separar las diagonales... tal vez me venga la inspiracion 
     /**
-     * me refiero, si le clicas en diagonal, coge la animacion mas cercana a la direccion de la diagonal (por ejemplo, si clicas en diagonal arriba-izquierda, coge la animacion de arriba)
+     * me refiero, si le clicas en diagonal, coge la animacion mas cercana 
+     * a la direccion de la diagonal 
+     * (por ejemplo, si clicas en diagonal arriba-izquierda, coge la animacion de arriba)
      * no es super eficiente, pero por ahora sirve.
      * @param isLeft 
      * @param pointer
      */
-    doAttackAnimation(isLeft?: boolean, pointer?: Phaser.Input.Pointer) {
+    doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean) {
         let color = this._owner.getColor();
         let animationKey = "";
 
-        if (pointer) {
-            let angle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
-            let angleDeg = Phaser.Math.RadToDeg(angle);
+        let angle = Phaser.Math.Angle.Between(this.x, this.y, position.x, position.y);
+        let angleDeg = Phaser.Math.RadToDeg(angle);
 
-            if (angleDeg >= -22.5 && angleDeg < 22.5) {
-                animationKey = `goblinAttackRight${color}`;
-                this.flipX = false;
-            } else if (angleDeg >= 22.5 && angleDeg < 67.5) {
-                animationKey = `goblinAttackDown${color}`;
-                this.flipX = false;
-            } else if (angleDeg >= 67.5 && angleDeg < 112.5) {
-                animationKey = `goblinAttackDown${color}`;
-                this.flipX = false;
-            } else if (angleDeg >= 112.5 && angleDeg < 157.5) {
-                animationKey = `goblinAttackUp${color}`;
-                this.flipX = false;
-            } else if (angleDeg >= 157.5 || angleDeg < -157.5) {
-                animationKey = `goblinAttackUp${color}`;
-                this.flipX = false;
-            } else if (angleDeg >= -157.5 && angleDeg < -112.5) {
-                animationKey = `goblinAttackUp${color}`;
-                this.flipX = true;
-            } else if (angleDeg >= -112.5 && angleDeg < -67.5) {
-                animationKey = `goblinAttackRight${color}`;
-                this.flipX = true;
-            } else if (angleDeg >= -67.5 && angleDeg < -22.5) {
-                animationKey = `goblinAttackRight${color}`;
-                this.flipX = true;
-            }
-        } else {
+        if (angleDeg >= -22.5 && angleDeg < 22.5) {
+            animationKey = `goblinAttackRight${color}`;
+            this.flipX = false;
+        } else if (angleDeg >= 22.5 && angleDeg < 67.5) {
+            animationKey = `goblinAttackDown${color}`;
+            this.flipX = false;
+        } else if (angleDeg >= 67.5 && angleDeg < 112.5) {
+            animationKey = `goblinAttackDown${color}`;
+            this.flipX = false;
+        } else if (angleDeg >= 112.5 && angleDeg < 157.5) {
             animationKey = `goblinAttackUp${color}`;
             this.flipX = false;
+        } else if (angleDeg >= 157.5 || angleDeg < -157.5) {
+            animationKey = `goblinAttackUp${color}`;
+            this.flipX = false;
+        } else if (angleDeg >= -157.5 && angleDeg < -112.5) {
+            animationKey = `goblinAttackUp${color}`;
+            this.flipX = true;
+        } else if (angleDeg >= -112.5 && angleDeg < -67.5) {
+            animationKey = `goblinAttackRight${color}`;
+            this.flipX = true;
+        } else if (angleDeg >= -67.5 && angleDeg < -22.5) {
+            animationKey = `goblinAttackRight${color}`;
+            this.flipX = true;
         }
 
         if (this.anims.isPlaying && this.anims.currentAnim.key !== animationKey) {
@@ -109,7 +106,5 @@ export default class Goblin extends AttackUnit {
         else {
             this.playAnimation(`goblinWalkRight${this._owner.getColor()}`);
         }
-
-
     }
 }

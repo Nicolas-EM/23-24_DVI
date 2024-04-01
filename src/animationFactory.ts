@@ -213,8 +213,9 @@ export namespace animationFactory {
         scene.anims.create({
             key: 'death',
             frames: scene.anims.generateFrameNumbers('Death', {
-                frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+            frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
             }),
+            frameRate: 7,
         });
     }
 }
