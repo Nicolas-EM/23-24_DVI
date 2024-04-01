@@ -27,12 +27,12 @@ export default class ResourceSpawner extends Phaser.GameObjects.Sprite {
             actions: []
         }
         
-        this.setInteractive();
-        this.on('pointerdown', this.onClick);
+        this.setInteractive( {pixelPerfect: true} );
+        this.on('pointerup', this.onClick, this);
     }
 
     onClick(pointer: Phaser.Input.Pointer): void {
-        if (pointer.leftButtonDown()) {
+        if (pointer.leftButtonReleased()) {
             (<Game>(this.scene)).setSelectedEntity(this);
         }
     }
