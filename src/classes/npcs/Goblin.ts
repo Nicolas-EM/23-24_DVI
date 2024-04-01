@@ -27,17 +27,7 @@ export default class Goblin extends AttackUnit {
 
 
     doIdleAnimation() {
-        if (this.anims.isPlaying) {
-            if (this.anims.currentAnim.key !== `goblinIdleRight${this._owner.getColor()}`) {
-                this.anims.stop();
-
-                this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
-            }
-        }
-        else {
-            this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
-        }
-        //DO NOT handle flipX here
+        this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
     }
 
 
@@ -57,28 +47,20 @@ export default class Goblin extends AttackUnit {
         let angle = Phaser.Math.Angle.Between(this.x, this.y, position.x, position.y);
         let angleDeg = Phaser.Math.RadToDeg(angle);
 
-        if (angleDeg >= -22.5 && angleDeg < 22.5) {
+        if (angleDeg >= -45 && angleDeg < 45) {
+            // Attack right
             animationKey = `goblinAttackRight${color}`;
             this.flipX = false;
-        } else if (angleDeg >= 22.5 && angleDeg < 67.5) {
+        } else if (angleDeg >= 45 && angleDeg < 135) {
+            // Attack down
             animationKey = `goblinAttackDown${color}`;
             this.flipX = false;
-        } else if (angleDeg >= 67.5 && angleDeg < 112.5) {
-            animationKey = `goblinAttackDown${color}`;
-            this.flipX = false;
-        } else if (angleDeg >= 112.5 && angleDeg < 157.5) {
+        } else if (angleDeg <= -45 && angleDeg > -135) {
+            // Attack up
             animationKey = `goblinAttackUp${color}`;
             this.flipX = false;
-        } else if (angleDeg >= 157.5 || angleDeg < -157.5) {
-            animationKey = `goblinAttackUp${color}`;
-            this.flipX = false;
-        } else if (angleDeg >= -157.5 && angleDeg < -112.5) {
-            animationKey = `goblinAttackUp${color}`;
-            this.flipX = true;
-        } else if (angleDeg >= -112.5 && angleDeg < -67.5) {
-            animationKey = `goblinAttackRight${color}`;
-            this.flipX = true;
-        } else if (angleDeg >= -67.5 && angleDeg < -22.5) {
+        } else {
+            // Attack left
             animationKey = `goblinAttackRight${color}`;
             this.flipX = true;
         }

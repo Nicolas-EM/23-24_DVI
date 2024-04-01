@@ -82,7 +82,9 @@ export default abstract class NPC extends PlayerEntity {
             if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
         }
         else {
-            this.doIdleAnimation();
+            if(!this.anims.isPlaying) {
+                this.doIdleAnimation();
+            }
         }
     }
 
@@ -100,6 +102,6 @@ export default abstract class NPC extends PlayerEntity {
     abstract doIdleAnimation(): void;
     //second attribute is optional, means that if this exact animation is already playing, ignores the call.
     public playAnimation(key: string) {
-        this.anims.play(key, true);
+        this.anims.play({ key, repeat: 0 }, true);
     }
 }

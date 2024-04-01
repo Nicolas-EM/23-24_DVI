@@ -26,17 +26,7 @@ export default class Soldier extends AttackUnit {
     }
 
     doIdleAnimation() {
-        if (this.anims.isPlaying) {
-            if (this.anims.currentAnim.key !== `soldierIdleRight${this._owner.getColor()}`) {
-                this.anims.stop();
-                this.playAnimation(`soldierIdleRight${this._owner.getColor()}`);
-            }
-        }
-        else {
-            this.playAnimation(`soldierIdleRight${this._owner.getColor()}`);
-        }
-        //DO NOT handle flipX here
-
+        this.playAnimation(`soldierIdleRight${this._owner.getColor()}`);
     }
 
     doMoveAnimation(isLeft?: boolean) {
@@ -62,18 +52,36 @@ export default class Soldier extends AttackUnit {
         if (isLeft) {
             this.flipX = true;
         } else {
-
             this.flipX = false;
         }
 
-        if (this.x <= position.x) {
-            this.playAnimation(`soldierAttackRight${this._owner.getColor()}`);
-        } else if (this.x > position.x) {
-            this.playAnimation(`soldierAttackRight${this._owner.getColor()}`);
-        } else if (position.y <= this.y) {
-            this.playAnimation(`soldierAttackUp${this._owner.getColor()}`);
-        } else if (position.y > this.y) {
-            this.playAnimation(`soldierAttackDown${this._owner.getColor()}`);
+        let animationKey = "";
+
+        let angle = Phaser.Math.Angle.Between(this.x, this.y, position.x, position.y);
+        let angleDeg = Phaser.Math.RadToDeg(angle);
+
+        if (angleDeg >= -45 && angleDeg < 45) {
+            // Attack right
+            animationKey = `soldierAttackRight${this._owner.getColor()}`;
+            this.flipX = false;
+        } else if (angleDeg >= 45 && angleDeg < 135) {
+            // Attack down
+            animationKey = `soldierAttackDown${this._owner.getColor()}`;
+            this.flipX = false;
+        } else if (angleDeg <= -45 && angleDeg > -135) {
+            // Attack up
+            animationKey = `soldierAttackUp${this._owner.getColor()}`;
+            this.flipX = false;
+        } else {
+            // Attack left
+            animationKey = `soldierAttackRight${this._owner.getColor()}`;
+            this.flipX = true;
         }
+
+        if (this.anims.isPlaying && this.anims.currentAnim.key !== animationKey) {
+            this.anims.stop();
+        }
+
+        this.playAnimation(animationKey);
     }
 }

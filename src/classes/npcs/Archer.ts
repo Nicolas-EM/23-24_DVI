@@ -26,16 +26,9 @@ export default class Archer extends AttackUnit {
     }
 
     doIdleAnimation(){
-        if(this.anims.isPlaying){
-            if(this.anims.currentAnim.key !== `archerIdleRight${this._owner.getColor()}`){
-                this.anims.stop();
-                this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
-            }
-        }
-        else{
-            this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
-        }
+        this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
     }
+
     doMoveAnimation(isLeft?: boolean) {
         if(isLeft){
             this.flipX = true;
@@ -62,35 +55,44 @@ export default class Archer extends AttackUnit {
         let angle = Phaser.Math.Angle.Between(this.x, this.y, position.x, position.y);
         let angleDeg = Phaser.Math.RadToDeg(angle);
 
-        if (angleDeg >= -22.5 && angleDeg < 22.5) {
+        if (angleDeg > -25 && angleDeg < 25) {
+            // Shoot right
             animationKey = `archerShootRight${color}`;
             this.flipX = false;
-        } else if (angleDeg >= 22.5 && angleDeg < 67.5) {
+        } else if (angleDeg >= 25 && angleDeg < 75) {
+            // Shoot down right
             animationKey = `archerShootDiagonalDownRight${color}`;
             this.flipX = false;
-        } else if (angleDeg >= 67.5 && angleDeg < 112.5) {
+        } else if (angleDeg <= -25 && angleDeg > -75) {
+            // Shoot up right
+            animationKey = `archerShootDiagonalUpRight${color}`;
+            this.flipX = false;
+        } else if (angleDeg >= 75 && angleDeg < 115) {
+            // Shoot down
             animationKey = `archerShootDown${color}`;
             this.flipX = false;
-        } else if (angleDeg >= 112.5 && angleDeg < 157.5) {
-            animationKey = `archerShootDiagonalUpRight${color}`;
-            this.flipX = false;
-        } else if (angleDeg >= 157.5 || angleDeg < -157.5) {
+        } else if (angleDeg <= -75 && angleDeg > -115) {
+            // Shoot up
             animationKey = `archerShootUp${color}`;
             this.flipX = false;
-        } else if (angleDeg >= -157.5 && angleDeg < -112.5) {
+        }  else if (angleDeg >= 115 && angleDeg < 165) {
+            // Shoot down left
+            animationKey = `archerShootDiagonalDownRight${color}`;
+            this.flipX = true;
+        }else if (angleDeg <= -115 && angleDeg > -165) {
+            // Shoot up left
             animationKey = `archerShootDiagonalUpRight${color}`;
             this.flipX = true;
-        } else if (angleDeg >= -112.5 && angleDeg < -67.5) {
+        } else {
+            // Shoot left
             animationKey = `archerShootRight${color}`;
-            this.flipX = true;
-        } else if (angleDeg >= -67.5 && angleDeg < -22.5) {
-            animationKey = `archerShootDiagonalDownRight${color}`;
             this.flipX = true;
         }
 
         if (this.anims.isPlaying && this.anims.currentAnim.key !== animationKey) {
             this.anims.stop();
-            this.playAnimation(animationKey);
         }
+
+        this.playAnimation(animationKey);
     }
 }

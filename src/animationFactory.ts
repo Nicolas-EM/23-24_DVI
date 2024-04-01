@@ -6,15 +6,14 @@ export namespace animationFactory {
         const colors = ['Blue', 'Red', 'Yellow', 'Purple'];
 
         colors.forEach((color) => {
-
             scene.anims.create({
                 key: `villagerIdle${color}`,
                 frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
                     frames: [0, 1, 2, 3, 4, 5],
                 }),
                 frameRate: 8,
-
             });
+
             //we need to flip this when walking left
             scene.anims.create({
                 key: `villagerWalk${color}`,
@@ -22,7 +21,6 @@ export namespace animationFactory {
                     frames: [6, 7, 8, 9, 10, 11],
                 }),
                 frameRate: 8,
-
             });
 
             scene.anims.create({
@@ -35,6 +33,7 @@ export namespace animationFactory {
                 repeat: 5,
 
             });
+
             scene.anims.create({
                 key: `villagerHammer${color}`,
                 frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
@@ -44,6 +43,7 @@ export namespace animationFactory {
                 repeat: 5,
 
             });
+            
             //maybe this mneeds to be flipped as well..?
             // scene.anims.create({
             //   key: "villagerCarrying",
@@ -62,13 +62,13 @@ export namespace animationFactory {
             //   frameRate: 8,
             //   
             // });
+
             scene.anims.create({
                 key: `soldierIdleRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
                     frames: [0, 1, 2, 3, 4, 5],
                 }),
                 frameRate: 8,
-
             });
 
             //note, walk left is the same as this but with setFlipX(true)
@@ -78,8 +78,8 @@ export namespace animationFactory {
                     frames: [6, 7, 8, 9, 10, 11],
                 }),
                 frameRate: 8,
-
             });
+
             //note, left attack is just this one, but call setFlipX(true) to attack left, then disable for normal behaviour.
             scene.anims.create({
                 key: `soldierAttackRight${color}`,
@@ -87,16 +87,16 @@ export namespace animationFactory {
                     frames: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
                 }),
                 frameRate: 8,
-
             });
+
             scene.anims.create({
                 key: `soldierAttackDown${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
                     frames: [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
                 }),
                 frameRate: 8,
-
             });
+
             scene.anims.create({
                 key: `soldierAttackUp${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
@@ -104,23 +104,24 @@ export namespace animationFactory {
                 }),
                 frameRate: 8,
             });
+
             scene.anims.create({
                 key: `archerIdleRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
                     frames: [0, 1, 2, 3, 4, 5],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed
             scene.anims.create({
                 key: `archerWalkRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
-                    frames: [8,9,10,11,12,13],
+                    frames: [8, 9, 10, 11, 12, 13],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed: down
             scene.anims.create({
                 key: `archerShootUp${color}`,
@@ -128,8 +129,8 @@ export namespace animationFactory {
                     frames: [16, 17, 18, 19, 20, 21, 22, 23],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed
             scene.anims.create({
                 key: `archerShootDiagonalUpRight${color}`,
@@ -137,8 +138,8 @@ export namespace animationFactory {
                     frames: [24, 25, 26, 27, 28, 29, 30, 31],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed
             scene.anims.create({
                 key: `archerShootRight${color}`,
@@ -146,8 +147,8 @@ export namespace animationFactory {
                     frames: [32, 33, 34, 35, 36, 37, 38, 39],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed
             scene.anims.create({
                 key: `archerShootDiagonalDownRight${color}`,
@@ -155,8 +156,8 @@ export namespace animationFactory {
                     frames: [40, 41, 42, 43, 44, 45, 46, 47],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed
             scene.anims.create({
                 key: `archerShootDown${color}`,
@@ -164,8 +165,8 @@ export namespace animationFactory {
                     frames: [48, 49, 50, 51, 52, 53, 54, 55],
                 }),
                 frameRate: 8,
-
             });
+
             //flip needed for all
             scene.anims.create({
                 key: `goblinIdleRight${color}`,
@@ -173,47 +174,45 @@ export namespace animationFactory {
                     frames: [0, 1, 2, 3, 4, 5, 6],
                 }),
                 frameRate: 8,
-
             });
+
             scene.anims.create({
                 key: `goblinWalkRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
                     frames: [7, 8, 9, 10, 11, 12],
                 }),
                 frameRate: 8,
-
             });
+
             scene.anims.create({
                 key: `goblinAttackRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
-                    frames: [13, 14, 15, 16, 17, 18],
+                    frames: [14, 15, 16, 17, 18, 19],
                 }),
                 frameRate: 8,
-
             });
+
             scene.anims.create({
                 key: `goblinAttackDown${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
-                    frames: [19, 20, 21, 22, 23, 24],
+                    frames: [21, 22, 23, 24, 25, 26],
                 }),
                 frameRate: 8,
-
             });
+
             scene.anims.create({
                 key: `goblinAttackUp${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
-                    frames: [25, 26, 27, 28, 29, 30],
+                    frames: [28, 29, 30, 31, 32, 33],
                 }),
                 frameRate: 8,
-
             });
-           
         });
         //same for all.. no duplicates here. 
         scene.anims.create({
             key: 'death',
             frames: scene.anims.generateFrameNumbers('Death', {
-            frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
             }),
             frameRate: 7,
         });
