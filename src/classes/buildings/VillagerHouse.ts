@@ -19,6 +19,7 @@ export default class VillagerHouse extends Building {
             },
             actions: []
         };
-        this.setSize(90, 140);
+        
+        (this.body as Phaser.Physics.Arcade.Body).setSize(90, 140, true);
     }
 }

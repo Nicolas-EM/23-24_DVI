@@ -28,6 +28,8 @@ export default class ResourceSpawner extends Phaser.GameObjects.Sprite {
         }
         
         this.setInteractive( {pixelPerfect: true} );
+        this.scene.physics.add.existing(this);
+        
         this.on('pointerup', this.onClick, this);
     }
 

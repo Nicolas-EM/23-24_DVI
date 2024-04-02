@@ -109,7 +109,7 @@ export default class Game extends Phaser.Scene {
       if (this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity)
         return;
       if (pointer.leftButtonDown()) {
-        this.setSelectedEntity(null);
+        this.setSelectedEntity(undefined);
       }
       if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
         const pointerPosition = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
@@ -128,6 +128,7 @@ export default class Game extends Phaser.Scene {
 
     this.setCornersVisibility(false);
   }
+
   update(time: number, delta: number): void {
     this.cameraPan(delta);
     this.events.emit('update', time, delta);
@@ -226,16 +227,12 @@ export default class Game extends Phaser.Scene {
     if (!this.optionsMenuOpened) {
       this._selectedEntity = entity;
       if (entity) {
-        console.log("Game: Entity Selected");
         this.scene.get('hud').events.emit('entityClicked', this._selectedEntity);
         this.setCornersPosition();
         this.setCornersVisibility(true);
-        console.log("WIDTH", this._selectedEntity.width);
-        console.log("HEIGHT", this._selectedEntity.height);
       }
       // Des-seleccionar
       else {
-        console.log("Game: Entity Un-selected");
         this.scene.get('hud').events.emit('entityUnclicked');
         this.setCornersVisibility(false);
       }
@@ -250,10 +247,10 @@ export default class Game extends Phaser.Scene {
   }
 
   setCornersPosition() {
-    this._topLeft.setPosition(this._selectedEntity.x - (this._selectedEntity.width / 2), this._selectedEntity.y - (this._selectedEntity.height / 2));
-    this._topRight.setPosition(this._selectedEntity.x + (this._selectedEntity.width / 2), this._selectedEntity.y - (this._selectedEntity.height / 2));
-    this._bottomLeft.setPosition(this._selectedEntity.x - (this._selectedEntity.width / 2), this._selectedEntity.y + (this._selectedEntity.height / 2));
-    this._bottomRight.setPosition(this._selectedEntity.x + (this._selectedEntity.width / 2), this._selectedEntity.y + (this._selectedEntity.height / 2));
+    this._topLeft.setPosition(this._selectedEntity.x - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
+    this._topRight.setPosition(this._selectedEntity.x + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
+    this._bottomLeft.setPosition(this._selectedEntity.x - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
+    this._bottomRight.setPosition(this._selectedEntity.x + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {

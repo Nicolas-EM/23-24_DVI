@@ -43,17 +43,14 @@ export default class Map {
         const mines = this._map.createFromObjects('Resources/Gold', { type: "GoldMine", key: 'GoldMine', classType: GoldMine });
 
         sheeps.forEach( s => {
-            if(s instanceof Sheep)
-                s.setSize(50, 50);
+            ((<Sheep>s).body as Phaser.Physics.Arcade.Body).setSize(50, 50, true);
         });
 
         trees.forEach( t => {
-            if(t instanceof Tree)
-                t.setSize(120, 150);
+            ((<Tree>t).body as Phaser.Physics.Arcade.Body).setSize(120, 150, true);
         });
         mines.forEach( m => {
-            if(m instanceof GoldMine)
-                m.setSize(160, 80);
+            ((<GoldMine>m).body as Phaser.Physics.Arcade.Body).setSize(160, 80, true);
         });
 
         // Decoration
@@ -126,10 +123,6 @@ export default class Map {
 
     navMeshIsWalkable(tile: Phaser.Tilemaps.Tile): boolean {
         if (tile.properties.collides || this.tileHasObject(tile)) {
-            if (this.tileHasObject(tile)) {
-                console.log("Tile has object");
-                console.log(tile);
-            }
             return false;
         }
         return true;

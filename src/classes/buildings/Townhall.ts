@@ -14,7 +14,7 @@ export default class Townhall extends SpawnerBuilding {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
         iconInfo.name += owner.getColor();
-        console.log(iconInfo.name);
+
         super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, BuildingsData.Townhall.VISION_RANGE, frame);
     
         // Build hud info
@@ -29,6 +29,7 @@ export default class Townhall extends SpawnerBuilding {
             },
             actions: [{run: () => this.queueNPC(Villager), actionFrame: `Villager_${this._owner.getColor()}`}]
         };
-        this.setSize(280, 190);
+        
+        (this.body as Phaser.Physics.Arcade.Body).setSize(280, 190, true);
     }
 }
