@@ -305,8 +305,13 @@ export default class Hud extends Phaser.Scene {
                     else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
                         self.queueContainer.setVisible(false);
                     }
+
+                    if(hudInfo.info.health <= 0)
+                        self.displayedEntity = undefined;
                 }
             });
+        } else {
+            this.flushHud();
         }
     }
 }
