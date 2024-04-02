@@ -295,7 +295,7 @@ export default class Hud extends Phaser.Scene {
                     // if Building with queue, show queue data
                     if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
                         self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
-                        self.queueTime.text = `${hudInfo.info.queueTime}s`;
+                        self.queueTime.text = hudInfo.info.queueTime === Infinity ? "Inf." : `${hudInfo.info.queueTime}s`;
                         // If not visible, set visible
                         if (!self.queueContainer.visible) {
                             self.queueContainer.setVisible(true);
