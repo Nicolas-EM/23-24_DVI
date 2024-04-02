@@ -76,9 +76,10 @@ export default class Game extends Phaser.Scene {
       this.optionsMenuOpened = false;
     });
     
+    animationFactory.createAnimations(this);
+
     // Map
     this._map = new Map(this, this.mapId);
-    animationFactory.createAnimations(this);//PENDING TESTING
 
 
     // Event listener al hacer scroll

@@ -208,6 +208,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
         });
+        
         //same for all.. no duplicates here. 
         scene.anims.create({
             key: 'death',
@@ -215,6 +216,26 @@ export namespace animationFactory {
                 frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
             }),
             frameRate: 7,
+        });
+
+        scene.anims.create({
+            key: 'treeIdle',
+            frames: scene.anims.generateFrameNumbers('Tree', {
+                frames: [0, 1, 2, 3],
+            }),
+            duration: 600,
+            repeat: -1,
+            randomFrame: true
+        });
+
+        scene.anims.create({
+            key: 'sheepIdle',
+            frames: scene.anims.generateFrameNumbers('Sheep', {
+                frames: [0, 1, 2, 3, 4, 5, 6, 7],
+            }),
+            duration: 800,
+            repeat: -1,
+            randomFrame: true
         });
     }
 }
