@@ -1,5 +1,4 @@
 import { io, Socket } from 'socket.io-client';
-import Lobby from "./scenes/Lobby";
 import lobbyData from './utils';
 import Game from './scenes/Game';
 import Menu from './scenes/Menu';

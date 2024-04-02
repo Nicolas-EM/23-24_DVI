@@ -40,7 +40,7 @@ export default abstract class SpawnerBuilding extends Building {
         if (this.spawnQueue.length > 0) {
             if(this._owner.getNPCs().length < this._owner.getMaxPopulation()) {
                 const npcType = this.spawnQueue.shift();
-                Client.spawnNpc(npcType.name, this.x + this.width, this.y, this._owner.getColor());
+                Client.spawnNpc(npcType.ICON, this.x + this.width, this.y, this._owner.getColor());
             }
 
             // Update with new (or current) NPC about to be spawned (if any)

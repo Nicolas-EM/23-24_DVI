@@ -11,7 +11,7 @@ namespace NPCsData {
         }
         public static HEALTH = 100;
         public static VISION_RANGE = 5;
-        public static SPEED = 1;
+        public static SPEED = 2.5;
         public static SPAWNING_TIME = 5000;
         public static SPAWNING_COST: Resources = {
             wood: 0,
@@ -29,7 +29,7 @@ namespace NPCsData {
         }
         public static HEALTH = 100;
         public static VISION_RANGE = 5;
-        public static SPEED = 1;
+        public static SPEED = 2.5;
         public static DAMAGE = 10;
         public static ATTACK_RANGE = 1;     // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds
@@ -50,7 +50,7 @@ namespace NPCsData {
         }
         public static HEALTH = 100;
         public static VISION_RANGE = 10;
-        public static SPEED = 1;
+        public static SPEED = 2.5;
         public static DAMAGE = 10;
         public static ATTACK_RANGE = 5;     // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds
@@ -71,7 +71,7 @@ namespace NPCsData {
         }
         public static HEALTH = 100;
         public static VISION_RANGE = 5;
-        public static SPEED = 1.5;
+        public static SPEED = 3.75;
         public static DAMAGE = 10;
         public static ATTACK_RANGE = 1;    // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds

@@ -223,7 +223,7 @@ export namespace animationFactory {
             frames: scene.anims.generateFrameNumbers('Tree', {
                 frames: [0, 1, 2, 3],
             }),
-            duration: 600,
+            frameRate: 5,
             repeat: -1,
             randomFrame: true
         });
@@ -243,7 +243,43 @@ export namespace animationFactory {
             frames: scene.anims.generateFrameNumbers('Foam', {
                 frames: [0, 1, 2, 3, 4, 5, 6, 7],
             }),
-            duration: 1600,
+            frameRate: 5,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'Rock1',
+            frames: scene.anims.generateFrameNumbers('Rocks', {
+                frames: [0, 1, 2, 3, 4, 5, 6, 7],
+            }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'Rock2',
+            frames: scene.anims.generateFrameNumbers('Rocks', {
+                frames: [8, 9, 10, 11, 12, 13, 14, 15],
+            }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'Rock3',
+            frames: scene.anims.generateFrameNumbers('Rocks', {
+                frames: [16, 17, 18, 19, 20, 21, 22, 23],
+            }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'Rock4',
+            frames: scene.anims.generateFrameNumbers('Rocks', {
+                frames: [24, 25, 26, 27, 28, 29, 30, 31],
+            }),
+            frameRate: 5,
             repeat: -1
         });
     }
