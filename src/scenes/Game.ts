@@ -17,17 +17,10 @@ import { animationFactory } from '../animationFactory';
 import { PhaserNavMesh } from "phaser-navMesh";
 
 // MAGIC NUMBER
-const MIN_ZOOM = 0.1;
+const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 1;
 const ZOOM_AMOUNT = 0.05;
 const MOVEMENT_OFFSET = 10;
-
-const npcConstructors: { [key: string]: new (scene: Phaser.Scene, x: number, y: number, owner: Player) => NPC } = {
-  "Archer": Archer,
-  "Goblin": Goblin,
-  "Soldier": Soldier,
-  "Villager": Villager
-};
 
 export default class Game extends Phaser.Scene {
   public navMeshPlugin: PhaserNavMeshPlugin;
@@ -281,9 +274,19 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  npcConstructor(npcType: string) {
+    const constructors = {
+      "Archer_": Archer,
+      "Goblin_": Goblin,
+      "Soldier_": Soldier,
+      "Villager_": Villager
+    }
+
+    return constructors[npcType];
+  }
+
   spawnNPC(npcType: string, x: number, y: number, ownerColor: string) {
-    console.log(npcConstructors[npcType]);
-    new npcConstructors[npcType](this, x, y, this.getPlayerByColor(ownerColor));
+    new (this.npcConstructor(npcType))(this, x, y, this.getPlayerByColor(ownerColor));
   }
 
   getAllBuildings(): Building[] {

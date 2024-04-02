@@ -1,13 +1,6 @@
 import * as Phaser from 'phaser';
 
-import ResourceSpawner from './resources/ResourceSpawner';
-import Building from './buildings/Building';
-import NPC from './npcs/NPC';
-
 import TownHall from "../classes/buildings/Townhall";
-import GoblinHut from "../classes/buildings/GoblinHut";
-import Tower from "../classes/buildings/Tower";
-import VillagerHouse from "../classes/buildings/VillagerHouse";
 import Tree from "./resources/Tree";
 import Sheep from "./resources/Sheep";
 import GoldMine from "./resources/GoldMine";
@@ -22,7 +15,6 @@ import Goblin from './npcs/Goblin';
 
 export default class Map {
     private _map: Phaser.Tilemaps.Tilemap;
-    private resourceSpawners: ResourceSpawner[];
     public navMesh: PhaserNavMesh;
 
     constructor(private scene: Game, private mapId: string) {
@@ -34,10 +26,13 @@ export default class Map {
         const waterLayer = this._map.createLayer("Fondo/Water", waterTileset!);
         waterLayer?.setCollisionByProperty({ collides: true });
         // Foam
-        const foamObjects = this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' });
-        foamObjects.forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Foam"))
+        this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Foam"));
         // Rocks
-        this._map.createFromObjects('Fondo/Rocks', [{ type: 'Rock1', key: 'Rocks', frame: 0 }, { type: 'Rock2', key: 'Rocks', frame: 8 }, { type: 'Rock3', key: 'Rocks', frame: 16 }, { type: 'Rock4', key: 'Rocks', frame: 24 }]);
+        this._map.createFromObjects('Fondo/Rocks', { type: 'Rock1', key: 'Rocks', frame: 0 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock1"));
+        this._map.createFromObjects('Fondo/Rocks', { type: 'Rock2', key: 'Rocks', frame: 8 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock2"));
+        this._map.createFromObjects('Fondo/Rocks', { type: 'Rock3', key: 'Rocks', frame: 16 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock3"));
+        this._map.createFromObjects('Fondo/Rocks', { type: 'Rock4', key: 'Rocks', frame: 24 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock4"));
+
         let groundTileset = this._map.addTilesetImage('Ground');
         const groundLayer = this._map.createLayer('Fondo/Ground', groundTileset!);
         const grassLayer = this._map.createLayer('Fondo/Grass', groundTileset!);
