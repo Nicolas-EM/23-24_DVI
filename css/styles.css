@@ -1,6 +1,7 @@
 body {
     background-image: url(../img/background.png);
     background-size: cover;
+    /* cursor: url(../assets/sprites/UI/pointers/pointer.png), auto; */
 }
 
 nav {
@@ -13,5 +14,6 @@ nav > div {
 }
 
 #game {
-    height: 93vh;
+    height: 90vh;
 }
+

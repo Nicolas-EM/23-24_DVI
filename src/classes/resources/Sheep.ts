@@ -1,12 +1,12 @@
-import ResourceSpawner from "./ResourceSpawner"
-
-// TODO: remove magic numbers
-const TOTAL_RESOURCE = 100;
-const RESOURCE_RATE = 10;
+import ResourceSpawner from "./ResourceSpawner";
+import ResourcesData from "../../magic_numbers/resources_data";
+import Game from "../../scenes/Game";
 
 export default class Sheep extends ResourceSpawner {
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number) {
-        super(scene, x, y, texture, TOTAL_RESOURCE, RESOURCE_RATE, frame)
+    constructor(scene: Game, x: number, y: number, frame?: string | number) {
+        super(scene, x, y, ResourcesData.Food.ICON_INFO.name, ResourcesData.Food.ICON_INFO, ResourcesData.Food.ICON, ResourcesData.Food.CAPACITY, ResourcesData.Food.RATE, frame);
+    
+        this.anims.play("sheepIdle");
     }
 }

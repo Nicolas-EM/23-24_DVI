@@ -1,62 +1,109 @@
 import * as Phaser from 'phaser';
-import Player from '../Player.ts'
-import PlayerEntity from '../PlayerEntity.ts';
-import Pathfinder from '../Pathfinder.ts';
-import { PathNode } from "@raresail/phaser-pathfinding";
-
+import Player from '../Player'
+import PlayerEntity from '../PlayerEntity';
+import Game from '../../scenes/Game';
+import { PhaserNavMesh } from "phaser-navMesh";
+import { Resources } from '../../utils';
 
 export default abstract class NPC extends PlayerEntity {
-    // protected attributes:
-    protected _id: string;
-    protected _owner: Player;
-    protected _health: number;
-    protected _visionRange: number;
+    protected _path;
+    protected _currentTarget;
+    protected _movementSpeed: number;
 
     /**
      * @constructor
      * @param owner is the player who created the entity, not optional.
      * @returns NPC instance
      */
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, visionRange: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, visionRange, frame);
-        //this.init();
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, frame?: string | number) {
+        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
+        this._movementSpeed = movementSpeed;
+
+        this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
+        owner.addNPC(this);
+
+        (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
     }
 
-    /**
-     * @summary initialization of NPC entity
-     */
-    // protected init(){
-    //     this.addEventListeners();
-    // }
+    setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
+        if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
+            this._currentTarget = null;
+            return;
+        }
 
-    /**
-     * @summary adds event listeners to the NPC for his generic actions (move, receive hit)
-     */
-    // protected addEventListeners(){
-    //     //TODO complete
-    //     this.scene.events.on('moveOrder',() => {});
-    //     //These dont belong here, rather in subclass
-    //     //TODO @sanord8
-    //    // this.scene.events.on('attackOrder',() => {});
-    //    // this.scene.events.on('gatherOrder',() => {});
-    //     this.scene.events.on('spawnOrder',() => {});
-    //     this.scene.events.on('death',() => {});
-    // }
+        // Find a path to the target
+        this._path = (this.scene as Game).getNavmesh().findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
+        if (this._path && this._path.length > 0) {
+            this._currentTarget = this._path.shift();
+        }
+        else this._currentTarget = null;
+    }
 
-    /**
-     * @summary executes move order on X Y cordinates
-     * @param x is X coordinate to move on board
-     * @param y is Y coordinate to move on board
-     */
-    move(X: number, Y: number): void{
-        let currentPosition = new Phaser.Math.Vector2(this.x, this.y);
-        let targetPosition = new Phaser.Math.Vector2(X, Y);
-        let path = Pathfinder.getInstance().findPath(currentPosition, targetPosition);
+    moveToTarget(elapsedSeconds: number) {
+        const { x, y } = this._currentTarget;
 
-        if(path){
-            //TODO
-            //maybe we should have an 'animOnProgress' variable, so we can cancel stuff on the go 
+        if (x < this.x) {
+            this.doMoveAnimation(true);
+        }
+        else {
+            this.doMoveAnimation();
+        }
+        const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
+        const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
+        const targetSpeed = distance / elapsedSeconds;
+        const magnitude = Math.min(this._movementSpeed, targetSpeed);
+
+        const velocityX = Math.cos(angle) * magnitude;
+        const velocityY = Math.sin(angle) * magnitude;
+
+        this.x += velocityX;
+        this.y += velocityY;
+    }
+
+    dieOrDestroy() {
+        this._owner.removeNPC(this);
+        if (this.anims.isPlaying) {
+            this.anims.stop();
+        }
+        this.doDeathAnimation();
+        this.destroy();
+    }
+
+    update(time: number, deltaTime: number) {
+        if (!this.body) return;
+
+        if (this._currentTarget) {
+            const { x, y } = this._currentTarget;
+            const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
+
+            if (distance < 5) {
+                if (this._path.length > 0) this._currentTarget = this._path.shift();
+                else this._currentTarget = null;
+            }
+
+            if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
+        }
+        else {
+            if(!this.anims.isPlaying) {
+                this.doIdleAnimation();
+            }
         }
     }
 
+    doDeathAnimation() {
+        let deathSprite = this.scene.add.sprite(this.x, this.y, "death");
+        deathSprite.anims.play("death");
+        deathSprite.on("animationcomplete", () => {
+            // nada, ya estaba implementado.. this.destroy();
+            //TODO maybe launch the death event too?
+            deathSprite.destroy();
+        });
+    }
+
+    abstract doMoveAnimation(isLeft?: boolean): void;
+    abstract doIdleAnimation(): void;
+    //second attribute is optional, means that if this exact animation is already playing, ignores the call.
+    public playAnimation(key: string) {
+        this.anims.play({ key, repeat: 0 }, true);
+    }
 }

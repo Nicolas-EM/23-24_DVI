@@ -1,5 +1,7 @@
 export { default as Carved_Big } from './carved_big.png';
+export { default as Carved_Big_Shadow } from './carved_big_shadow.png';
 export { default as Carved_Rectangle } from './carved_rectangle.png';
+export { default as Carved_Rectangle_Shadow } from './carved_rectangle_shadow.png';
 export { default as Carved_Square } from './carved_square.png';
 export { default as Connection_Down } from './connection_down.png';
 export { default as Connection_Left } from './connection_left.png';

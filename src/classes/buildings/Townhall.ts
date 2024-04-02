@@ -1,21 +1,35 @@
-import NPC from "../npcs/NPC";
+import Client from "../../client";
+import Game from "../../scenes/Game";
+import { Resources } from "../../utils";
+import Villager from "../npcs/Villager";
 import Player from "../Player";
-import NPCSpawner from "./SpawnerBuilding";
+import BuildingsData from "../../magic_numbers/buildings_data";
+import SpawnerBuilding from "./SpawnerBuilding";
 
-const health = 1000;
-const visionRange = 10;
 
-export default class Townhall extends NPCSpawner {
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, visionRange, frame);
+export default class Townhall extends SpawnerBuilding {
+    
+    static readonly COST: Resources = null;
 
-        this.scene.add.existing(this);
-    }
+    constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
+        let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
+        iconInfo.name += owner.getColor();
 
-    spawn(): NPC {
-        throw new Error("Method not implemented.");
-    }
-    queueNPC(npc: NPC) {
-        throw new Error("Method not implemented.");
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, BuildingsData.Townhall.VISION_RANGE, frame);
+    
+        // Build hud info
+        this._hudInfo = {
+            entity: iconInfo,
+            info: {
+                isMine: this._owner.getColor() === Client.getMyColor(),
+                health: this._health,
+                totalHealth: this._totalHealth,
+                queueIcon: null,
+                queueTime: null
+            },
+            actions: [{run: () => this.queueNPC(Villager), actionFrame: `Villager_${this._owner.getColor()}`}]
+        };
+        
+        (this.body as Phaser.Physics.Arcade.Body).setSize(280, 190, true);
     }
 }

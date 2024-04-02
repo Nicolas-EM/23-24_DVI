@@ -1,0 +1,1 @@
+export { default as Troops } from './Troops.mp3';
