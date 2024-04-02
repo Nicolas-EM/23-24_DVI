@@ -26,6 +26,8 @@ export default class Hud extends Phaser.Scene {
     // Player
     private player: Player;
 
+    private optionsMenuOpened = false;
+
     // Constructor
     constructor() {
         super({ key: 'hud' });
@@ -38,6 +40,13 @@ export default class Hud extends Phaser.Scene {
     create() {
         this.createTopHud();
         this.createBottomHud();
+
+        this.scene.get('settings').events.on('menuOpened', () => {
+            this.optionsMenuOpened = true;
+        });
+        this.scene.get('settings').events.on('menuClosed', () => {
+            this.optionsMenuOpened = false;
+        });
     }
 
     createTopHud() {
@@ -173,8 +182,8 @@ export default class Hud extends Phaser.Scene {
                         // Funcionalidad acción
                         actionIcon.setInteractive();
                         actionIcon.on("pointerdown", () => {
-                            console.log(`Nueva acción pulsada: ${action.run}`);
-                            action.run();
+                            if(!this.optionsMenuOpened)
+                                action.run();
                         });
                         this.actionsContainer.add(actionIcon);
                     });
@@ -286,7 +295,7 @@ export default class Hud extends Phaser.Scene {
                     // if Building with queue, show queue data
                     if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
                         self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
-                        self.queueTime.text = `${hudInfo.info.queueTime}s`;
+                        self.queueTime.text = hudInfo.info.queueTime === Infinity ? "Inf." : `${hudInfo.info.queueTime}s`;
                         // If not visible, set visible
                         if (!self.queueContainer.visible) {
                             self.queueContainer.setVisible(true);
@@ -296,8 +305,13 @@ export default class Hud extends Phaser.Scene {
                     else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
                         self.queueContainer.setVisible(false);
                     }
+
+                    if(hudInfo.info.health <= 0)
+                        self.displayedEntity = undefined;
                 }
             });
+        } else {
+            this.flushHud();
         }
     }
 }

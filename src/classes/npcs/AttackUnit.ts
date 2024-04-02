@@ -52,22 +52,39 @@ export default abstract class AttackUnit extends NPC {
         }
     }
 
+    setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
+        if(this._attackTargetId) {
+            const target = (this.scene as Game).getEntityById(this._attackTargetId);
+            if(target && Phaser.Math.Distance.Between(targetPoint.x, targetPoint.y, target.x, target.y) > 64) { // TODO: magic number - tile size
+                this._attackTargetId = undefined;
+            }
+        }
+
+        super.setMovementTarget(targetPoint);
+    }
+
     update(time: number, delta: number) {
         if (this._attackTargetId) {
             const target = (this.scene as Game).getEntityById(this._attackTargetId);
 
             if (target && !this.entityIsWithinRange(target)) {
                 // Not within range - move towards target
-                Client.setNpcTarget(this._id, new Phaser.Math.Vector2(target.x, target.y));
+                this.setMovementTarget(new Phaser.Math.Vector2(target.x, target.y));
+                // Client.setNpcTarget(this._id, new Phaser.Math.Vector2(target.x, target.y));
             } else {
                 // Within range - stop moving
-                Client.setNpcTarget(this._id, new Phaser.Math.Vector2(this.x, this.y));
+                if(this._path || this._currentTarget) { 
+                    this._path = [];
+                    this._currentTarget = undefined;
+                }
+                // Client.setNpcTarget(this._id, new Phaser.Math.Vector2(this.x, this.y));
 
                 // If target still alive
                 if (target) {
                     // Check if enough time has passed since the last attack or if have never attacked
                     const timeSinceLastAttack = (time - this._lastAttackTime) / 1000;   // in seconds
                     if (this._lastAttackTime === undefined || timeSinceLastAttack >= this._attackCooldown) {
+                        this.doAttackAnimation(new Phaser.Math.Vector2(target.x, target.y), (this.x >= target.x));
                         target.onAttackReceived(this._damage, this);
                         // Update last attack time
                         this._lastAttackTime = time;
@@ -80,5 +97,5 @@ export default abstract class AttackUnit extends NPC {
 
         super.update(time, delta);
     }
-    
+    abstract doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean): void;
 }

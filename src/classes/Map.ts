@@ -34,7 +34,8 @@ export default class Map {
         const waterLayer = this._map.createLayer("Fondo/Water", waterTileset!);
         waterLayer?.setCollisionByProperty({ collides: true });
         // Foam
-        this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' });
+        const foamObjects = this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' });
+        foamObjects.forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Foam"))
         // Rocks
         this._map.createFromObjects('Fondo/Rocks', [{ type: 'Rock1', key: 'Rocks', frame: 0 }, { type: 'Rock2', key: 'Rocks', frame: 8 }, { type: 'Rock3', key: 'Rocks', frame: 16 }, { type: 'Rock4', key: 'Rocks', frame: 24 }]);
         let groundTileset = this._map.addTilesetImage('Ground');
