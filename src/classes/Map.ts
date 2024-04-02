@@ -73,6 +73,7 @@ export default class Map {
                     this.scene.cameras.main.zoom = 0.7;
                 }
                 new TownHall(this.scene, <number>obj.x, <number>obj.y, p1);
+                
 
                 new Soldier(this.scene, <number>obj.x, <number>obj.y - 192, p1);
                 new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
