@@ -29,6 +29,6 @@ export default class Townhall extends SpawnerBuilding {
             },
             actions: [{run: () => this.queueNPC(Villager), actionFrame: `Villager_${this._owner.getColor()}`}]
         };
+        this.setSize(280, 190);
     }
-
 }

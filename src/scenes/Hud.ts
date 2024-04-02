@@ -153,10 +153,7 @@ export default class Hud extends Phaser.Scene {
                 // Save selectedEntity
                 this.displayedEntity = selectedEntity;
 
-                // -----------------------------------------------
-                // TODO - Move to Game onclick
                 this.flushHud();
-                // -----------------------------------------------
 
                 let hudInfo = this.displayedEntity.getHudInfo();
 
@@ -182,6 +179,11 @@ export default class Hud extends Phaser.Scene {
                         this.actionsContainer.add(actionIcon);
                     });
                 }
+            });
+
+            self.events.on('entityUnclicked', () => {
+                this.displayedEntity = null;
+                this.flushHud();
             });
 
         });

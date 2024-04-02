@@ -36,7 +36,7 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
         
-        this.setInteractive();
+        this.setInteractive( {pixelPerfect: true} );
         this.on('pointerup', this.onEntityClicked, this);
 
         this.scene.events.on("update", this.update, this);
