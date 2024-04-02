@@ -26,6 +26,8 @@ export default class Hud extends Phaser.Scene {
     // Player
     private player: Player;
 
+    private optionsMenuOpened = false;
+
     // Constructor
     constructor() {
         super({ key: 'hud' });
@@ -38,6 +40,13 @@ export default class Hud extends Phaser.Scene {
     create() {
         this.createTopHud();
         this.createBottomHud();
+
+        this.scene.get('settings').events.on('menuOpened', () => {
+            this.optionsMenuOpened = true;
+        });
+        this.scene.get('settings').events.on('menuClosed', () => {
+            this.optionsMenuOpened = false;
+        });
     }
 
     createTopHud() {
@@ -173,8 +182,8 @@ export default class Hud extends Phaser.Scene {
                         // Funcionalidad acción
                         actionIcon.setInteractive();
                         actionIcon.on("pointerdown", () => {
-                            console.log(`Nueva acción pulsada: ${action.run}`);
-                            action.run();
+                            if(!this.optionsMenuOpened)
+                                action.run();
                         });
                         this.actionsContainer.add(actionIcon);
                     });

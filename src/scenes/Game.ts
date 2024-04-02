@@ -65,21 +65,21 @@ export default class Game extends Phaser.Scene {
     this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
       this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     });
-    
+
     // Players
     this.p1 = new Player(Client.lobby.players[0].color, Client.lobby.players[0].color, this);
     this.p2 = new Player(Client.lobby.players[1].color, Client.lobby.players[1].color, this);
 
     // Hud
     this.scene.run('hud', { player: (this.p1.getColor() === Client.getMyColor() ? this.p1 : this.p2) });
-    this.scene.run('settings', { scene: "game" });
-    this.events.on('menuOpened', () => {
+    this.scene.run('settings');
+    this.scene.get('settings').events.on('menuOpened', () => {
       this.optionsMenuOpened = true;
     });
-    this.events.on('menuClosed', () => {
+    this.scene.get('settings').events.on('menuClosed', () => {
       this.optionsMenuOpened = false;
     });
-    
+
     animationFactory.createAnimations(this);
 
     // Map
@@ -103,11 +103,11 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.on('gameobjectdown', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject, stopPropagation) => {
-      if(this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+      if (this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
         return;
 
-      if(this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
-        if(!(gameObject as PlayerEntity).belongsToMe())
+      if (this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
+        if (!(gameObject as PlayerEntity).belongsToMe())
           Client.attackOrder(this._selectedEntity.getId(), gameObject.getId());
       }
     });
@@ -155,7 +155,7 @@ export default class Game extends Phaser.Scene {
       }
     }
 
-    if (this._selectedEntity){
+    if (this._selectedEntity) {
       this.setCornersPosition();
     }
   }
@@ -225,7 +225,7 @@ export default class Game extends Phaser.Scene {
       return this.p2;
   }
 
-  getSelectedEntity() : PlayerEntity | ResourceSpawner {
+  getSelectedEntity(): PlayerEntity | ResourceSpawner {
     return this._selectedEntity;
   }
 
@@ -233,7 +233,7 @@ export default class Game extends Phaser.Scene {
     if (!this.optionsMenuOpened) {
       this._selectedEntity = entity;
       if (entity) {
-        console.log("Game: Entity Selected");        
+        console.log("Game: Entity Selected");
         this.scene.get('hud').events.emit('entityClicked', this._selectedEntity);
         this.setCornersPosition();
         this.setCornersVisibility(true);
@@ -242,7 +242,7 @@ export default class Game extends Phaser.Scene {
       }
       // Des-seleccionar
       else {
-        console.log("Game: Entity Un-selected");  
+        console.log("Game: Entity Un-selected");
         this.scene.get('hud').events.emit('entityUnclicked');
         this.setCornersVisibility(false);
       }
@@ -257,10 +257,10 @@ export default class Game extends Phaser.Scene {
   }
 
   setCornersPosition() {
-    this._topLeft.setPosition(this._selectedEntity.x -(this._selectedEntity.width / 2), this._selectedEntity.y -(this._selectedEntity.height / 2));
-    this._topRight.setPosition(this._selectedEntity.x +(this._selectedEntity.width / 2), this._selectedEntity.y -(this._selectedEntity.height / 2));
-    this._bottomLeft.setPosition(this._selectedEntity.x -(this._selectedEntity.width / 2), this._selectedEntity.y +(this._selectedEntity.height / 2));
-    this._bottomRight.setPosition(this._selectedEntity.x +(this._selectedEntity.width / 2), this._selectedEntity.y +(this._selectedEntity.height / 2));
+    this._topLeft.setPosition(this._selectedEntity.x - (this._selectedEntity.width / 2), this._selectedEntity.y - (this._selectedEntity.height / 2));
+    this._topRight.setPosition(this._selectedEntity.x + (this._selectedEntity.width / 2), this._selectedEntity.y - (this._selectedEntity.height / 2));
+    this._bottomLeft.setPosition(this._selectedEntity.x - (this._selectedEntity.width / 2), this._selectedEntity.y + (this._selectedEntity.height / 2));
+    this._bottomRight.setPosition(this._selectedEntity.x + (this._selectedEntity.width / 2), this._selectedEntity.y + (this._selectedEntity.height / 2));
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {
@@ -270,12 +270,12 @@ export default class Game extends Phaser.Scene {
 
   setNPCAttackTarget(npcId: string, targetId: string) {
     let npc = this.p1.getNPCById(npcId);
-    if(npc && npc instanceof AttackUnit) {
+    if (npc && npc instanceof AttackUnit) {
       npc.setAttackTarget(targetId);
       return;
     }
     npc = this.p2.getNPCById(npcId);
-    if(npc && npc instanceof AttackUnit) {
+    if (npc && npc instanceof AttackUnit) {
       npc.setAttackTarget(targetId);
       return;
     }
@@ -292,7 +292,7 @@ export default class Game extends Phaser.Scene {
 
   getEntityById(entityId: string): PlayerEntity {
     let entity = this.p1.getPlayerEntityById(entityId);
-    if(entity)
+    if (entity)
       return entity;
     else
       return this.p2.getPlayerEntityById(entityId);

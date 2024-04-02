@@ -21,12 +21,14 @@ export default class Menu extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings', { scene: "menu" });
-    this.events.on('menuOpened', () => {
-      this.scene.pause();
+    this.scene.run('settings');
+    this.scene.get('settings').events.on('menuOpened', () => {
+      if(this.scene.isActive("menu"))
+        this.scene.pause();
     });
-    this.events.on('menuClosed', () => {
-      this.scene.resume();
+    this.scene.get('settings').events.on('menuClosed', () => {
+      if(this.scene.isActive("menu"))
+        this.scene.resume();
     });
 
     // Background
@@ -48,7 +50,7 @@ export default class Menu extends Phaser.Scene {
     this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, this.joinLobby);
 
     // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.5}).play();
+    this.sound.add('TroopsTheme', { loop: true, volume: 0.5 }).play();
   }
 
   startLobby() {
@@ -99,7 +101,7 @@ export default class Menu extends Phaser.Scene {
           actionButton();
         }
       });
-    });   
+    });
   }
 
 }

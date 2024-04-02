@@ -5,18 +5,12 @@ import { FontLoader } from '../utils';
 
 export default class Settings extends Phaser.Scene {
 
-    private sceneBase: string;
-
     private optionsContainer: Phaser.GameObjects.Container;
     private optionsBackground: Phaser.GameObjects.Rectangle;
     private optionsButton: Phaser.GameObjects.Image;
 
     constructor() {
-        super({ key: 'settings' });        
-    }
-
-    init(sceneBase) {
-        this.sceneBase = sceneBase.scene;
+        super({ key: 'settings' });
     }
 
     create() {
@@ -77,13 +71,13 @@ export default class Settings extends Phaser.Scene {
                 // Surrender button
                 let surrenderBtnImg = self.add.image(-125, 85, "Button_Red_Slide");
                 surrenderBtnImg.scale = 0.7;
-                surrenderBtnImg.setOrigin(0);        
+                surrenderBtnImg.setOrigin(0);
                 let surrenderBtnText = self.add.text(-105, 93, "SURRENDER", { fontFamily: "Bellefair" });
                 let surrenderBtnContainer = self.add.container(0, 0);
                 surrenderBtnContainer.add(surrenderBtnImg);
                 surrenderBtnContainer.add(surrenderBtnText);
                 self.optionsContainer.add(surrenderBtnContainer);
-            }     
+            }
 
             // Silence button
             let silenceBtnImg = self.add.image(32, 80, "Button_Yellow");
@@ -159,14 +153,14 @@ export default class Settings extends Phaser.Scene {
         this.optionsButton.disableInteractive();
         this.optionsBackground.setVisible(true);
         this.optionsContainer.setVisible(true);
-        this.scene.get(this.sceneBase).events.emit('menuOpened');
+        this.events.emit('menuOpened');
     }
 
     closeOptionsMenu() {
         this.optionsButton.setInteractive();
         this.optionsBackground.setVisible(false);
         this.optionsContainer.setVisible(false);
-        this.scene.get(this.sceneBase).events.emit('menuClosed');
+        this.events.emit('menuClosed');
     }
 
     changeFullscreen() {

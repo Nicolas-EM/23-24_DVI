@@ -19,7 +19,7 @@ export default class Lobby extends Phaser.Scene {
 
   create() {
     Client.setScene(this);
-    
+
     // Cursor
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
       this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
@@ -29,12 +29,14 @@ export default class Lobby extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings', { scene: "lobby" });
-    this.events.on('menuOpened', () => {
-      this.scene.pause();
+    this.scene.run('settings');
+    this.scene.get("settings").events.on('menuOpened', () => {
+      if(this.scene.isActive("lobby"))
+        this.scene.pause();
     });
-    this.events.on('menuClosed', () => {
-      this.scene.resume();
+    this.scene.get("settings").events.on('menuClosed', () => {
+      if(this.scene.isActive("lobby"))
+        this.scene.resume();
     });
 
     // Background
@@ -80,25 +82,25 @@ export default class Lobby extends Phaser.Scene {
       self.colorButtons = [];
       let startX = self.cameras.main.width / 2 - 150;
 
-    // Buttons start disabled
-    colors.forEach((color, index) => {
-      const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
-      button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-        if (pointer.leftButtonReleased()) {
-          this.selectColor(color);
-        }
+      // Buttons start disabled
+      colors.forEach((color, index) => {
+        const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
+        button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+          if (pointer.leftButtonReleased()) {
+            this.selectColor(color);
+          }
+        });
+        button.disableInteractive();
+        button.setTint(0x808080); // Set grey tint
+        this.colorButtons.push(button);
       });
-      button.disableInteractive();
-      button.setTint(0x808080); // Set grey tint
-      this.colorButtons.push(button);
-    });
 
       // Ready button
       let readyContainer = self.add.container(self.cameras.main.width / 2, 450);
       self.readyButton = self.add.image(0, 0, "Button_Yellow_Slides").setInteractive();
       self.readyButton.scale = 0.85;
       let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontWeigth: "bold" })
-      self.readyButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => { 
+      self.readyButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonDown()) {
           if (!this.isReady)
             self.readyButton.setTexture("Button_Yellow_Slides_Pressed");
@@ -107,7 +109,7 @@ export default class Lobby extends Phaser.Scene {
           readyText.setPosition(-35, -15);
         }
       });
-      self.readyButton.on('pointerup', (pointer: Phaser.Input.Pointer) => { 
+      self.readyButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonReleased()) {
           if (this.isReady)
             self.readyButton.setTexture("Button_Yellow_Slides");
