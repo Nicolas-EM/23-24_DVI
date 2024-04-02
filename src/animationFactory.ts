@@ -237,5 +237,14 @@ export namespace animationFactory {
             repeat: -1,
             randomFrame: true
         });
+
+        scene.anims.create({
+            key: 'Foam',
+            frames: scene.anims.generateFrameNumbers('Foam', {
+                frames: [0, 1, 2, 3, 4, 5, 6, 7],
+            }),
+            duration: 1600,
+            repeat: -1
+        });
     }
 }
