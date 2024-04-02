@@ -29,7 +29,6 @@ export default class Player {
    * @param {Scene  } scene - The scene where the player is created.
    */
   constructor(private id: string, private color: string, private scene: Phaser.Scene) {
-    console.log(`Player color ${color}`);
   }
 
   getColor(): string {

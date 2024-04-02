@@ -26,7 +26,8 @@ export default class TownHall extends SpawnerBuilding {
                 queueTime: null
             },
             actions: [{run: () => this.queueNPC(Soldier), actionFrame: `Soldier_${this._owner.getColor()}`}, {run: () => this.queueNPC(Archer), actionFrame: `Archer_${this._owner.getColor()}`}]
-        }
-        this.setSize(90, 180);
+        };
+
+        (this.body as Phaser.Physics.Arcade.Body).setSize(90, 180, true);
     }
 }

@@ -84,4 +84,8 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     getId(): string {
         return this._id;
     }
+
+    getHealth(): number {
+        return this._health;
+    }
 }

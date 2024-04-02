@@ -21,7 +21,8 @@ export default abstract class NPC extends PlayerEntity {
 
         this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);
-        this.setSize(70, 70);
+
+        (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
     }
 
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
