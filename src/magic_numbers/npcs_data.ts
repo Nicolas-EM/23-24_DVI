@@ -18,6 +18,7 @@ namespace NPCsData {
             food: 10,
             gold: 0
         }
+        public static GATHER_COOLDOWN = 2;
     }
     
     // Soldier

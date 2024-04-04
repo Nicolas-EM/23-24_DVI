@@ -101,6 +101,8 @@ export default class Game extends Phaser.Scene {
       if (this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
         if (!(gameObject as PlayerEntity).belongsToMe())
           Client.attackOrder(this._selectedEntity.getId(), gameObject.getId());
+      } else if(this._selectedEntity instanceof Villager && gameObject instanceof ResourceSpawner) {
+        Client.gatherOrder(this._selectedEntity.getId(), gameObject.getId());
       }
     });
 
@@ -278,6 +280,14 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  setVillagerGatherTarget(villagerId: string, resourceSpawnerId: string) {
+    const villager = this.getEntityById(villagerId);
+    const spawner = this.getResourceSpawnerById(resourceSpawnerId);
+    if(villager && villager instanceof Villager && spawner) {
+      villager.setGatherTarget(spawner);
+    }
+  }
+
   npcConstructor(npcType: string) {
     const constructors = {
       "Archer_": Archer,
@@ -307,5 +317,9 @@ export default class Game extends Phaser.Scene {
 
   getNavmesh(): PhaserNavMesh {
     return this._map.navMesh;
+  }
+
+  getResourceSpawnerById(id: string): ResourceSpawner {
+    return this._map.getResourceSpawnerById(id);
   }
 }

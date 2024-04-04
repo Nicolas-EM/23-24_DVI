@@ -12,10 +12,12 @@ import Client from '../client';
 import Soldier from './npcs/Soldier';
 import Archer from './npcs/Archer';
 import Goblin from './npcs/Goblin';
+import ResourceSpawner from './resources/ResourceSpawner';
 
 export default class Map {
     private _map: Phaser.Tilemaps.Tilemap;
     public navMesh: PhaserNavMesh;
+    private spawners: ResourceSpawner[] = [];
 
     constructor(private scene: Game, private mapId: string) {
         // Crear mapa
@@ -45,13 +47,18 @@ export default class Map {
         sheeps.forEach( s => {
             ((<Sheep>s).body as Phaser.Physics.Arcade.Body).setSize(50, 50, true);
         });
+        this.spawners.push();
+        this.spawners = this.spawners.concat(<ResourceSpawner[]>sheeps);
 
         trees.forEach( t => {
             ((<Tree>t).body as Phaser.Physics.Arcade.Body).setSize(120, 150, true);
         });
+        this.spawners = this.spawners.concat(<ResourceSpawner[]>trees);
+
         mines.forEach( m => {
             ((<GoldMine>m).body as Phaser.Physics.Arcade.Body).setSize(160, 80, true);
         });
+        this.spawners = this.spawners.concat(<ResourceSpawner[]>mines);
 
         // Decoration
         let decoTileset = this._map.addTilesetImage('Decoration');
@@ -134,5 +141,10 @@ export default class Map {
 
     getHeightInPixel(): number {
         return this._map.heightInPixels;
+    }
+
+    getResourceSpawnerById(id: string): ResourceSpawner {
+        console.log(this.spawners);
+        return this.spawners.find((spawner: ResourceSpawner) => spawner.getId() === id);
     }
 }

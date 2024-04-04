@@ -4,11 +4,15 @@ import { Resources } from '../../utils';
 import Player from '../Player';
 import NPC from './NPC';
 import NPCsData from "../../magic_numbers/npcs_data";
+import ResourceSpawner from '../resources/ResourceSpawner';
 
 export default class Villager extends NPC {
     static readonly COST: Resources = NPCsData.Villager.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Villager.SPAWNING_TIME;
     private _currentAnimation: string = "idle"; static readonly ICON: string = NPCsData.Villager.ICON_INFO.name;
+    private _gatherTarget: ResourceSpawner;
+    private _lastGatherTime: number;
+    private _gatherCooldown: number = NPCsData.Villager.GATHER_COOLDOWN;
 
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Villager.ICON_INFO };
@@ -44,10 +48,6 @@ export default class Villager extends NPC {
 
     }
 
-    gather() {
-
-    }
-
     doIdleAnimation() {
         if (this.anims.isPlaying) {
             if (this.anims.currentAnim.key !== `villagerIdle${this._owner.getColor()}`) {
@@ -80,7 +80,7 @@ export default class Villager extends NPC {
 
     }
 
-    doGatherAnimation(isLeft?: boolean) {
+    private doGatherAnimation(isLeft?: boolean) {
         if (isLeft) {
             this.flipX = true;
         }
@@ -130,5 +130,44 @@ export default class Villager extends NPC {
     //     this.playAnimation(`villagerLift${this._owner.getColor()}`);
     // }
 
+    setGatherTarget(resourceSpawner: ResourceSpawner) {
+        this._gatherTarget = resourceSpawner;
+        if(this._gatherTarget){
+            this.setMovementTarget(new Phaser.Math.Vector2(this._gatherTarget.x, this._gatherTarget.y));
+        }
+    }
 
+    private isGatherTargetInRange(): boolean {
+        if(!this._gatherTarget)
+            return false;
+
+        const distance = Phaser.Math.Distance.Between(this.x, this.y, this._gatherTarget.x, this._gatherTarget.y);
+        return distance <= 64;  // Within 1 tile
+    }
+
+    update(time: number, delta: number) {
+        if (this._gatherTarget && this.isGatherTargetInRange()) {
+            // Within range - stop moving
+            if(this._path || this._currentTarget) { 
+                this._path = [];
+                this._currentTarget = undefined;
+            }
+
+            // TODO: Check if resource still has resource
+            if(this._gatherTarget) {
+                // Check if enough time has passed since the last attack or if have never attacked
+                const timeSinceLastAttack = (time - this._lastGatherTime) / 1000;   // in seconds
+                if (this._lastGatherTime === undefined || timeSinceLastAttack >= this._gatherCooldown) {
+                    this.doGatherAnimation(this.x >= this._gatherTarget.x);
+                    this._gatherTarget.gather(this._owner);
+                    // Update last gather time
+                    this._lastGatherTime = time;
+                }
+            } else {
+                this._gatherTarget = undefined;
+            }
+        }
+
+        super.update(time, delta);
+    }
 }
