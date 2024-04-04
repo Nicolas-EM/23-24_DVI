@@ -62,6 +62,7 @@ export default abstract class NPC extends PlayerEntity {
 
     dieOrDestroy() {
         this._owner.removeNPC(this);
+        this.scene.events.emit("death", this)
         if (this.anims.isPlaying) {
             this.anims.stop();
         }

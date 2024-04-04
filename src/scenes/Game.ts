@@ -78,7 +78,6 @@ export default class Game extends Phaser.Scene {
     // Map
     this._map = new Map(this, this.mapId);
 
-
     // Event listener al hacer scroll
     this.input.on('wheel', this.cameraZoom, this);
     this.input.on('gameout', () => this.pointerInMap = false);
@@ -127,6 +126,14 @@ export default class Game extends Phaser.Scene {
     this._bottomRight = this.add.image(0, 0, "Selected_Bottom_Right");
 
     this.setCornersVisibility(false);
+
+    this.events.on("death", (entity) => {
+      console.log("Entity death", entity);
+      if(this._selectedEntity === entity) {
+        this._selectedEntity = null;
+        this.setCornersVisibility(false);
+      }
+    });
   }
 
   update(time: number, delta: number): void {
