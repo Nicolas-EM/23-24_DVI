@@ -29,14 +29,12 @@ export default class Lobby extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings');
-    this.scene.get("settings").events.on('menuOpened', () => {
-      if(this.scene.isActive("lobby"))
-        this.scene.pause();
+    this.scene.run('settings', { scene: "lobby" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
     });
-    this.scene.get("settings").events.on('menuClosed', () => {
-      if(this.scene.isActive("lobby"))
-        this.scene.resume();
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
     });
 
     // Background
