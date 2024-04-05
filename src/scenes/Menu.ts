@@ -21,14 +21,12 @@ export default class Menu extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings');
-    this.scene.get('settings').events.on('menuOpened', () => {
-      if(this.scene.isActive("menu"))
-        this.scene.pause();
+    this.scene.run('settings', { scene: "menu" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
     });
-    this.scene.get('settings').events.on('menuClosed', () => {
-      if(this.scene.isActive("menu"))
-        this.scene.resume();
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
     });
 
     // Background

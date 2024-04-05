@@ -65,11 +65,11 @@ export default class Game extends Phaser.Scene {
 
     // Hud
     this.scene.run('hud', { player: (this.p1.getColor() === Client.getMyColor() ? this.p1 : this.p2) });
-    this.scene.run('settings');
-    this.scene.get('settings').events.on('menuOpened', () => {
+    this.scene.run('settings', { scene: "game" });
+    this.events.on('menuOpened', () => {
       this.optionsMenuOpened = true;
     });
-    this.scene.get('settings').events.on('menuClosed', () => {
+    this.events.on('menuClosed', () => {
       this.optionsMenuOpened = false;
     });
 

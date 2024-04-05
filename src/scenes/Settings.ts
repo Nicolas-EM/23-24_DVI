@@ -5,12 +5,18 @@ import { FontLoader } from '../utils';
 
 export default class Settings extends Phaser.Scene {
 
+    private sceneBase: string;
+
     private optionsContainer: Phaser.GameObjects.Container;
     private optionsBackground: Phaser.GameObjects.Rectangle;
     private optionsButton: Phaser.GameObjects.Image;
 
     constructor() {
         super({ key: 'settings' });
+    }
+
+    init(sceneBase) {
+        this.sceneBase = sceneBase.scene;
     }
 
     create() {
@@ -153,14 +159,14 @@ export default class Settings extends Phaser.Scene {
         this.optionsButton.disableInteractive();
         this.optionsBackground.setVisible(true);
         this.optionsContainer.setVisible(true);
-        this.events.emit('menuOpened');
+        this.scene.get(this.sceneBase).events.emit('menuOpened');
     }
 
     closeOptionsMenu() {
         this.optionsButton.setInteractive();
         this.optionsBackground.setVisible(false);
         this.optionsContainer.setVisible(false);
-        this.events.emit('menuClosed');
+        this.scene.get(this.sceneBase).events.emit('menuClosed');
     }
 
     changeFullscreen() {
