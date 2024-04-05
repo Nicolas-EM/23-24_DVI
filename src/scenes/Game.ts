@@ -308,4 +308,9 @@ export default class Game extends Phaser.Scene {
   getNavmesh(): PhaserNavMesh {
     return this._map.navMesh;
   }
+
+  endGame(defeat: boolean) {
+    this.scene.pause();
+    alert(`Game has ended, you ${defeat ? "lose :(": "win!"}`);
+  }
 }

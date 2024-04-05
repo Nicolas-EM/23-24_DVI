@@ -207,6 +207,11 @@ io.on('connection', socket => {
     socket.on('attack', (lobbyCode: string, npcId: string, targetId: string) => {
         io.to(lobbyCode).emit('attack', npcId, targetId);
     });
+
+    // Surrender or Lose condition
+    socket.on('end-game', (lobbyCode: string, playerColor: string) => {
+        io.to(lobbyCode).emit('end-game', playerColor);
+    });
 });
 
 http.listen(port, () => {

@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
+import Client from '../client';
 
 
 export default class Settings extends Phaser.Scene {
@@ -83,6 +84,24 @@ export default class Settings extends Phaser.Scene {
                 surrenderBtnContainer.add(surrenderBtnImg);
                 surrenderBtnContainer.add(surrenderBtnText);
                 self.optionsContainer.add(surrenderBtnContainer);
+                surrenderBtnImg
+                // Surrender function
+                surrenderBtnImg.setInteractive();
+                surrenderBtnImg.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+                    if (pointer.leftButtonDown()) {
+                        // TODO: this
+                        // fullscreenIcon.setPosition(105, 102);
+                        // fullscreenBtnImg.setTexture("Button_Yellow_Pressed");
+                    }
+                });
+                surrenderBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+                    if (pointer.leftButtonReleased()) {
+                        // TODO: this
+                        // fullscreenIcon.setPosition(105, 100);
+                        // fullscreenBtnImg.setTexture("Button_Yellow");
+                        Client.surrenderOrLose(Client.getMyColor());
+                    }
+                });
             }
 
             // Silence button

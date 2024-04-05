@@ -34,6 +34,12 @@ export default class Client {
                 (<Game>(Client.scene)).setNPCAttackTarget(npcId, targetId);
             }
         });
+
+        Client.socket.on('end-game', (playerColor: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).endGame(playerColor === Client.getMyColor());
+            }
+        });
     }
 
     static setScene(scene: Phaser.Scene) {
@@ -83,6 +89,10 @@ export default class Client {
 
     static attackOrder(npcId: string, targetId: string) {
         Client.socket.emit('attack', Client.lobby.code, npcId, targetId);
+    }
+
+    static surrenderOrLose(playerColor: string) {
+        Client.socket.emit('end-game', Client.lobby.code, playerColor);
     }
 }
 
