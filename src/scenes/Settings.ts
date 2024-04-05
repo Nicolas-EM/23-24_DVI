@@ -90,6 +90,21 @@ export default class Settings extends Phaser.Scene {
             silenceBtnContainer.add(silenceBtnImg);
             silenceBtnContainer.add(silenceIcon);
 
+            // Silence function
+            silenceBtnImg.setInteractive();
+            silenceBtnImg.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+                if (pointer.leftButtonDown()) {
+                    silenceIcon.setTexture("Sound_Off")
+                    silenceBtnImg.setTexture("Button_Yellow_Pressed");
+                }                
+            });
+            silenceBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+                if (pointer.leftButtonReleased()) {
+                    silenceIcon.setTexture("Sound_On")
+                    silenceBtnImg.setTexture("Button_Yellow");
+                    this.muteUnmute();
+                }
+            });
             // Fullscreen button
             let fullscreenBtnImg = self.add.image(80, 80, "Button_Yellow");
             fullscreenBtnImg.scale = 0.8;
@@ -170,6 +185,15 @@ export default class Settings extends Phaser.Scene {
         } else {
             const el = document.getElementById("game")!;
             el.requestFullscreen();
+        }
+    }
+
+    muteUnmute() {
+        if(!this.sound.mute) {
+            this.sound.mute = true;
+        }
+        else {
+            this.sound.mute = false;
         }
     }
 
