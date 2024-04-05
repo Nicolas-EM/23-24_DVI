@@ -90,6 +90,10 @@ export default class Settings extends Phaser.Scene {
             silenceBtnImg.scale = 0.8;
             silenceBtnImg.setOrigin(0);
             let silenceIcon = self.add.image(57, 104, "Sound_On");
+            if (this.sound.mute) {
+                silenceIcon.setTexture("Sound_Off");
+                silenceIcon.setPosition(57, 102);
+            }            
             silenceIcon.setDisplaySize(45, 45);
             silenceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             let silenceBtnContainer = self.add.container(0, 0);
@@ -100,13 +104,25 @@ export default class Settings extends Phaser.Scene {
             silenceBtnImg.setInteractive();
             silenceBtnImg.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
                 if (pointer.leftButtonDown()) {
-                    silenceIcon.setTexture("Sound_Off")
+                    if (this.sound.mute) {
+                        silenceIcon.setPosition(57, 104);
+                    }
+                    else {
+                        silenceIcon.setPosition(57, 109);
+                    }
                     silenceBtnImg.setTexture("Button_Yellow_Pressed");
                 }                
             });
             silenceBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
                 if (pointer.leftButtonReleased()) {
-                    silenceIcon.setTexture("Sound_On")
+                    if (this.sound.mute) {
+                        silenceIcon.setTexture("Sound_On");
+                        silenceIcon.setPosition(57, 104);
+                    }
+                    else {
+                        silenceIcon.setTexture("Sound_Off");
+                        silenceIcon.setPosition(57, 102);
+                    }
                     silenceBtnImg.setTexture("Button_Yellow");
                     this.muteUnmute();
                 }
@@ -195,7 +211,7 @@ export default class Settings extends Phaser.Scene {
     }
 
     muteUnmute() {
-        if(!this.sound.mute) {
+        if (!this.sound.mute) {
             this.sound.mute = true;
         }
         else {

@@ -257,22 +257,6 @@ export default class Boot extends Phaser.Scene {
     this.load.audio('Game2', Sounds.Themes.Game2);
     this.load.audio('Game3', Sounds.Themes.Game3);
     this.load.audio('Game4', Sounds.Themes.Game4);
-    this.load.audio('Game5', Sounds.Themes.Game5);
-    this.load.audio('Game6', Sounds.Themes.Game6);
-    this.load.audio('Game7', Sounds.Themes.Game7);
-    this.load.audio('Game8', Sounds.Themes.Game8);
-    this.load.audio('Game9', Sounds.Themes.Game9);
-    this.load.audio('Game10', Sounds.Themes.Game10);
-    this.load.audio('Game11', Sounds.Themes.Game11);
-    this.load.audio('Game12', Sounds.Themes.Game12);
-    this.load.audio('Game13', Sounds.Themes.Game13);
-    this.load.audio('Game14', Sounds.Themes.Game14);
-    this.load.audio('Game15', Sounds.Themes.Game15);
-    this.load.audio('Game16', Sounds.Themes.Game16);
-    this.load.audio('Game17', Sounds.Themes.Game17);
-    this.load.audio('Game18', Sounds.Themes.Game18);
-    this.load.audio('Game19', Sounds.Themes.Game19);
-    this.load.audio('Game20', Sounds.Themes.Game20);
 
   }
 

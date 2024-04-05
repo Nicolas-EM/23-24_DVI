@@ -38,7 +38,7 @@ export default class Game extends Phaser.Scene {
   private _bottomLeft: Phaser.GameObjects.Image;
   private _bottomRight: Phaser.GameObjects.Image;
 
-  private playlist: string[] = ['Game1', 'Game2', 'Game3', 'Game4', 'Game5', 'Game6', 'Game7', 'Game8', 'Game9', 'Game10', 'Game11', 'Game12', 'Game13', 'Game14', 'Game15', 'Game16', 'Game17', 'Game18', 'Game19', 'Game20'];
+  private playlist: string[] = ['Game1', 'Game2', 'Game3', 'Game4'];
   private playedSongs: string[] = [];
   private warTheme: Phaser.Sound.BaseSound | null = null; // Canción WarTheme.mp3
   private attackEventTimer: Phaser.Time.TimerEvent | null = null; // Temporizador para el evento de ataque
@@ -125,7 +125,7 @@ export default class Game extends Phaser.Scene {
     // Sound
     this.sound.removeAll();
     this.playRandomSong();
-    this.warTheme = this.sound.add('War', { volume: 0.5 });
+    this.warTheme = this.sound.add('War', { volume: 0.3 });
 
     this.events.on('attackEvent', () => {
       if (!this.warTheme.isPlaying) {
@@ -340,7 +340,7 @@ export default class Game extends Phaser.Scene {
 
     const nextSong = remainingSongs[0];
 
-    const song = this.sound.add(nextSong, { volume: 0.5 });
+    const song = this.sound.add(nextSong, { volume: 0.2 });
     song.play();
 
     this.playedSongs.push(nextSong);
