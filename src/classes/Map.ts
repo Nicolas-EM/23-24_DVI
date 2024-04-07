@@ -82,6 +82,8 @@ export default class Map {
                 new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
                 new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
                 new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);
+                // TODO borrar
+                new Soldier(this.scene, <number>obj.x - 320, <number>obj.y - 192, (<Game>(this.scene)).getP1());
             }
         });
 

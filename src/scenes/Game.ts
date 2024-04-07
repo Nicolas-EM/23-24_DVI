@@ -311,6 +311,8 @@ export default class Game extends Phaser.Scene {
 
   endGame(defeat: boolean) {
     this.scene.pause();
-    alert(`Game has ended, you ${defeat ? "lose :(": "win!"}`);
+    this.scene.pause("hud");
+    this.scene.pause("settings");
+    this.scene.run("endgame", { defeat: defeat, color: Client.getMyColor() });
   }
 }
