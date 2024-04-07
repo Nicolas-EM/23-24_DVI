@@ -43,7 +43,7 @@ export default class EndGame extends Phaser.Scene {
 
     // Banner
     let endBanner = this.add.image(0, 0, "Carved_Big");
-    endBanner.scale = 1.75;
+    endBanner.scale = 1.85;
     endContainer.add(endBanner);
 
     this.createEndBanner(endContainer);
@@ -58,7 +58,8 @@ export default class EndGame extends Phaser.Scene {
 
     // Lose
     if (this.defeat) {
-        let dead = this.add.image(0, 17, "Death", 6);
+        let dead = this.add.image(0, 10, "Death", 6);
+        dead.scale = 1.4;
         endContainer.add(dead);
     }
     // Win
@@ -80,15 +81,15 @@ export default class EndGame extends Phaser.Scene {
 
     // Load font
     FontLoader.loadFonts(this, (self) => {
-        let title = self.add.text(0, -100, endTitle, { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", fontSize: 30 }).setOrigin(0.5);
-        let text = self.add.text(0, -45, endText, 
-            { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", wordWrap: { width: 260, useAdvancedWrap: true }, align: "center", fontSize: 15 })
+        let title = self.add.text(0, -110, endTitle, { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", fontSize: 30 }).setOrigin(0.5);
+        let text = self.add.text(0, -55, endText, 
+            { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", wordWrap: { width: 280, useAdvancedWrap: true }, align: "center", fontSize: 16 })
             .setOrigin(0.5);
 
         // Return home button
-        let exitButton = self.add.nineslice(0, -5, "Button_Yellow_Slides", undefined, 210, 60, 15, 15, 0, 5).setInteractive();
+        let exitButton = self.add.nineslice(0, 5, "Button_Yellow_Slides", undefined, 210, 60, 15, 15, 0, 5).setInteractive();
         exitButton.scale = 0.85;
-        let exitText = self.add.text(-60, -20, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", fontSize: 17 });
+        let exitText = self.add.text(-60, -10, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", fontSize: 17 });
         let exitContainer = self.add.container(0, 110);
         exitContainer.add(exitButton);
         exitContainer.add(exitText);
@@ -97,7 +98,7 @@ export default class EndGame extends Phaser.Scene {
         exitButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             if (pointer.leftButtonDown()) {
                 exitButton.setTexture("Button_Yellow_Slides_Pressed");
-                exitText.setPosition(-60, -17);
+                exitText.setPosition(-60, -7);
             }
         });
         exitButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
