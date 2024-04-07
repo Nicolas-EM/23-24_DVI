@@ -9,6 +9,8 @@ import map_desert from '../../assets/maps/desert.json';
 import map_mountain from '../../assets/maps/mountain.json';
 import map_river from '../../assets/maps/river.json';
 
+import { animationFactory } from '../animationFactory';
+
 
 /**
  * Escena para la precarga de los assets que se usarán en el juego.
@@ -260,6 +262,7 @@ export default class Boot extends Phaser.Scene {
    */
   create() {
     this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
+    animationFactory.createAnimations(this);
     this.scene.start('menu');
   }
 

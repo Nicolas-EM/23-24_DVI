@@ -13,7 +13,6 @@ import Soldier from '../classes/npcs/Soldier';
 import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
-import { animationFactory } from '../animationFactory';
 import { PhaserNavMesh } from "phaser-navMesh";
 
 // MAGIC NUMBER
@@ -72,8 +71,6 @@ export default class Game extends Phaser.Scene {
     this.events.on('menuClosed', () => {
       this.optionsMenuOpened = false;
     });
-
-    animationFactory.createAnimations(this);
 
     // Map
     this._map = new Map(this, this.mapId);
