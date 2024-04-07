@@ -5,8 +5,6 @@ import { FontLoader } from '../utils';
 
 const WIN_TITLE = "YOU WON !";
 const LOSE_TITLE = "YOU LOST";
-const WIN_TEXT = "Vincent Redwood has oficially conquered Eliora thanks to your help! He will forever be in debt to you.";
-const LOSE_TEXT = "Vincent Redwood won the war. Now you will have to bow before him. Better luck next time...";
 
 export default class EndGame extends Phaser.Scene {
   
@@ -60,7 +58,7 @@ export default class EndGame extends Phaser.Scene {
 
   createEndBanner(endContainer: Phaser.GameObjects.Container) {
     let endTitle = this.defeat ? LOSE_TITLE : WIN_TITLE;
-    let endText = this.defeat ? LOSE_TEXT : WIN_TEXT;
+    let endText = this.buildText();
 
     // Lose
     if (this.defeat) {
@@ -117,6 +115,26 @@ export default class EndGame extends Phaser.Scene {
         endContainer.add(exitContainer);
     });
 
+  }
+
+  buildText(): String {
+    let pron1 = this.color == "Yellow" ? "She" : "He";
+    let pron2 = this.color == "Yellow" ? "her" : "him";
+
+    let kingName;
+    if (this.color == "Blue")
+      kingName = "Charles Bluebird";
+    else if (this.color == "Red")
+      kingName = "Vincent Redwood";
+    else if (this.color == "Yellow")
+      kingName = "Margaret Yellowstone";
+    else
+      kingName = "Jabari Purpleheart";
+
+    if (this.defeat) 
+      return `${kingName} won the war. Now you will have to bow before ${pron2}. Better luck next time...`;
+    else
+      return `${kingName} has oficially conquered Eliora thanks to your help! ${pron1} will forever be in debt to you.`;
   }
 
   returnHome() {
