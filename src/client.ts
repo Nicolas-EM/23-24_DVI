@@ -70,6 +70,10 @@ export default class Client {
         Client.socket.emit('joinLobby', code);
     }
 
+    static leaveLobby() {
+        Client.socket.emit('leaveLobby');
+    }
+
     static chooseColor(color: string): void {
         Client.socket.emit('chooseColor', Client.lobby.code, color);
     }
@@ -93,6 +97,10 @@ export default class Client {
 
     static surrenderOrLose(playerColor: string) {
         Client.socket.emit('end-game', Client.lobby.code, playerColor);
+    }
+
+    static returnHome() {
+        Client.socket.emit('returnHome');
     }
 }
 

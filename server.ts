@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+import { Socket } from 'socket.io';
 
 const port = 8081;
 const maxPlayers = 2;
@@ -55,6 +56,38 @@ function generateLobbyCode(): string {
     } while (lobbies[code] !== undefined);
 
     return code;
+}
+
+function removePlayerFromLobby(socket: Socket) {
+     // Find lobbies where the player is present
+     for (const lobbyCode in lobbies) {
+        const lobby = lobbies[lobbyCode];
+        const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
+
+        // If player is found in the lobby
+        if (playerIndex !== -1) {
+            // Remove player from the lobby
+            const removedPlayer = lobby.players.splice(playerIndex, 1)[0];
+
+            // Update readyPlayers count if the player was ready
+            if (removedPlayer.ready) {
+                lobby.readyPlayers--;
+            }
+
+            // Add player's color back to available colors
+            if (removedPlayer.color) {
+                lobby.availableColors.push(removedPlayer.color);
+            }
+
+            // Update all players in the lobby
+            io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+
+            // If lobby becomes empty after the player leaves, remove the lobby
+            if (lobby.players.length === 0) {
+                delete lobbies[lobbyCode];
+            }
+        }
+    }
 }
 
 io.on('connection', socket => {
@@ -125,6 +158,12 @@ io.on('connection', socket => {
         }
     });
 
+    // Leave lobby
+    socket.on('leaveLobby', () => {
+        removePlayerFromLobby(socket);
+    });
+
+    // Color chosen
     socket.on('chooseColor', (lobbyCode: string, color: ('Red' | 'Blue' | 'Purple' | 'Yellow')) => {
         const lobby = lobbies[lobbyCode];
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
@@ -148,7 +187,7 @@ io.on('connection', socket => {
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
         if (playerIndex !== -1) {
             if (lobby.players[playerIndex].ready) {
-                console.log("not ready anymore")
+                console.log("Not ready anymore")
                 // Unready
                 lobby.players[playerIndex].ready = false;
                 lobby.readyPlayers--;
@@ -162,35 +201,7 @@ io.on('connection', socket => {
 
     // Handle player disconnecting from lobby
     socket.on('disconnect', () => {
-        // Find lobbies where the player is present
-        for (const lobbyCode in lobbies) {
-            const lobby = lobbies[lobbyCode];
-            const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
-
-            // If player is found in the lobby
-            if (playerIndex !== -1) {
-                // Remove player from the lobby
-                const removedPlayer = lobby.players.splice(playerIndex, 1)[0];
-
-                // Update readyPlayers count if the player was ready
-                if (removedPlayer.ready) {
-                    lobby.readyPlayers--;
-                }
-
-                // Add player's color back to available colors
-                if (removedPlayer.color) {
-                    lobby.availableColors.push(removedPlayer.color);
-                }
-
-                // Update all players in the lobby
-                io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
-
-                // If lobby becomes empty after the player leaves, remove the lobby
-                if (lobby.players.length === 0) {
-                    delete lobbies[lobbyCode];
-                }
-            }
-        }
+        removePlayerFromLobby(socket);
     });
 
     // Set NPC Target
@@ -211,6 +222,20 @@ io.on('connection', socket => {
     // Surrender or Lose condition
     socket.on('end-game', (lobbyCode: string, playerColor: string) => {
         io.to(lobbyCode).emit('end-game', playerColor);
+    });
+
+    // Return to home menu
+    socket.on('returnHome', (lobbyCode: string, playerColor: string) => {
+        // Find lobbies where the player is present
+        for (const lobbyCode in lobbies) {
+            const lobby = lobbies[lobbyCode];
+            const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
+
+            // If player is found in the lobby
+            if (playerIndex !== -1) {
+                delete lobbies[lobbyCode];
+            }
+        }
     });
 });
 

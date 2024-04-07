@@ -102,9 +102,8 @@ export default class EndGame extends Phaser.Scene {
             }
         });
         exitButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonReleased()) {
-                self.returnHome();
-            }
+            if (pointer.leftButtonReleased())
+                this.returnHome();
         });
 
         endContainer.add(title);
@@ -115,7 +114,12 @@ export default class EndGame extends Phaser.Scene {
   }
 
   returnHome() {
-    // TODO
+    Client.returnHome();
+    this.scene.stop();
+    this.scene.stop("game");
+    this.scene.stop("hud");
+    this.scene.stop("settings");
+    this.scene.start('menu');
   }
 
 }

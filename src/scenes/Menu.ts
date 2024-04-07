@@ -5,6 +5,7 @@ import { FontLoader } from '../utils';
 
 
 export default class Menu extends Phaser.Scene {
+  
   constructor() {
     super({ key: 'menu' });
   }
@@ -51,7 +52,8 @@ export default class Menu extends Phaser.Scene {
     this.sound.add('TroopsTheme', { loop: true, volume: 0.5 }).play();
   }
 
-  startLobby() {
+  startLobby() {   
+    this.scene.stop(); 
     this.scene.start('lobby');
   }
 
@@ -79,7 +81,7 @@ export default class Menu extends Phaser.Scene {
 
     // Add text with font
     FontLoader.loadFonts(this, (self) => {
-      let menuText = self.add.text(0, 0,
+      let menuText = self.add.text(0, 1,
         textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25, fontWeigth: "bold" })
         .setOrigin(0.5, 0.9);
 
