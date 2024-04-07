@@ -307,6 +307,10 @@ export default class Game extends Phaser.Scene {
   }
 
   endGame(defeat: boolean) {
+    // Stop music
+    this.sound.removeAll();
+
+    // Change screen
     this.scene.pause();
     this.scene.pause("hud");
     this.scene.pause("settings");

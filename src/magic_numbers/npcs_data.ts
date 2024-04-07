@@ -30,7 +30,7 @@ namespace NPCsData {
         public static HEALTH = 100;
         public static VISION_RANGE = 5;
         public static SPEED = 2.5;
-        public static DAMAGE = 100;
+        public static DAMAGE = 10;
         public static ATTACK_RANGE = 1;     // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds
         public static SPAWNING_TIME = 5000;    

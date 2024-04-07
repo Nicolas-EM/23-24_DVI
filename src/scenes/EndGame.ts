@@ -48,8 +48,14 @@ export default class EndGame extends Phaser.Scene {
 
     this.createEndBanner(endContainer);
 
-    // TODO Sound
-    // this.sound.add('TroopsTheme', { loop: true, volume: 0.5 }).play();
+    // Sound
+    if (this.defeat) {
+      this.sound.add('DefeatTheme', { volume: 0.3 }).play();
+    }
+    else {
+      this.sound.add('VictoryTheme', { volume: 0.2 }).play();
+    }
+    
   }
 
   createEndBanner(endContainer: Phaser.GameObjects.Container) {
@@ -114,6 +120,10 @@ export default class EndGame extends Phaser.Scene {
   }
 
   returnHome() {
+    // Sound
+    this.sound.removeAll();
+
+    // Return to home menu
     Client.returnHome();
     this.scene.stop();
     this.scene.stop("game");
