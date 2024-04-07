@@ -84,6 +84,7 @@ export default abstract class AttackUnit extends NPC {
                     // Check if enough time has passed since the last attack or if have never attacked
                     const timeSinceLastAttack = (time - this._lastAttackTime) / 1000;   // in seconds
                     if (this._lastAttackTime === undefined || timeSinceLastAttack >= this._attackCooldown) {
+                        this.scene.events.emit("attackEvent");
                         this.doAttackAnimation(new Phaser.Math.Vector2(target.x, target.y), (this.x >= target.x));
                         target.onAttackReceived(this._damage, this);
                         // Update last attack time

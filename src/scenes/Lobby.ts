@@ -120,7 +120,6 @@ export default class Lobby extends Phaser.Scene {
       readyContainer.add(self.readyButton);
       readyContainer.add(readyText);
     });
-
   }
 
   update(time: number, delta: number) {
