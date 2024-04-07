@@ -37,6 +37,11 @@ export default class Game extends Phaser.Scene {
   private _bottomLeft: Phaser.GameObjects.Image;
   private _bottomRight: Phaser.GameObjects.Image;
 
+  private gameTheme: Phaser.Sound.BaseSound;// Canción WarTheme.mp3
+  private warTheme: Phaser.Sound.BaseSound; // Canción WarTheme.mp3
+  private attackEventTimer: Phaser.Time.TimerEvent; // Temporizador para el evento de ataque
+
+
   constructor() {
     super({ key: 'game' });
   }
@@ -115,6 +120,25 @@ export default class Game extends Phaser.Scene {
 
     // Sound
     this.sound.removeAll();
+    this.gameTheme = this.sound.add('Game', {volume: 0.2, loop: true});
+    this.gameTheme.play();
+
+    this.warTheme = null;
+    this.attackEventTimer = null;
+
+    this.events.on('attackEvent', () => {
+      // Reiniciar el temporizador en cada evento de ataque
+      if (this.attackEventTimer) {
+        this.attackEventTimer.remove(false);
+      }
+      this.attackEventTimer = this.time.delayedCall(15000, this.stopWarThemeAndResumeSong, [], this);
+
+      this.gameTheme.stop();
+      if (this.warTheme === null) {
+        this.warTheme = this.sound.add('War', { volume: 0.3 , loop: true});
+        this.warTheme.play();
+      }
+    });
 
     // Corners Selected Entity
     this._topLeft = this.add.image(0, 0, "Selected_Top_Left");
@@ -131,6 +155,21 @@ export default class Game extends Phaser.Scene {
         this.setCornersVisibility(false);
       }
     });
+  }
+
+  stopWarThemeAndResumeSong() {
+    if (this.warTheme.isPlaying) {
+      this.tweens.add({
+        targets: this.warTheme,
+        volume: 0,
+        duration: 5000,
+        onComplete: () => {
+          this.warTheme.stop();
+          this.warTheme = null;
+          this.gameTheme.play();
+        }
+      });
+    }
   }
 
   update(time: number, delta: number): void {

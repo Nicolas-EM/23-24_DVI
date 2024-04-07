@@ -103,12 +103,43 @@ export default class Settings extends Phaser.Scene {
             silenceBtnImg.scale = 0.8;
             silenceBtnImg.setOrigin(0);
             let silenceIcon = self.add.image(57, 104, "Sound_On");
+            if (this.sound.mute) {
+                silenceIcon.setTexture("Sound_Off");
+                silenceIcon.setPosition(57, 102);
+            }            
             silenceIcon.setDisplaySize(45, 45);
             silenceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             let silenceBtnContainer = self.add.container(0, 0);
             silenceBtnContainer.add(silenceBtnImg);
             silenceBtnContainer.add(silenceIcon);
 
+            // Silence function
+            silenceBtnImg.setInteractive();
+            silenceBtnImg.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+                if (pointer.leftButtonDown()) {
+                    if (this.sound.mute) {
+                        silenceIcon.setPosition(57, 104);
+                    }
+                    else {
+                        silenceIcon.setPosition(57, 109);
+                    }
+                    silenceBtnImg.setTexture("Button_Yellow_Pressed");
+                }                
+            });
+            silenceBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+                if (pointer.leftButtonReleased()) {
+                    if (this.sound.mute) {
+                        silenceIcon.setTexture("Sound_On");
+                        silenceIcon.setPosition(57, 104);
+                    }
+                    else {
+                        silenceIcon.setTexture("Sound_Off");
+                        silenceIcon.setPosition(57, 102);
+                    }
+                    silenceBtnImg.setTexture("Button_Yellow");
+                    this.muteUnmute();
+                }
+            });
             // Fullscreen button
             let fullscreenBtnImg = self.add.image(80, 80, "Button_Yellow");
             fullscreenBtnImg.scale = 0.8;
@@ -189,6 +220,15 @@ export default class Settings extends Phaser.Scene {
         } else {
             const el = document.getElementById("game")!;
             el.requestFullscreen();
+        }
+    }
+
+    muteUnmute() {
+        if (!this.sound.mute) {
+            this.sound.mute = true;
+        }
+        else {
+            this.sound.mute = false;
         }
     }
 

@@ -254,6 +254,8 @@ export default class Boot extends Phaser.Scene {
 
     // Sounds
     this.load.audio('TroopsTheme', Sounds.Themes.Troops);
+    this.load.audio('War', Sounds.Themes.War);
+    this.load.audio('Game', Sounds.Themes.Game);
     this.load.audio('VictoryTheme', Sounds.Themes.Victory);
     this.load.audio('DefeatTheme', Sounds.Themes.Defeat);
   }

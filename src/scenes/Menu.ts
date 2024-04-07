@@ -49,7 +49,7 @@ export default class Menu extends Phaser.Scene {
     this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, this.joinLobby);
 
     // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.5 }).play();
+    this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
 
   startLobby() {   
