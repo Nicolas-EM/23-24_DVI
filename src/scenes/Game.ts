@@ -38,10 +38,9 @@ export default class Game extends Phaser.Scene {
   private _bottomLeft: Phaser.GameObjects.Image;
   private _bottomRight: Phaser.GameObjects.Image;
 
-  private playlist: string[] = ['Game1', 'Game2', 'Game3', 'Game4'];
-  private playedSongs: string[] = [];
-  private warTheme: Phaser.Sound.BaseSound | null = null; // Canción WarTheme.mp3
-  private attackEventTimer: Phaser.Time.TimerEvent | null = null; // Temporizador para el evento de ataque
+  private gameTheme: Phaser.Sound.BaseSound;// Canción WarTheme.mp3
+  private warTheme: Phaser.Sound.BaseSound; // Canción WarTheme.mp3
+  private attackEventTimer: Phaser.Time.TimerEvent; // Temporizador para el evento de ataque
 
 
   constructor() {
@@ -124,18 +123,23 @@ export default class Game extends Phaser.Scene {
 
     // Sound
     this.sound.removeAll();
-    this.playRandomSong();
-    this.warTheme = this.sound.add('War', { volume: 0.3 });
+    this.gameTheme = this.sound.add('Game', {volume: 0.2, loop: true});
+    this.gameTheme.play();
+
+    this.warTheme = null;
+    this.attackEventTimer = null;
 
     this.events.on('attackEvent', () => {
-      if (!this.warTheme.isPlaying) {
-        this.stopAllSongs();
-        this.playWarTheme();      
-        // Restablecer el temporizador de eventos de ataque
-        if (this.attackEventTimer) {
-            this.attackEventTimer.remove(false);
-        }
-        this.attackEventTimer = this.time.delayedCall(30000, this.stopWarThemeAndResumeSongs, [], this);
+      // Reiniciar el temporizador en cada evento de ataque
+      if (this.attackEventTimer) {
+        this.attackEventTimer.remove(false);
+      }
+      this.attackEventTimer = this.time.delayedCall(15000, this.stopWarThemeAndResumeSong, [], this);
+
+      this.gameTheme.stop();
+      if (this.warTheme === null) {
+        this.warTheme = this.sound.add('War', { volume: 0.3 , loop: true});
+        this.warTheme.play();
       }
     });
 
@@ -154,6 +158,21 @@ export default class Game extends Phaser.Scene {
         this.setCornersVisibility(false);
       }
     });
+  }
+
+  stopWarThemeAndResumeSong() {
+    if (this.warTheme.isPlaying) {
+      this.tweens.add({
+        targets: this.warTheme,
+        volume: 0,
+        duration: 5000,
+        onComplete: () => {
+          this.warTheme.stop();
+          this.warTheme = null;
+          this.gameTheme.play();
+        }
+      });
+    }
   }
 
   update(time: number, delta: number): void {
@@ -327,61 +346,5 @@ export default class Game extends Phaser.Scene {
 
   getNavmesh(): PhaserNavMesh {
     return this._map.navMesh;
-  }
-
-  playRandomSong() {
-    if (this.playedSongs.length === this.playlist.length) {
-        this.playedSongs = [];
-    }
-    let remainingSongs = [...this.playlist];
-    remainingSongs = remainingSongs.filter(song => !this.playedSongs.includes(song));
-
-    Phaser.Utils.Array.Shuffle(remainingSongs);
-
-    const nextSong = remainingSongs[0];
-
-    const song = this.sound.add(nextSong, { volume: 0.2 });
-    song.play();
-
-    this.playedSongs.push(nextSong);
-    
-    song.once('complete', () => {
-        this.playRandomSong();
-    });
-  }
-
-  stopAllSongs() {
-    // Detener todas las canciones de la lista de reproducción aleatoria
-    this.playedSongs.forEach(songKey => {
-        const song = this.sound.get(songKey);
-        if (song && song.isPlaying) {
-            song.stop();
-        }
-    });
-  }
-
-  playWarTheme() {
-    if (!this.warTheme.isPlaying) {
-      this.warTheme.play();
-    }
-  }
-
-  stopWarThemeAndResumeSongs() {
-    // Detener gradualmente WarTheme.mp3
-    if (this.warTheme) {
-        this.tweens.add({
-            targets: this.warTheme,
-            volume: 0,
-            duration: 5000, // Tiempo para desvanecer el volumen a 0
-            onComplete: () => {
-                this.warTheme?.stop();
-                // Reanudar la reproducción normal
-                this.playRandomSong();
-            }
-        });
-    } else {
-        // Si WarTheme no está reproduciendo, simplemente reanuda la reproducción normal
-        this.playRandomSong();
-    }
   }
 }
