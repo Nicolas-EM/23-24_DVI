@@ -284,7 +284,7 @@ export default class Hud extends Phaser.Scene {
                     if ("damage" in hudInfo.info) {
                         // Sword
                         let sword = self.add.image(30, 0, 'Sword');
-                        sword.setDisplaySize(30, 30);
+                        sword.setDisplaySize(14, 30);
                         sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
                         sword.setFlipX(true);
                         self.infoContainer.add(sword);

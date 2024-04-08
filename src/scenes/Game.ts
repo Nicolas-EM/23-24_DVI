@@ -160,21 +160,6 @@ export default class Game extends Phaser.Scene {
     });
   }
 
-  stopWarThemeAndResumeSong() {
-    if (this.warTheme.isPlaying) {
-      this.tweens.add({
-        targets: this.warTheme,
-        volume: 0,
-        duration: 5000,
-        onComplete: () => {
-          this.warTheme.stop();
-          this.warTheme = null;
-          this.gameTheme.play();
-        }
-      });
-    }
-  }
-
   update(time: number, delta: number): void {
     this.cameraPan(delta);
     this.events.emit('update', time, delta);
@@ -264,7 +249,7 @@ export default class Game extends Phaser.Scene {
     else
       return this.p2;
   }
-
+  
   getSelectedEntity(): PlayerEntity | ResourceSpawner {
     return this._selectedEntity;
   }
@@ -346,5 +331,20 @@ export default class Game extends Phaser.Scene {
 
   getNavmesh(): PhaserNavMesh {
     return this._map.navMesh;
+  }
+
+  stopWarThemeAndResumeSong() {
+    if (this.warTheme.isPlaying) {
+      this.tweens.add({
+        targets: this.warTheme,
+        volume: 0,
+        duration: 5000,
+        onComplete: () => {
+          this.warTheme.stop();
+          this.warTheme = null;
+          this.gameTheme.play();
+        }
+      });
+    }
   }
 }
