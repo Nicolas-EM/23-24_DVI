@@ -80,7 +80,7 @@ export default class Menu extends Phaser.Scene {
     // Add text with font
     FontLoader.loadFonts(this, (self) => {
       let menuText = self.add.text(0, 0,
-        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25, fontWeigth: "bold" })
+        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25 })
         .setOrigin(0.5, 0.9);
 
       let menuContainer = self.add.container(self.cameras.main.width / 2, posY)
