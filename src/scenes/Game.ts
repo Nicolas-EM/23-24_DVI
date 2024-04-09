@@ -353,6 +353,6 @@ export default class Game extends Phaser.Scene {
     this.scene.pause();
     this.scene.pause("hud");
     this.scene.pause("settings");
-    this.scene.run("endgame", { defeat: defeat, color: Client.getMyColor() });
+    this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
   }
 }

@@ -91,7 +91,7 @@ export default class Settings extends Phaser.Scene {
                 surrenderButton.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
                     if (pointer.leftButtonDown()) {
                         surrenderButton.setTexture("Button_Red_Slides_Pressed");
-                        surrenderText.setPosition(-105, 96);
+                        surrenderText.setPosition(-105, 105);
                     }
                 });
                 surrenderButton.on("pointerup", (pointer: Phaser.Input.Pointer) => {

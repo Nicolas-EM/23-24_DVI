@@ -50,6 +50,10 @@ export default class Client {
         return Client.lobby.players.find(player => player.id === Client.socket.id)?.color;
     }
 
+    static getOthersColor(): string {
+        return Client.lobby.players.find(player => player.id !== Client.socket.id)?.color;
+    }
+
     static sendTest(): void {
         console.log("test sent");
         Client.socket.emit('test');
