@@ -85,15 +85,15 @@ export default class EndGame extends Phaser.Scene {
 
     // Load font
     FontLoader.loadFonts(this, (self) => {
-        let title = self.add.text(0, -110, endTitle, { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", fontSize: 30 }).setOrigin(0.5);
+        let title = self.add.text(0, -110, endTitle, { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 30 }).setOrigin(0.5);
         let text = self.add.text(0, -55, endText, 
-            { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", wordWrap: { width: 280, useAdvancedWrap: true }, align: "center", fontSize: 16 })
+            { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", wordWrap: { width: 280, useAdvancedWrap: true }, align: "center", fontSize: 16 })
             .setOrigin(0.5);
 
         // Return home button
         let exitButton = self.add.nineslice(0, 5, "Button_Yellow_Slides", undefined, 210, 60, 15, 15, 0, 5).setInteractive();
         exitButton.scale = 0.85;
-        let exitText = self.add.text(-60, -10, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontWeigth: "bold", fontSize: 17 });
+        let exitText = self.add.text(-60, -10, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 17 });
         let exitContainer = self.add.container(0, 110);
         exitContainer.add(exitButton);
         exitContainer.add(exitText);
