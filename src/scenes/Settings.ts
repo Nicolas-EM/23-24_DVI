@@ -69,17 +69,20 @@ export default class Settings extends Phaser.Scene {
         this.optionsContainer = this.add.container(midX, midY);
 
         // Menu
-        let menu = this.add.nineslice(0, 0, "Vertical", undefined, 385, 400, 75, 75, 75, 75);
+        let menu = this.add.nineslice(0, 0, "Vertical", undefined, 385, 420, 75, 75, 75, 75);
         this.optionsContainer.add(menu);
+
+        // Controls
+        this.createControls();
 
         // Load font
         FontLoader.loadFonts(this, (self) => {
             if (self.sceneBase === "game") {
                 // Surrender button
-                let surrenderButton = self.add.image(-125, 85, "Button_Red_Slide").setInteractive();
+                let surrenderButton = self.add.image(-125, 95, "Button_Red_Slide").setInteractive();
                 surrenderButton.scale = 0.7;
                 surrenderButton.setOrigin(0);
-                let surrenderText = self.add.text(-105, 93, "SURRENDER", { fontFamily: "Bellefair" });
+                let surrenderText = self.add.text(-105, 103, "SURRENDER", { fontFamily: "Quattrocento" });
                 let surrenderBtnContainer = self.add.container(0, 0);
                 surrenderBtnContainer.add(surrenderButton);
                 surrenderBtnContainer.add(surrenderText);
@@ -99,13 +102,13 @@ export default class Settings extends Phaser.Scene {
             }
 
             // Silence button
-            let silenceBtnImg = self.add.image(32, 80, "Button_Yellow");
+            let silenceBtnImg = self.add.image(32, 90, "Button_Yellow");
             silenceBtnImg.scale = 0.8;
             silenceBtnImg.setOrigin(0);
-            let silenceIcon = self.add.image(57, 104, "Sound_On");
+            let silenceIcon = self.add.image(57, 114, "Sound_On");
             if (this.sound.mute) {
                 silenceIcon.setTexture("Sound_Off");
-                silenceIcon.setPosition(57, 102);
+                silenceIcon.setPosition(57, 112);
             }            
             silenceIcon.setDisplaySize(45, 45);
             silenceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
@@ -118,10 +121,10 @@ export default class Settings extends Phaser.Scene {
             silenceBtnImg.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
                 if (pointer.leftButtonDown()) {
                     if (this.sound.mute) {
-                        silenceIcon.setPosition(57, 104);
+                        silenceIcon.setPosition(57, 114);
                     }
                     else {
-                        silenceIcon.setPosition(57, 109);
+                        silenceIcon.setPosition(57, 119);
                     }
                     silenceBtnImg.setTexture("Button_Yellow_Pressed");
                 }                
@@ -130,21 +133,21 @@ export default class Settings extends Phaser.Scene {
                 if (pointer.leftButtonReleased()) {
                     if (this.sound.mute) {
                         silenceIcon.setTexture("Sound_On");
-                        silenceIcon.setPosition(57, 104);
+                        silenceIcon.setPosition(57, 114);
                     }
                     else {
                         silenceIcon.setTexture("Sound_Off");
-                        silenceIcon.setPosition(57, 102);
+                        silenceIcon.setPosition(57, 112);
                     }
                     silenceBtnImg.setTexture("Button_Yellow");
                     this.muteUnmute();
                 }
             });
             // Fullscreen button
-            let fullscreenBtnImg = self.add.image(80, 80, "Button_Yellow");
+            let fullscreenBtnImg = self.add.image(80, 90, "Button_Yellow");
             fullscreenBtnImg.scale = 0.8;
             fullscreenBtnImg.setOrigin(0);
-            let fullscreenIcon = self.add.image(105, 100, "Selected");
+            let fullscreenIcon = self.add.image(105, 110, "Selected");
             fullscreenIcon.setDisplaySize(22, 22);
             fullscreenIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             let fullscreenBtnContainer = self.add.container(0, 0);
@@ -154,23 +157,23 @@ export default class Settings extends Phaser.Scene {
             fullscreenBtnImg.setInteractive();
             fullscreenBtnImg.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
                 if (pointer.leftButtonDown()) {
-                    fullscreenIcon.setPosition(105, 102);
+                    fullscreenIcon.setPosition(105, 112);
                     fullscreenBtnImg.setTexture("Button_Yellow_Pressed");
                 }
             });
             fullscreenBtnImg.on("pointerup", (pointer: Phaser.Input.Pointer) => {
                 if (pointer.leftButtonReleased()) {
-                    fullscreenIcon.setPosition(105, 100);
+                    fullscreenIcon.setPosition(105, 110);
                     fullscreenBtnImg.setTexture("Button_Yellow");
                     this.changeFullscreen();
                 }
             });
 
             // Close button
-            let closeBtnImg = self.add.image(80, -140, "Button_Red");
+            let closeBtnImg = self.add.image(80, -150, "Button_Red");
             closeBtnImg.scale = 0.8;
             closeBtnImg.setOrigin(0);
-            let closeIcon = self.add.image(105, -115, "X");
+            let closeIcon = self.add.image(105, -125, "X");
             closeIcon.setDisplaySize(40, 40);
             closeIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
             let closeBtnContainer = self.add.container(0, 0);
@@ -197,6 +200,73 @@ export default class Settings extends Phaser.Scene {
             self.optionsContainer.add(closeBtnContainer);
             self.optionsContainer.setVisible(false);
         });
+    }
+
+    createControls() {
+        FontLoader.loadFonts(this, (self) => {
+            // Title
+            let titleIcon = self.add.image(0, 0, "Carved_Rectangle_Shadow");
+            titleIcon.scale = 0.75;
+            let titleText = self.add.text(0, 0, "CONTROLS", { color: '#000000', fontFamily: "Quattrocento", fontSize: 20, fontStyle: "bold" }).setOrigin(0.5);
+            let titleContainer = self.add.container(-45, -125);
+            titleContainer.add(titleIcon);
+            titleContainer.add(titleText);
+            self.optionsContainer.add(titleContainer);
+
+            // Move around the map
+            self.optionsContainer.add(self.add.text(-115, -90, "Move around the map:", { color: '#000000', fontFamily: "Quattrocento", fontSize: 16 }));
+            // Move controls
+            self.optionsContainer.add(self.add.rectangle(-115, -65, 220, 70).setOrigin(0));
+            // WASD keys
+            self.createKey(-65, -45, "W");
+            self.createKey(-95, -15, "A");
+            self.createKey(-65, -15, "S");
+            self.createKey(-35, -15, "D");
+            // Map arrows
+            let mapContainer = self.add.container(45, -30);
+            let mapIcon = self.add.nineslice(0, 0, "Carved_Big", undefined, 115, 65, 5, 5, 5, 5);
+            let pointer = self.add.image(0, 0, "Pointer");
+            pointer.setDisplaySize(10, 15);
+            pointer.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let arrowUp = (self.add.image(0, -18, "Exit").setAngle(90)).setDisplaySize(18, 16);
+            arrowUp.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let arrowDown = (self.add.image(0, 18, "Exit").setAngle(-90)).setDisplaySize(18, 16);
+            arrowDown.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let arrowLeft = (self.add.image(-30, 0, "Exit")).setDisplaySize(18, 16);
+            arrowLeft.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            let arrowRight = (self.add.image(30, 0, "Exit")).setDisplaySize(-18, 16);
+            arrowRight.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            mapContainer.add(mapIcon);
+            mapContainer.add(pointer);
+            mapContainer.add(arrowUp);
+            mapContainer.add(arrowDown);
+            mapContainer.add(arrowLeft);
+            mapContainer.add(arrowRight);
+            self.optionsContainer.add(mapContainer);
+
+            // Left click
+            let leftClick = self.add.image(-105, 31, "LMB");
+            leftClick.setDisplaySize(20, 25);
+            leftClick.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            self.optionsContainer.add(leftClick);
+            self.optionsContainer.add(self.add.text(-23, 30, "Select / Spawn NPC", { color: '#000000', fontFamily: "Quattrocento", fontSize: 15 }).setOrigin(0.5));
+            // Right click
+            let rightClick = self.add.image(-105, 61, "RMB");
+            rightClick.setDisplaySize(20, 25);
+            rightClick.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            self.optionsContainer.add(rightClick);
+            self.optionsContainer.add(self.add.text(-13, 60, "Move / Attack / Gather", { color: '#000000', fontFamily: "Quattrocento", fontSize: 15 }).setOrigin(0.5));
+        });
+    }
+
+    createKey(posX, posY, key) {
+        let keyIcon = this.add.image(0, 0, "Button_Disable");
+        keyIcon.scale = 0.5;
+        let keyText = this.add.text(0, -2, key, { color: '#000000', fontFamily: "Quattrocento", fontSize: 15, fontStyle: "bold" }).setOrigin(0.5);
+        let keyContainer = this.add.container(posX, posY);
+        keyContainer.add(keyIcon);
+        keyContainer.add(keyText);
+        this.optionsContainer.add(keyContainer);
     }
 
     openOptionsMenu() {
