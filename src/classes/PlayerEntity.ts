@@ -5,9 +5,6 @@ import { HudInfo, Resources } from '../utils';
 import * as Sprites from "../../assets/sprites";
 import Client from '../client';
 import AttackUnit from './npcs/AttackUnit';
-import Archer from './npcs/Archer';
-import Goblin from './npcs/Goblin';
-import Soldier from './npcs/Soldier';
 
 export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     // protected attributes:
@@ -77,18 +74,18 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
 
     onDown(pointer: Phaser.Input.Pointer): void { // TODO Se sobre pone el de game
         let entity = (<Game>(this.scene)).getSelectedEntity();
+        const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
 
-        if (entity && entity instanceof PlayerEntity // TODO Tiene que ser solo para las AttackUnits
-            && entity.belongsToMe() && !this.belongsToMe() && pointer.rightButtonDown()) {
+        if (entity && entity instanceof PlayerEntity && isAttackUnit && entity.belongsToMe() && !this.belongsToMe() && pointer.rightButtonDown()) {
             this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Sword_Pressed}), pointer`);
         }
     }
 
     onHover(): void {
-        let entity = (<Game>(this.scene)).getSelectedEntity();
+        const entity = (<Game>(this.scene)).getSelectedEntity();
+        const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
 
-        if (entity && entity instanceof PlayerEntity // TODO Tiene que ser solo para las AttackUnits
-            && entity.belongsToMe() && !this.belongsToMe()) {
+        if (entity && isAttackUnit && entity instanceof PlayerEntity && entity.belongsToMe() && !this.belongsToMe()) {
             this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Sword}), pointer`);
         }
     }
