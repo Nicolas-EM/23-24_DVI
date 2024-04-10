@@ -66,22 +66,32 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
 
     protected abstract dieOrDestroy();
 
-    onEntityClicked(pointer: Phaser.Input.Pointer): void {
+    private setSwordCursor(icon: any) {
+        let entity = (<Game>(this.scene)).getSelectedEntity();
+        const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
+
+        if (entity && entity instanceof PlayerEntity && isAttackUnit && entity.belongsToMe() && !this.belongsToMe()) {
+            this.scene.input.setDefaultCursor(`url(${icon}), pointer`);
+        }
+    }
+
+    private onEntityClicked(pointer: Phaser.Input.Pointer): void {
+        if(pointer.rightButtonReleased()) {
+            this.setSwordCursor(Sprites.UI.Pointers.Sword);
+        }
+
         if (pointer.leftButtonReleased()) {
             (<Game>(this.scene)).setSelectedEntity(this);
         }
     }
 
-    onDown(pointer: Phaser.Input.Pointer): void { // TODO Se sobre pone el de game
-        let entity = (<Game>(this.scene)).getSelectedEntity();
-        const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
-
-        if (entity && entity instanceof PlayerEntity && isAttackUnit && entity.belongsToMe() && !this.belongsToMe() && pointer.rightButtonDown()) {
-            this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Sword_Pressed}), pointer`);
+    private onDown(pointer: Phaser.Input.Pointer): void {
+        if (pointer.rightButtonDown()) {
+            this.setSwordCursor(Sprites.UI.Pointers.Sword_Pressed);
         }
     }
 
-    onHover(): void {
+    private onHover(): void {
         const entity = (<Game>(this.scene)).getSelectedEntity();
         const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
 
@@ -90,7 +100,7 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         }
     }
 
-    onOut(): void {
+    private onOut(): void {
         this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     }
 
