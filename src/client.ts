@@ -9,8 +9,8 @@ export default class Client {
     static scene: Phaser.Scene;
 
     static init() {
-        Client.socket.on('lobbyCreated', (code) => {
-            Client.joinLobby(code);
+        Client.socket.on('lobbyCreated', (code, quickPlay) => {
+            Client.joinLobby(code, quickPlay);
         });
 
         Client.socket.on('updateLobby', (data: {lobby: lobbyData}) => {
@@ -44,11 +44,6 @@ export default class Client {
         return Client.lobby.players.find(player => player.id === Client.socket.id)?.color;
     }
 
-    static sendTest(): void {
-        console.log("test sent");
-        Client.socket.emit('test');
-    }
-
     // Menu functions
     static quickPlay(): void {
         Client.socket.emit('quickPlay');
@@ -59,8 +54,8 @@ export default class Client {
     }
 
     // Lobby Functions
-    static joinLobby(code: string): void {
-        (<Menu>(Client.scene)).startLobby();
+    static joinLobby(code: string, quickPlay: boolean): void {
+        (<Menu>(Client.scene)).startLobby(quickPlay);
         Client.socket.emit('joinLobby', code);
     }
 

@@ -51,8 +51,8 @@ export default class Menu extends Phaser.Scene {
     this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
 
-  startLobby() {
-    this.scene.start('lobby');
+  startLobby(quickPlay: boolean) {
+    this.scene.start('lobby', { quickPlay: quickPlay });
   }
 
   quickPlay() {
@@ -64,7 +64,7 @@ export default class Menu extends Phaser.Scene {
   }
 
   joinLobby() {
-    Client.joinLobby(globalThis.lobbyCode);
+    Client.joinLobby(globalThis.lobbyCode, false);
   }
 
   addCloud(texture: number, posX: number, posY: number, scale: number): void {
