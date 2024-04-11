@@ -29,14 +29,12 @@ export default class Lobby extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings');
-    this.scene.get("settings").events.on('menuOpened', () => {
-      if(this.scene.isActive("lobby"))
-        this.scene.pause();
+    this.scene.run('settings', { scene: "lobby" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
     });
-    this.scene.get("settings").events.on('menuClosed', () => {
-      if(this.scene.isActive("lobby"))
-        this.scene.resume();
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
     });
 
     // Background
@@ -99,7 +97,7 @@ export default class Lobby extends Phaser.Scene {
       let readyContainer = self.add.container(self.cameras.main.width / 2, 450);
       self.readyButton = self.add.image(0, 0, "Button_Yellow_Slides").setInteractive();
       self.readyButton.scale = 0.85;
-      let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontWeigth: "bold" })
+      let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontStyle: "bold" })
       self.readyButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonDown()) {
           if (!this.isReady)
@@ -122,7 +120,6 @@ export default class Lobby extends Phaser.Scene {
       readyContainer.add(self.readyButton);
       readyContainer.add(readyText);
     });
-
   }
 
   update(time: number, delta: number) {

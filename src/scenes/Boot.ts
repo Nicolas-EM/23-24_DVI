@@ -185,6 +185,8 @@ export default class Boot extends Phaser.Scene {
     this.load.image('X_Disable', Sprites.UI.Icons.X_Disable);
     this.load.image('X_Pressed', Sprites.UI.Icons.X_Pressed);
     this.load.image('X', Sprites.UI.Icons.X);
+    this.load.image('RMB', Sprites.UI.Icons.RMB);
+    this.load.image('LMB', Sprites.UI.Icons.LMB);
     this.load.multiatlas('Icons');
 
     // UI - Menu&Lobby
@@ -196,6 +198,7 @@ export default class Boot extends Phaser.Scene {
 
     // UI - Pointers
     this.load.image('Axe', Sprites.UI.Pointers.Axe);
+    this.load.image('Axe_Pressed', Sprites.UI.Pointers.Axe_Pressed);
     this.load.image('Hammer', Sprites.UI.Pointers.Hammer);
     this.load.image('Pointer', Sprites.UI.Pointers.Pointer);
     this.load.image('Pointer_Pressed', Sprites.UI.Pointers.Pointer_Pressed);
@@ -205,6 +208,7 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Selected_Top_Right', Sprites.UI.Pointers.Selected_Top_Right);
     this.load.image('Selected', Sprites.UI.Pointers.Selected);
     this.load.image('Sword', Sprites.UI.Pointers.Sword);
+    this.load.image('Sword_Pressed', Sprites.UI.Pointers.Sword_Pressed);
 
     // UI - Ribbons
     this.load.image('Ribbon_Blue_Down_Pressed', Sprites.UI.Ribbons.Blue_Down_Pressed);
@@ -252,6 +256,9 @@ export default class Boot extends Phaser.Scene {
 
     // Sounds
     this.load.audio('TroopsTheme', Sounds.Themes.Troops);
+    this.load.audio('War', Sounds.Themes.War);
+    this.load.audio('Game', Sounds.Themes.Game);
+
   }
 
   /**

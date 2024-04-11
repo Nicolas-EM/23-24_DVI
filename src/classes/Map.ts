@@ -77,6 +77,7 @@ export default class Map {
                 new Soldier(this.scene, <number>obj.x, <number>obj.y - 192, p1);
                 new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
                 new Goblin(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
+                new Villager(this.scene, <number>obj.x + 128, <number>obj.y - 192, p1);
             } else if (obj.type === "Townhall_P2") {
                 const p2 = (<Game>(this.scene)).getP2();
 

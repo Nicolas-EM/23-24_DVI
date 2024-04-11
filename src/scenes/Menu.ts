@@ -21,14 +21,12 @@ export default class Menu extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings');
-    this.scene.get('settings').events.on('menuOpened', () => {
-      if(this.scene.isActive("menu"))
-        this.scene.pause();
+    this.scene.run('settings', { scene: "menu" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
     });
-    this.scene.get('settings').events.on('menuClosed', () => {
-      if(this.scene.isActive("menu"))
-        this.scene.resume();
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
     });
 
     // Background
@@ -50,7 +48,7 @@ export default class Menu extends Phaser.Scene {
     this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, this.joinLobby);
 
     // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.5 }).play();
+    this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
 
   startLobby() {
@@ -82,7 +80,7 @@ export default class Menu extends Phaser.Scene {
     // Add text with font
     FontLoader.loadFonts(this, (self) => {
       let menuText = self.add.text(0, 0,
-        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25, fontWeigth: "bold" })
+        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25 })
         .setOrigin(0.5, 0.9);
 
       let menuContainer = self.add.container(self.cameras.main.width / 2, posY)
