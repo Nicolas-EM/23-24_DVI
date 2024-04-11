@@ -76,14 +76,14 @@ io.on('connection', socket => {
 
         if (availableLobby) {
             // Join available lobby
-            socket.emit('lobbyCreated', availableLobby.code);
+            socket.emit('lobbyCreated', availableLobby.code, true);
         } else {
             // No available lobbies, create a new one
             const lobbyCode = generateLobbyCode(); // Function to generate a unique lobby code
             lobbies[lobbyCode] = createDefaultLobby();
             lobbies[lobbyCode].code = lobbyCode;
 
-            socket.emit('lobbyCreated', lobbyCode);
+            socket.emit('lobbyCreated', lobbyCode, true);
         }
     });
 
@@ -94,7 +94,7 @@ io.on('connection', socket => {
         // Make lobby private
         lobbies[lobbyCode].isPrivate = true;
 
-        socket.emit('lobbyCreated', lobbyCode);
+        socket.emit('lobbyCreated', lobbyCode, false);
     });
 
     // Handle lobby joining
