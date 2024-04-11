@@ -58,8 +58,7 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
             damage?: number;
         }).health = this._health;
 
-        if(this._health <= 0) {
-            // TODO: Kill / Destroy entity
+        if(this._health <= 0 && this.body) {
             this.dieOrDestroy();
         }
     }

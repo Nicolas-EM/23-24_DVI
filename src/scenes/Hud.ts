@@ -275,6 +275,9 @@ export default class Hud extends Phaser.Scene {
                     let resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Quattrocento" });
                     self.infoContainer.add(resourceIcon);
                     self.infoContainer.add(resourceAmount);
+
+                    if(hudInfo.info.remainingResources <= 0)
+                        self.displayedEntity = undefined;
                 }
                 // PlayerEntity
                 else {

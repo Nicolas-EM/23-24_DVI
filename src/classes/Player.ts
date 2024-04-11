@@ -98,6 +98,12 @@ export default class Player {
     return false;
   }
 
+  addResources(resource: Resources) {
+    this.resources.gold += resource.gold;
+    this.resources.wood += resource.wood;
+    this.resources.food += resource.food;
+  }
+
   pay(resources: Resources) {
     this.resources.gold -= resources.gold;
     this.resources.wood -= resources.wood;
