@@ -150,8 +150,10 @@ export default class Game extends Phaser.Scene {
       }
     }
 
-    if(!this._selectedEntity?.body)
+    if(!this._selectedEntity?.body) {
       this._selectedEntity = undefined;
+      this.setCornersVisibility(false);
+    }
 
     // If not NPC, position should not update
     if (this._selectedEntity && this._selectedEntity instanceof NPC) {

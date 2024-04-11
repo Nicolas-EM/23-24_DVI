@@ -1,7 +1,6 @@
 import * as Phaser from "phaser";
 import { HudInfo, IconInfo } from "../../utils";
 import Game from "../../scenes/Game";
-import Villager from "../npcs/Villager";
 import Player from "../Player";
 
 export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite {
@@ -36,6 +35,7 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
         this.scene.physics.add.existing(this);
         
         this.on('pointerup', this.onClick, this);
+        this.scene.events.on("update", this.update, this);
     }
 
     onClick(pointer: Phaser.Input.Pointer): void {
