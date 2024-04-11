@@ -48,7 +48,6 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
         if (entity && entity instanceof Villager && entity.belongsToMe()) {
             this.scene.input.setDefaultCursor(`url(${icon}), pointer`);
         }
-        this.scene.events.on("update", this.update, this);
     }
 
     onClick(pointer: Phaser.Input.Pointer): void {

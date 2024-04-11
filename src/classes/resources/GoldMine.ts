@@ -5,7 +5,7 @@ import Player from "../Player";
 import NPCsData from "../../magic_numbers/npcs_data";
 
 export default class GoldMine extends ResourceSpawner {
-    private timeSinceLastGather = 0;
+    private activeTimer: Phaser.Time.TimerEvent = undefined;
 
     constructor(scene: Game, x: number, y: number, frame?: string | number) {
         super(scene, x, y, ResourcesData.Gold.ICON_INFO.name, ResourcesData.Gold.ICON_INFO, ResourcesData.Gold.ICON, ResourcesData.Gold.CAPACITY, ResourcesData.Gold.RATE, frame);
@@ -18,22 +18,32 @@ export default class GoldMine extends ResourceSpawner {
     }
 
     gather(player: Player)  {
-        this.timeSinceLastGather = 0;
         this.setFrame(1);
+
+        // Remove the previous timer if it exists
+        if (this.activeTimer) {
+            this.activeTimer.remove();
+        }
+
+        // Create a new timer to reset the frame after the cooldown period
+        this.activeTimer = this.scene.time.addEvent({
+            delay: NPCsData.Villager.GATHER_COOLDOWN * 1000 * 2,
+            callback: this.resetFrame,
+            callbackScope: this,
+            loop: false
+        });
+
         super.gather(player);
+    }
+
+    resetFrame() {
+        console.log("frame reset");
+        this.setFrame(0);
+        this.activeTimer = undefined;
     }
 
     protected setDestroyedFrame() {
         const x = this.scene.add.sprite(this.x, this.y, this.texture.key, 2);
         x.setDepth(this.depth);
-    }
-
-    update(time: number, delta: number) {
-        this.timeSinceLastGather += delta / 2100;
-        if(this.timeSinceLastGather >= NPCsData.Villager.GATHER_COOLDOWN) {
-            this.setFrame(0);
-        }
-
-        super.update(time, delta);
     }
 }
