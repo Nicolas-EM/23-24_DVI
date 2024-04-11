@@ -8,6 +8,7 @@ const LOBBY_CODE_LENGTH = 6;
 export default class Settings extends Phaser.Scene {
 
     private lobbyCode: Phaser.GameObjects.Text;
+    private cursor: Phaser.GameObjects.Text;
 
     constructor() {
         super({ key: 'join-lobby' });
@@ -33,7 +34,7 @@ export default class Settings extends Phaser.Scene {
         let joinContainer = this.add.container(midX, midY - 10);
         joinContainer.add(joinIcon);
 
-        FontLoader.loadFonts(this, (self) => {
+        FontLoader.loadFonts(this, (self: Settings) => {
             // Cancel button
             let cancelBtnImg = self.add.image(0, 0, "Button_Red_Slide");
             cancelBtnImg.scale = 0.75;
@@ -60,10 +61,15 @@ export default class Settings extends Phaser.Scene {
             // Text area
             let textContainer = self.add.container(joinContainer.width, -35);
             let textIcon = self.add.nineslice(0, 0, "Horizontal", undefined, 360, 100, 3, 3, 5, 5);
-            this.lobbyCode = self.add.text(0, 0, "", { color: '#000000', fontFamily: "Quattrocento", fontSize: 34 }).setOrigin(0.5);
+            self.lobbyCode = self.add.text(0, 0, "", { color: '#000000', fontFamily: "Quattrocento", fontSize: 34 }).setOrigin(0.5);
             textContainer.add(textIcon);
-            textContainer.add(this.lobbyCode);
+            textContainer.add(self.lobbyCode);
             joinContainer.add(textContainer);
+
+            // Cursor
+            self.cursor = self.add.text(self.lobbyCode.x + self.lobbyCode.width, 0, "_", { color: '#000000', fontFamily: "Quattrocento", fontSize: 34, fontStyle: "bold" }).setOrigin(0.5);
+            self.tweens.add({ targets: self.cursor, alpha: 0, duration: 400, repeat: -1, yoyo: true });
+            textContainer.add(self.cursor);
 
             // Join button
             let joinBtnContainer = self.add.container(joinContainer.width + 75, joinContainer.height + 45);
@@ -98,9 +104,17 @@ export default class Settings extends Phaser.Scene {
             let key = event.key;
             if (/^[a-zA-Z0-9]$/i.test(key) && this.lobbyCode.text.length < LOBBY_CODE_LENGTH) {
                 this.lobbyCode.text += key.toUpperCase();
+                if (this.lobbyCode.text.length == LOBBY_CODE_LENGTH) {
+                    this.cursor.setVisible(false);
+                }
+                this.cursor.setX(this.lobbyCode.x + this.lobbyCode.width / 2 + 10);
             }
             else if (key == "Backspace" && this.lobbyCode.text.length > 0) {
                 this.lobbyCode.text = this.lobbyCode.text.slice(0, -1);
+                if (this.lobbyCode.text.length == LOBBY_CODE_LENGTH - 1) {
+                    this.cursor.setVisible(true);
+                }
+                this.cursor.setX(this.lobbyCode.x + this.lobbyCode.width / 2 + 10);
             }
         });
     }
@@ -109,4 +123,10 @@ export default class Settings extends Phaser.Scene {
         Client.joinLobby(this.lobbyCode.text);
     }
 
+    private cursorBlink() {
+        console.log("Cursor blink");
+        if (this.lobbyCode.text.length < LOBBY_CODE_LENGTH) {
+            this.cursor.setVisible(!this.cursor.visible);
+        }
+    }
 }
