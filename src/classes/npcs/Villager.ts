@@ -10,7 +10,7 @@ export default class Villager extends NPC {
     static readonly COST: Resources = NPCsData.Villager.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Villager.SPAWNING_TIME;
     private _currentAnimation: string = "idle"; static readonly ICON: string = NPCsData.Villager.ICON_INFO.name;
-    private _gatherTarget: ResourceSpawner;
+    private _gatherTargetId: string = undefined;
     private _lastGatherTime: number;
     private _gatherCooldown: number = NPCsData.Villager.GATHER_COOLDOWN;
 
@@ -131,40 +131,52 @@ export default class Villager extends NPC {
     // }
 
     setGatherTarget(resourceSpawner: ResourceSpawner) {
-        this._gatherTarget = resourceSpawner;
-        if(this._gatherTarget){
-            this.setMovementTarget(new Phaser.Math.Vector2(this._gatherTarget.x, this._gatherTarget.y));
+        this._gatherTargetId = resourceSpawner.getId();
+        if(this._gatherTargetId){
+            this.setMovementTarget(new Phaser.Math.Vector2(resourceSpawner.x, resourceSpawner.y));
         }
     }
 
-    private isGatherTargetInRange(): boolean {
-        if(!this._gatherTarget)
-            return false;
-
-        const distance = Phaser.Math.Distance.Between(this.x, this.y, this._gatherTarget.x, this._gatherTarget.y);
+    private isGatherTargetInRange(gatherTarget: ResourceSpawner): boolean {
+        const distance = Phaser.Math.Distance.Between(this.x, this.y, gatherTarget.x, gatherTarget.y);
         return distance <= 64;  // Within 1 tile
     }
 
-    update(time: number, delta: number) {
-        if (this._gatherTarget && this.isGatherTargetInRange()) {
-            // Within range - stop moving
-            if(this._path || this._currentTarget) { 
-                this._path = [];
-                this._currentTarget = undefined;
+    setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
+        if(this._gatherTargetId) {
+            const target = (this.scene as Game).getResourceSpawnerById(this._gatherTargetId);
+            if(target && Phaser.Math.Distance.Between(targetPoint.x, targetPoint.y, target.x, target.y) > 64) { // TODO: magic number - tile size
+                this._gatherTargetId = undefined;
             }
+        }
 
-            // TODO: Check if resource still has resource
-            if(this._gatherTarget) {
-                // Check if enough time has passed since the last attack or if have never attacked
-                const timeSinceLastAttack = (time - this._lastGatherTime) / 1000;   // in seconds
-                if (this._lastGatherTime === undefined || timeSinceLastAttack >= this._gatherCooldown) {
-                    this.doGatherAnimation(this.x >= this._gatherTarget.x);
-                    this._gatherTarget.gather(this._owner);
-                    // Update last gather time
-                    this._lastGatherTime = time;
+        super.setMovementTarget(targetPoint);
+    }
+
+    update(time: number, delta: number) {
+        if(this._gatherTargetId) {
+            const gatherTarget = (this.scene as Game).getResourceSpawnerById(this._gatherTargetId);
+
+            if (gatherTarget && this.isGatherTargetInRange(gatherTarget)) {
+                // Within range - stop moving
+                if(this._path || this._currentTarget) { 
+                    this._path = [];
+                    this._currentTarget = undefined;
                 }
-            } else {
-                this._gatherTarget = undefined;
+    
+                // TODO: Check if resource still has resource
+                if(gatherTarget) {
+                    // Check if enough time has passed since the last attack or if have never attacked
+                    const timeSinceLastAttack = (time - this._lastGatherTime) / 1000;   // in seconds
+                    if (this._lastGatherTime === undefined || timeSinceLastAttack >= this._gatherCooldown) {
+                        this.doGatherAnimation(this.x >= gatherTarget.x);
+                        gatherTarget.gather(this._owner);
+                        // Update last gather time
+                        this._lastGatherTime = time;
+                    }
+                } else {
+                    this._gatherTargetId = undefined;
+                }
             }
         }
 

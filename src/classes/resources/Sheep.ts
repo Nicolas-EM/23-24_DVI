@@ -15,4 +15,6 @@ export default class Sheep extends ResourceSpawner {
     protected addResourceToPlayer(player: Player, amount: number) {
         player.addResources({gold: 0, wood: 0, food: amount});
     }
+
+    protected setDestroyedFrame() {}
 }

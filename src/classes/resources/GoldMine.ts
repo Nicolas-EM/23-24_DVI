@@ -14,4 +14,9 @@ export default class GoldMine extends ResourceSpawner {
     protected addResourceToPlayer(player: Player, amount: number) {
         player.addResources({gold: amount, wood: 0, food: 0});
     }
+
+    protected setDestroyedFrame() {
+        const x = this.scene.add.sprite(this.x, this.y, this.texture.key, 2);
+        x.setDepth(this.depth);
+    }
 }

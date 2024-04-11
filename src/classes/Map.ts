@@ -144,7 +144,10 @@ export default class Map {
     }
 
     getResourceSpawnerById(id: string): ResourceSpawner {
-        console.log(this.spawners);
         return this.spawners.find((spawner: ResourceSpawner) => spawner.getId() === id);
+    }
+
+    removeResourceSpawner(spawner: ResourceSpawner) {
+        this.spawners = this.spawners.filter(s => s.getId() !== spawner.getId());
     }
 }

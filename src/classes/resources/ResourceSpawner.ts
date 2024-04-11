@@ -68,5 +68,18 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
         (this._hudInfo.info as { remainingResources: number; resource: string; }).remainingResources = this._remainingResources;
 
         this.addResourceToPlayer(player, amountGathered);
+
+        if(this._remainingResources <= 0)
+            this.setDestroyed();
+    }
+
+    protected abstract setDestroyedFrame();
+
+    setDestroyed(): void {
+        if(this.body) {
+            (this.scene as Game).removeResourceSpawner(this);
+            this.setDestroyedFrame();
+            this.destroy();
+        }
     }
 }

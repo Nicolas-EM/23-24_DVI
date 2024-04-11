@@ -128,14 +128,6 @@ export default class Game extends Phaser.Scene {
     this._bottomRight = this.add.image(0, 0, "Selected_Bottom_Right");
 
     this.setCornersVisibility(false);
-
-    this.events.on("death", (entity) => {
-      console.log("Entity death", entity);
-      if(this._selectedEntity === entity) {
-        this._selectedEntity = null;
-        this.setCornersVisibility(false);
-      }
-    });
   }
 
   update(time: number, delta: number): void {
@@ -158,7 +150,11 @@ export default class Game extends Phaser.Scene {
       }
     }
 
-    if (this._selectedEntity) {
+    if(!this._selectedEntity?.body)
+      this._selectedEntity = undefined;
+
+    // If not NPC, position should not update
+    if (this._selectedEntity && this._selectedEntity instanceof NPC) {
       this.setCornersPosition();
     }
   }
@@ -256,10 +252,14 @@ export default class Game extends Phaser.Scene {
   }
 
   setCornersPosition() {
-    this._topLeft.setPosition(this._selectedEntity.x - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
-    this._topRight.setPosition(this._selectedEntity.x + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
-    this._bottomLeft.setPosition(this._selectedEntity.x - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
-    this._bottomRight.setPosition(this._selectedEntity.x + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
+    const physicsBody = (this._selectedEntity.body as Phaser.Physics.Arcade.Body);
+    const width = physicsBody.width / 2;
+    const height = physicsBody.height / 2;
+    
+    this._topLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y - (height));
+    this._topRight.setPosition(this._selectedEntity.x + (width), this._selectedEntity.y - (height));
+    this._bottomLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y + (height));
+    this._bottomRight.setPosition(this._selectedEntity.x + (width), this._selectedEntity.y + (height));
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {
@@ -321,5 +321,9 @@ export default class Game extends Phaser.Scene {
 
   getResourceSpawnerById(id: string): ResourceSpawner {
     return this._map.getResourceSpawnerById(id);
+  }
+
+  removeResourceSpawner(spawner: ResourceSpawner) {
+    this._map.removeResourceSpawner(spawner);
   }
 }

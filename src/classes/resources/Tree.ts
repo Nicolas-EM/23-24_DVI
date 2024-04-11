@@ -16,4 +16,9 @@ export default class Tree extends ResourceSpawner {
     protected addResourceToPlayer(player: Player, amount: number) {
         player.addResources({gold: 0, wood: amount, food: 0});
     }
+
+    protected setDestroyedFrame() {
+        const x = this.scene.add.sprite(this.x, this.y, this.texture.key, 8);
+        x.setDepth(this.depth);
+    }
 }
