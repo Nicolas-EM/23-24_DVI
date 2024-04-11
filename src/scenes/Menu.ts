@@ -47,6 +47,11 @@ export default class Menu extends Phaser.Scene {
     this.addButton("CREATE GAME", this.cameras.main.height / 2, this.createLobby);
     this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, this.joinLobby);
 
+    // On resume
+    this.events.on("resume", () => {
+      Client.setScene(this);
+    });
+
     // Sound
     this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
@@ -63,8 +68,9 @@ export default class Menu extends Phaser.Scene {
     Client.createLobby();
   }
 
-  joinLobby() {
-    Client.joinLobby(globalThis.lobbyCode, false);
+  joinLobby = () => {
+    this.scene.pause();
+    this.scene.run("join-lobby");
   }
 
   addCloud(texture: number, posX: number, posY: number, scale: number): void {
