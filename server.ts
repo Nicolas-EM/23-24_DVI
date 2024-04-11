@@ -207,6 +207,12 @@ io.on('connection', socket => {
     socket.on('attack', (lobbyCode: string, npcId: string, targetId: string) => {
         io.to(lobbyCode).emit('attack', npcId, targetId);
     });
+
+    // Villager gather order
+    socket.on('gather', (lobbyCode: string, villagerId: string, resourceSpawnerId: string) => {
+        console.log("gather", villagerId, resourceSpawnerId);
+        io.to(lobbyCode).emit('gather', villagerId, resourceSpawnerId);
+    });
 });
 
 http.listen(port, () => {

@@ -56,14 +56,6 @@ export default class Game extends Phaser.Scene {
   create() {
     Client.setScene(this);
 
-    // Cursor
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
-    });
-    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
-    });
-
     // Players
     this.p1 = new Player(Client.lobby.players[0].color, Client.lobby.players[0].color, this);
     this.p2 = new Player(Client.lobby.players[1].color, Client.lobby.players[1].color, this);
@@ -99,31 +91,14 @@ export default class Game extends Phaser.Scene {
       'right': Phaser.Input.Keyboard.KeyCodes.D
     });
 
-    this.input.on('gameobjectdown', (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject, stopPropagation) => {
-      if (this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
-        return;
-
-      if (this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
-        if (!(gameObject as PlayerEntity).belongsToMe())
-          Client.attackOrder(this._selectedEntity.getId(), gameObject.getId());
-      }
-    });
-
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if (this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity)
-        return;
-      if (pointer.leftButtonDown()) {
-        this.setSelectedEntity(undefined);
-      }
-      if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
-        const pointerPosition = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
-        Client.setNpcTarget(this._selectedEntity.getId(), pointerPosition);
-      }
-    });
+    // Cursor
+    this.input.on('gameobjectdown', this.handlGameObjectDown);
+    this.input.on('pointerdown', this.handlePointerDown);
+    this.input.on("pointerup", this.handlePointerUp);
 
     // Sound
     this.sound.removeAll();
-    this.gameTheme = this.sound.add('Game', {volume: 0.2, loop: true});
+    this.gameTheme = this.sound.add('Game', { volume: 0.2, loop: true });
     this.gameTheme.play();
 
     this.warTheme = null;
@@ -138,7 +113,7 @@ export default class Game extends Phaser.Scene {
 
       this.gameTheme.stop();
       if (this.warTheme === null) {
-        this.warTheme = this.sound.add('War', { volume: 0.3 , loop: true});
+        this.warTheme = this.sound.add('War', { volume: 0.3, loop: true });
         this.warTheme.play();
       }
     });
@@ -150,28 +125,40 @@ export default class Game extends Phaser.Scene {
     this._bottomRight = this.add.image(0, 0, "Selected_Bottom_Right");
 
     this.setCornersVisibility(false);
-
-    this.events.on("death", (entity) => {
-      console.log("Entity death", entity);
-      if(this._selectedEntity === entity) {
-        this._selectedEntity = null;
-        this.setCornersVisibility(false);
-      }
-    });
   }
 
-  stopWarThemeAndResumeSong() {
-    if (this.warTheme.isPlaying) {
-      this.tweens.add({
-        targets: this.warTheme,
-        volume: 0,
-        duration: 5000,
-        onComplete: () => {
-          this.warTheme.stop();
-          this.warTheme = null;
-          this.gameTheme.play();
-        }
-      });
+  private handlGameObjectDown = (pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.GameObject, stopPropagation) => {
+    if (this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity || !pointer.rightButtonDown())
+      return;
+
+    if (this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
+      if (!(gameObject as PlayerEntity).belongsToMe())
+        Client.attackOrder(this._selectedEntity.getId(), gameObject.getId());
+    } else if(this._selectedEntity instanceof Villager && gameObject instanceof ResourceSpawner) {
+      Client.gatherOrder(this._selectedEntity.getId(), gameObject.getId());
+    }
+  }
+
+  private handlePointerDown = (pointer: Phaser.Input.Pointer) => {
+    // Cursor icon
+    if(this.input.manager.defaultCursor.includes("/pointer")) {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
+    }
+
+    if (this.optionsMenuOpened || !this.pointerInMap || !this._selectedEntity)
+      return;
+    if (pointer.leftButtonDown()) {
+      this.setSelectedEntity(undefined);
+    }
+    if (this._selectedEntity instanceof NPC && this._selectedEntity.belongsToMe()) {
+      const pointerPosition = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
+      Client.setNpcTarget(this._selectedEntity.getId(), pointerPosition);
+    }
+  }
+
+  private handlePointerUp = (pointer: Phaser.Input.Pointer) => {
+    if(this.input.manager.defaultCursor.includes("/pointer_pressed")) {
+      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     }
   }
 
@@ -195,7 +182,13 @@ export default class Game extends Phaser.Scene {
       }
     }
 
-    if (this._selectedEntity) {
+    if(!this._selectedEntity?.body) {
+      this._selectedEntity = undefined;
+      this.setCornersVisibility(false);
+    }
+
+    // If not NPC, position should not update
+    if (this._selectedEntity && this._selectedEntity instanceof NPC) {
       this.setCornersPosition();
     }
   }
@@ -265,6 +258,10 @@ export default class Game extends Phaser.Scene {
       return this.p2;
   }
 
+  isSelectedEntityAttackUnit(): boolean {
+    return this._selectedEntity instanceof AttackUnit;
+  }
+
   getSelectedEntity(): PlayerEntity | ResourceSpawner {
     return this._selectedEntity;
   }
@@ -293,10 +290,14 @@ export default class Game extends Phaser.Scene {
   }
 
   setCornersPosition() {
-    this._topLeft.setPosition(this._selectedEntity.x - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
-    this._topRight.setPosition(this._selectedEntity.x + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
-    this._bottomLeft.setPosition(this._selectedEntity.x - ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
-    this._bottomRight.setPosition(this._selectedEntity.x + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).width / 2), this._selectedEntity.y + ((this._selectedEntity.body as Phaser.Physics.Arcade.Body).height / 2));
+    const physicsBody = (this._selectedEntity.body as Phaser.Physics.Arcade.Body);
+    const width = physicsBody.width / 2;
+    const height = physicsBody.height / 2;
+    
+    this._topLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y - (height));
+    this._topRight.setPosition(this._selectedEntity.x + (width), this._selectedEntity.y - (height));
+    this._bottomLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y + (height));
+    this._bottomRight.setPosition(this._selectedEntity.x + (width), this._selectedEntity.y + (height));
   }
 
   setNpcTarget(npcId: string, position: Phaser.Math.Vector2) {
@@ -314,6 +315,14 @@ export default class Game extends Phaser.Scene {
     if (npc && npc instanceof AttackUnit) {
       npc.setAttackTarget(targetId);
       return;
+    }
+  }
+
+  setVillagerGatherTarget(villagerId: string, resourceSpawnerId: string) {
+    const villager = this.getEntityById(villagerId);
+    const spawner = this.getResourceSpawnerById(resourceSpawnerId);
+    if(villager && villager instanceof Villager && spawner) {
+      villager.setGatherTarget(spawner);
     }
   }
 
@@ -346,5 +355,28 @@ export default class Game extends Phaser.Scene {
 
   getNavmesh(): PhaserNavMesh {
     return this._map.navMesh;
+  }
+
+  stopWarThemeAndResumeSong() {
+    if (this.warTheme.isPlaying) {
+      this.tweens.add({
+        targets: this.warTheme,
+        volume: 0,
+        duration: 5000,
+        onComplete: () => {
+          this.warTheme.stop();
+          this.warTheme = null;
+          this.gameTheme.play();
+        }
+      });
+    }
+  }
+
+  getResourceSpawnerById(id: string): ResourceSpawner {
+    return this._map.getResourceSpawnerById(id);
+  }
+
+  removeResourceSpawner(spawner: ResourceSpawner) {
+    this._map.removeResourceSpawner(spawner);
   }
 }

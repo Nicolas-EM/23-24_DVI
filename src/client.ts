@@ -41,6 +41,12 @@ export default class Client {
                 (<Game>(Client.scene)).setNPCAttackTarget(npcId, targetId);
             }
         });
+
+        Client.socket.on('gather', (villagerId: string, resourceSpawnerId: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).setVillagerGatherTarget(villagerId, resourceSpawnerId);
+            }
+        });
     }
 
     static setScene(scene: Phaser.Scene) {
@@ -84,6 +90,10 @@ export default class Client {
 
     static attackOrder(npcId: string, targetId: string) {
         Client.socket.emit('attack', Client.lobby.code, npcId, targetId);
+    }
+
+    static gatherOrder(villagerId: string, resourceSpawnerId: string) {
+        Client.socket.emit('gather', Client.lobby.code, villagerId, resourceSpawnerId);
     }
 }
 
