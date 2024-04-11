@@ -109,14 +109,14 @@ io.on('connection', socket => {
 
         if (availableLobby) {
             // Join available lobby
-            socket.emit('lobbyCreated', availableLobby.code);
+            socket.emit('lobbyCreated', availableLobby.code, true);
         } else {
             // No available lobbies, create a new one
             const lobbyCode = generateLobbyCode(); // Function to generate a unique lobby code
             lobbies[lobbyCode] = createDefaultLobby();
             lobbies[lobbyCode].code = lobbyCode;
 
-            socket.emit('lobbyCreated', lobbyCode);
+            socket.emit('lobbyCreated', lobbyCode, true);
         }
     });
 
@@ -127,7 +127,7 @@ io.on('connection', socket => {
         // Make lobby private
         lobbies[lobbyCode].isPrivate = true;
 
-        socket.emit('lobbyCreated', lobbyCode);
+        socket.emit('lobbyCreated', lobbyCode, false);
     });
 
     // Handle lobby joining
@@ -217,6 +217,12 @@ io.on('connection', socket => {
     // NPC Attack order
     socket.on('attack', (lobbyCode: string, npcId: string, targetId: string) => {
         io.to(lobbyCode).emit('attack', npcId, targetId);
+    });
+
+    // Villager gather order
+    socket.on('gather', (lobbyCode: string, villagerId: string, resourceSpawnerId: string) => {
+        console.log("gather", villagerId, resourceSpawnerId);
+        io.to(lobbyCode).emit('gather', villagerId, resourceSpawnerId);
     });
 
     // Surrender or Lose condition

@@ -275,6 +275,9 @@ export default class Hud extends Phaser.Scene {
                     let resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Quattrocento" });
                     self.infoContainer.add(resourceIcon);
                     self.infoContainer.add(resourceAmount);
+
+                    if(hudInfo.info.remainingResources <= 0)
+                        self.displayedEntity = undefined;
                 }
                 // PlayerEntity
                 else {
@@ -284,7 +287,7 @@ export default class Hud extends Phaser.Scene {
                     if ("damage" in hudInfo.info) {
                         // Sword
                         let sword = self.add.image(30, 0, 'Sword');
-                        sword.setDisplaySize(30, 30);
+                        sword.setDisplaySize(14, 30);
                         sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
                         sword.setFlipX(true);
                         self.infoContainer.add(sword);

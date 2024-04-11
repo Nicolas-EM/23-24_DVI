@@ -200,6 +200,7 @@ export default class Boot extends Phaser.Scene {
 
     // UI - Pointers
     this.load.image('Axe', Sprites.UI.Pointers.Axe);
+    this.load.image('Axe_Pressed', Sprites.UI.Pointers.Axe_Pressed);
     this.load.image('Hammer', Sprites.UI.Pointers.Hammer);
     this.load.image('Pointer', Sprites.UI.Pointers.Pointer);
     this.load.image('Pointer_Pressed', Sprites.UI.Pointers.Pointer_Pressed);
@@ -209,6 +210,7 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Selected_Top_Right', Sprites.UI.Pointers.Selected_Top_Right);
     this.load.image('Selected', Sprites.UI.Pointers.Selected);
     this.load.image('Sword', Sprites.UI.Pointers.Sword);
+    this.load.image('Sword_Pressed', Sprites.UI.Pointers.Sword_Pressed);
 
     // UI - Ribbons
     this.load.image('Ribbon_Blue_Down_Pressed', Sprites.UI.Ribbons.Blue_Down_Pressed);

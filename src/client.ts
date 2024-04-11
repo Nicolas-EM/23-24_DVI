@@ -9,11 +9,18 @@ export default class Client {
     static scene: Phaser.Scene;
 
     static init() {
-        Client.socket.on('lobbyCreated', (code) => {
+        Client.socket.on('lobbyCreated', (code, quickPlay) => {
+            (<Menu>(Client.scene)).startLobby(quickPlay);
             Client.joinLobby(code);
         });
 
         Client.socket.on('updateLobby', (data: {lobby: lobbyData}) => {
+            if (Client.scene.scene.isActive('join-lobby')) {
+                (Client.scene).scene.stop();
+            }
+            if (!Client.scene.scene.isActive('lobby')) {
+                (Client.scene).scene.start("lobby");
+            }
             Client.lobby = data.lobby;
         });
 
@@ -32,6 +39,12 @@ export default class Client {
         Client.socket.on('attack', (npcId: string, targetId: string) => {
             if (Client.scene.scene.isActive('game')) {
                 (<Game>(Client.scene)).setNPCAttackTarget(npcId, targetId);
+            }
+        });
+
+        Client.socket.on('gather', (villagerId: string, resourceSpawnerId: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).setVillagerGatherTarget(villagerId, resourceSpawnerId);
             }
         });
 
@@ -54,11 +67,6 @@ export default class Client {
         return Client.lobby.players.find(player => player.id !== Client.socket.id)?.color;
     }
 
-    static sendTest(): void {
-        console.log("test sent");
-        Client.socket.emit('test');
-    }
-
     // Menu functions
     static quickPlay(): void {
         Client.socket.emit('quickPlay');
@@ -70,7 +78,6 @@ export default class Client {
 
     // Lobby Functions
     static joinLobby(code: string): void {
-        (<Menu>(Client.scene)).startLobby();
         Client.socket.emit('joinLobby', code);
     }
 
@@ -105,6 +112,10 @@ export default class Client {
 
     static returnHome() {
         Client.socket.emit('returnHome');
+    }
+
+    static gatherOrder(villagerId: string, resourceSpawnerId: string) {
+        Client.socket.emit('gather', Client.lobby.code, villagerId, resourceSpawnerId);
     }
 }
 

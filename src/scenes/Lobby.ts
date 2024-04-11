@@ -13,8 +13,14 @@ export default class Lobby extends Phaser.Scene {
   readyButton: Phaser.GameObjects.Image;
   isReady: boolean = false;
 
+  private quickPlay: boolean;
+
   constructor() {
     super('lobby');
+  }
+
+  init(data) {
+    this.quickPlay = data.quickPlay;
   }
 
   create() {
@@ -82,9 +88,14 @@ export default class Lobby extends Phaser.Scene {
       // Display lobby UI elements (e.g., player list, color selection, ready button)
       let banner = this.add.nineslice(0, 0, 'Horizontal', undefined, 275, 99, 35, 35, 0, 10);
       let lobbyContainer = this.add.container(self.cameras.main.width / 2, 80);
-      self.lobbyText = self.add.text(0, 0, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
       lobbyContainer.add(banner);
-      lobbyContainer.add(self.lobbyText);
+      if (!this.quickPlay) {        
+        self.lobbyText = self.add.text(0, 0, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+        lobbyContainer.add(self.lobbyText);
+      }
+      else {
+        lobbyContainer.add(self.add.text(0, 0, 'QUICK PLAY', { fontSize: 24, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5));
+      }
 
       self.playerListText = self.add.text(self.cameras.main.width / 2, 200, '', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
 
@@ -137,7 +148,8 @@ export default class Lobby extends Phaser.Scene {
 
   update(time: number, delta: number) {
     if (Client.lobby?.code) {
-      this.lobbyText.setText(`${Client.lobby.code}`);
+      if (!this.quickPlay)
+        this.lobbyText.setText(`${Client.lobby.code}`);
       this.updatePlayers(Client.lobby.players);
       this.updateAvailableColors(Client.lobby.availableColors);
 

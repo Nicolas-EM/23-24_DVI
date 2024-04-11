@@ -98,5 +98,6 @@ export default abstract class AttackUnit extends NPC {
 
         super.update(time, delta);
     }
+    
     abstract doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean): void;
 }
