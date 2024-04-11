@@ -38,17 +38,27 @@ export default class ResourceSpawner extends Phaser.GameObjects.Sprite {
         this.on('pointerout', this.onOut, this);
     }
 
+    private setAxeCursor(icon: any) {
+        let entity = (<Game>(this.scene)).getSelectedEntity();
+
+        if (entity && entity instanceof Villager && entity.belongsToMe()) {
+            this.scene.input.setDefaultCursor(`url(${icon}), pointer`);
+        }
+    }
+
     onClick(pointer: Phaser.Input.Pointer): void {
+        if(pointer.rightButtonReleased()) {
+            this.setAxeCursor(Sprites.UI.Pointers.Axe);
+        }
+
         if (pointer.leftButtonReleased()) {
             (<Game>(this.scene)).setSelectedEntity(this);
         }
     }
 
     onDown(pointer: Phaser.Input.Pointer): void { // TODO Se sobre pone el de game
-        let entity = (<Game>(this.scene)).getSelectedEntity();
-
-        if (entity && entity instanceof Villager && entity.belongsToMe() && pointer.rightButtonDown()) {
-            this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Axe_Pressed}), pointer`);
+        if (pointer.rightButtonDown()) {
+            this.setAxeCursor(Sprites.UI.Pointers.Axe_Pressed);
         }
     }
 
