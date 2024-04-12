@@ -10,7 +10,7 @@ namespace NPCsData {
             height: 200
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 5;
+        public static VISION_RANGE = 1.5;
         public static SPEED = 2.5;
         public static SPAWNING_TIME = 5000;
         public static SPAWNING_COST: Resources = {
@@ -29,7 +29,7 @@ namespace NPCsData {
             height: 150
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 5;
+        public static VISION_RANGE = 1.5;
         public static SPEED = 2.5;
         public static DAMAGE = 10;
         public static ATTACK_RANGE = 1;     // tiles
@@ -50,7 +50,7 @@ namespace NPCsData {
             height: 150
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 10;
+        public static VISION_RANGE = 1.8;
         public static SPEED = 2.5;
         public static DAMAGE = 10;
         public static ATTACK_RANGE = 5;     // tiles
@@ -71,7 +71,7 @@ namespace NPCsData {
             height: 150
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 5;
+        public static VISION_RANGE = 1.75;
         public static SPEED = 3.75;
         public static DAMAGE = 10;
         public static ATTACK_RANGE = 1;    // tiles

@@ -16,10 +16,9 @@ export default abstract class NPC extends PlayerEntity {
      * @returns NPC instance
      */
     constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
+        super(scene, x, y, texture, `${owner.getColor()}_NPC_${owner.getNextEntityId()}`, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
         this._movementSpeed = movementSpeed;
 
-        this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);
 
         (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
@@ -58,6 +57,12 @@ export default abstract class NPC extends PlayerEntity {
 
         this.x += velocityX;
         this.y += velocityY;
+
+        if(this.maskGraphicsData) {
+            this.maskGraphicsData.x += velocityX;
+            this.maskGraphicsData.y += velocityY;
+            (this.scene as Game).clearFogOfWar(this.maskGraphicsData);
+        }
     }
 
     dieOrDestroy() {

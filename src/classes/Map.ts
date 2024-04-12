@@ -13,11 +13,14 @@ import Soldier from './npcs/Soldier';
 import Archer from './npcs/Archer';
 import Goblin from './npcs/Goblin';
 import ResourceSpawner from './resources/ResourceSpawner';
+import { GraphicsMaskData } from '../utils';
 
 export default class Map {
     private _map: Phaser.Tilemaps.Tilemap;
     public navMesh: PhaserNavMesh;
     private spawners: ResourceSpawner[] = [];
+    private fogOfWar: Phaser.GameObjects.RenderTexture;
+    private maskData: GraphicsMaskData[] = [];
 
     constructor(private scene: Game, private mapId: string) {
         // Crear mapa
@@ -28,7 +31,7 @@ export default class Map {
         const waterLayer = this._map.createLayer("Fondo/Water", waterTileset!);
         waterLayer?.setCollisionByProperty({ collides: true });
         // Foam
-        this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Foam"));
+        const foam = this._map.createFromObjects('Fondo/Foam', { type: 'Foam', key: 'Foam' }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Foam"));
         // Rocks
         this._map.createFromObjects('Fondo/Rocks', { type: 'Rock1', key: 'Rocks', frame: 0 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock1"));
         this._map.createFromObjects('Fondo/Rocks', { type: 'Rock2', key: 'Rocks', frame: 8 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock2"));
@@ -44,54 +47,38 @@ export default class Map {
         const trees = this._map.createFromObjects('Resources/Wood', { type: "Tree", key: 'Tree', classType: Tree });
         const mines = this._map.createFromObjects('Resources/Gold', { type: "GoldMine", key: 'GoldMine', classType: GoldMine });
 
-        sheeps.forEach( s => {
+        sheeps.forEach(s => {
             ((<Sheep>s).body as Phaser.Physics.Arcade.Body).setSize(50, 50, true);
         });
         this.spawners.push();
         this.spawners = this.spawners.concat(<ResourceSpawner[]>sheeps);
 
-        trees.forEach( t => {
+        trees.forEach(t => {
             ((<Tree>t).body as Phaser.Physics.Arcade.Body).setSize(120, 150, true);
         });
         this.spawners = this.spawners.concat(<ResourceSpawner[]>trees);
 
-        mines.forEach( m => {
+        mines.forEach(m => {
             ((<GoldMine>m).body as Phaser.Physics.Arcade.Body).setSize(160, 80, true);
         });
         this.spawners = this.spawners.concat(<ResourceSpawner[]>mines);
 
         // Decoration
         let decoTileset = this._map.addTilesetImage('Decoration');
-        this._map.createLayer('Decoration', [decoTileset!, groundTileset!]);
+        const decoLayer = this._map.createLayer('Decoration', [decoTileset!, groundTileset!]);
 
-        this._map.getObjectLayer("Buildings")?.objects.forEach(obj => {
-            if (obj.type === "Townhall_P1") {
-                const p1 = (<Game>(this.scene)).getP1();
+        const width = this.getWidthInPixel();
+        const height = this.getHeightInPixel();
 
-                if (Client.getMyColor() === p1.getColor()){
-                    this.scene.cameras.main.centerOn(<number>obj.x, <number>obj.y);
-                    this.scene.cameras.main.zoom = 0.7;
-                }
-                new TownHall(this.scene, <number>obj.x, <number>obj.y, p1);
-
-                new Soldier(this.scene, <number>obj.x, <number>obj.y - 192, p1);
-                new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
-                new Goblin(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
-                new Villager(this.scene, <number>obj.x + 128, <number>obj.y - 192, p1);
-            } else if (obj.type === "Townhall_P2") {
-                const p2 = (<Game>(this.scene)).getP2();
-
-                if(Client.getMyColor() === p2.getColor()){
-                    this.scene.cameras.main.centerOn(<number>obj.x, <number>obj.y);
-                    this.scene.cameras.main.zoom = 0.7;
-                }
-                new TownHall(this.scene, <number>obj.x, <number>obj.y, p2);
-
-                new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
-                new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
-                new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);
-            }
-        });
+        // make a RenderTexture that is the size of the screen
+        this.fogOfWar = this.scene.make.renderTexture({ width, height }, true).setOrigin(0, 0);
+        // fill it with black
+        this.fogOfWar.fill(0x000000, 1);
+        // draw the floorLayer into it
+        this.fogOfWar.draw([waterLayer, groundLayer, grassLayer, foam, decoLayer]);
+        // set a dark blue tint
+        this.fogOfWar.setTint(0x0a2948);
+        this.fogOfWar.setDepth(15);
 
         // (<Game>this.scene).setSelectedEntity(this.NPCs[0]);
 
@@ -117,6 +104,37 @@ export default class Map {
 
         // // Visualize an individual path
         // this.navMesh.debugDrawPath(path, 0xffd900);
+    }
+
+    createBuildings() {
+        this._map.getObjectLayer("Buildings")?.objects.forEach(obj => {
+            if (obj.type === "Townhall_P1") {
+                const p1 = (<Game>(this.scene)).getP1();
+
+                if (Client.getMyColor() === p1.getColor()) {
+                    this.scene.cameras.main.centerOn(<number>obj.x, <number>obj.y);
+                    this.scene.cameras.main.zoom = 0.7;
+                }
+                new TownHall(this.scene, <number>obj.x, <number>obj.y, p1);
+
+                new Soldier(this.scene, <number>obj.x, <number>obj.y - 192, p1);
+                new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
+                new Goblin(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
+                new Villager(this.scene, <number>obj.x + 128, <number>obj.y - 192, p1);
+            } else if (obj.type === "Townhall_P2") {
+                const p2 = (<Game>(this.scene)).getP2();
+
+                if (Client.getMyColor() === p2.getColor()) {
+                    this.scene.cameras.main.centerOn(<number>obj.x, <number>obj.y);
+                    this.scene.cameras.main.zoom = 0.7;
+                }
+                new TownHall(this.scene, <number>obj.x, <number>obj.y, p2);
+
+                new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
+                new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
+                new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);
+            }
+        });
     }
 
     tileHasObject(tile: Phaser.Tilemaps.Tile): boolean {
@@ -150,5 +168,26 @@ export default class Map {
 
     removeResourceSpawner(spawner: ResourceSpawner) {
         this.spawners = this.spawners.filter(s => s.getId() !== spawner.getId());
+    }
+    
+    clearFogOfWar(maskGraphicsData: GraphicsMaskData) {
+        const i = this.maskData.findIndex(data => data.id === maskGraphicsData.id);
+        if(i !== -1) {
+            this.maskData[i] = maskGraphicsData;
+        } else {
+            this.maskData.push(maskGraphicsData);
+        }
+
+        const maskGraphics = this.scene.make.graphics();
+        maskGraphics.fillStyle(0xffffff);
+        for(let data of this.maskData) {
+            maskGraphics.fillRect(data.x, data.y, data.width, data.height);
+        }
+        maskGraphics.setDepth(15);
+
+        // Create a BitmapMask for the combined vision areas
+        const combinedMask = new Phaser.Display.Masks.BitmapMask(this.scene, maskGraphics);
+        combinedMask.invertAlpha = true;
+        this.fogOfWar.setMask(combinedMask);
     }
 }

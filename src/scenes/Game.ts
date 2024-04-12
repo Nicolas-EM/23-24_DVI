@@ -15,6 +15,7 @@ import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
 import { animationFactory } from '../animationFactory';
 import { PhaserNavMesh } from "phaser-navMesh";
+import { GraphicsMaskData } from '../utils';
 
 // MAGIC NUMBER
 const MIN_ZOOM = 0.5;
@@ -74,6 +75,7 @@ export default class Game extends Phaser.Scene {
 
     // Map
     this._map = new Map(this, this.mapId);
+    this._map.createBuildings();
 
     // Event listener al hacer scroll
     this.input.on('wheel', this.cameraZoom, this);
@@ -378,5 +380,9 @@ export default class Game extends Phaser.Scene {
 
   removeResourceSpawner(spawner: ResourceSpawner) {
     this._map.removeResourceSpawner(spawner);
+  }
+
+  clearFogOfWar(maskGraphics: GraphicsMaskData) {
+    this._map.clearFogOfWar(maskGraphics);
   }
 }

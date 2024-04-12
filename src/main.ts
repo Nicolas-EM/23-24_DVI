@@ -15,7 +15,7 @@ import Settings from './scenes/Settings';
 let config: Phaser.Types.Core.GameConfig = {
   title: 'Troops',
   parent: "game", // ID canvas
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   width: 1000,
   height: 563,
   disableContextMenu: true,

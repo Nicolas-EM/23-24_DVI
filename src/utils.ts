@@ -50,3 +50,12 @@ export class FontLoader {
         });
     }
 }
+
+// Fog of War mask data
+export interface GraphicsMaskData {
+    id: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+}

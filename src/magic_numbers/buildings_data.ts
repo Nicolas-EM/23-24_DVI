@@ -10,7 +10,7 @@ namespace BuildingsData {
             height: 65
         }
         public static HEALTH = 200;
-        public static VISION_RANGE = 10;
+        public static VISION_RANGE = 5;
     }
 
     // Villager House
@@ -21,7 +21,7 @@ namespace BuildingsData {
             height: 85
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 10;
+        public static VISION_RANGE = 1.5;
         public static SPAWNING_TIME = 10000;
         public static SPAWNING_COST: Resources = {
             wood: 10,
@@ -39,7 +39,7 @@ namespace BuildingsData {
             height: 110
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 10;
+        public static VISION_RANGE = 3.5;
         public static SPAWNING_TIME = 10000;
         public static SPAWNING_COST: Resources = {
             wood: 10,
@@ -56,7 +56,7 @@ namespace BuildingsData {
             height: 85
         }
         public static HEALTH = 100;
-        public static VISION_RANGE = 10;
+        public static VISION_RANGE = 2;
         public static SPAWNING_TIME = 10000;
         public static SPAWNING_COST: Resources = {
             wood: 10,

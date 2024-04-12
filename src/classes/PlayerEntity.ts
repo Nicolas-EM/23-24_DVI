@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import Player from './Player';
 import Game from '../scenes/Game';
-import { HudInfo, Resources } from '../utils';
+import { GraphicsMaskData, HudInfo, Resources } from '../utils';
 import * as Sprites from "../../assets/sprites";
 import Client from '../client';
 import AttackUnit from './npcs/AttackUnit';
@@ -17,6 +17,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     protected _spawningCost: Resources;
     protected _hudInfo: HudInfo;
 
+    // For Fog of War
+    protected maskGraphicsData: GraphicsMaskData;
+
     static readonly COST: Resources;
     static readonly SPAWN_TIME_MS: number;
 
@@ -25,8 +28,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
      * @param owner is the player who created the entity, not optional.
      * @returns Object
      */
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, frame?: string | number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, id: string, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, frame?: string | number) {
         super(scene, x, y, texture, frame);
+        this._id = id;
         this._owner = owner;
         this._health = health;
         this._totalHealth = totalHealth;
@@ -44,6 +48,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.on('pointerout', this.onOut, this);
 
         this.scene.events.on("update", this.update, this);
+
+        if(this.belongsToMe())
+            this.setFogVision(id);
     }
 
     /**
@@ -62,6 +69,18 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
             this.dieOrDestroy();
         }
     }
+
+    protected setFogVision(id: string) {
+        this.maskGraphicsData = {
+            id: id,
+            x: this.x - this.width / 2 * this._visionRange,
+            y: this.y - this.height / 2 * this._visionRange,
+            width: this.width * this._visionRange,
+            height: this.height * this._visionRange
+        };
+        
+        (this.scene as Game).clearFogOfWar(this.maskGraphicsData);
+    };
 
     protected abstract dieOrDestroy();
 
