@@ -28,6 +28,13 @@ export default class Boot extends Phaser.Scene {
 
   // Carga de los assets del juego
   preload() {
+    
+    // Sounds
+    this.load.audio('TroopsTheme', Sounds.Themes.Troops);
+    this.load.audio('War', Sounds.Themes.War);
+    this.load.audio('Game', Sounds.Themes.Game);
+    this.load.audio('VictoryTheme', Sounds.Themes.Victory);
+    this.load.audio('DefeatTheme', Sounds.Themes.Defeat);
 
     // -------- FONT --------
     this.load.script("webfont", "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
@@ -255,13 +262,6 @@ export default class Boot extends Phaser.Scene {
     this.load.image('King_Purple', Sprites.Kings.Purple);
     this.load.image('King_Red', Sprites.Kings.Red);
     this.load.image('King_Yellow', Sprites.Kings.Yellow);
-
-    // Sounds
-    this.load.audio('TroopsTheme', Sounds.Themes.Troops);
-    this.load.audio('War', Sounds.Themes.War);
-    this.load.audio('Game', Sounds.Themes.Game);
-    this.load.audio('VictoryTheme', Sounds.Themes.Victory);
-    this.load.audio('DefeatTheme', Sounds.Themes.Defeat);
   }
 
   /**
