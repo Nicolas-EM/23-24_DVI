@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import Player from '../classes/Player';
 import ResourceSpawner from '../classes/resources/ResourceSpawner';
 import PlayerEntity from '../classes/PlayerEntity';
-import { FontLoader } from '../utils';
+import { FontLoader, Resources } from '../utils';
 
 export default class Hud extends Phaser.Scene {
     // Attributes
@@ -77,7 +77,7 @@ export default class Hud extends Phaser.Scene {
             let villagerIcon = self.add.image(-20, 2, `Villager_${self.player.getColor()}`);
             villagerIcon.setDisplaySize(60, 60);
             villagerIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-            self.populationCounter = self.add.text(0, -13, `0/${self.player.getMaxPopulation()}`,
+            self.populationCounter = self.add.text(0, -13, `${self.player.getNPCs.length}/${self.player.getMaxPopulation()}`,
                 { color: '#000000', fontFamily: "Quattrocento", fontSize: 18 });
 
             let populationContainer = self.add.container(midX, 45);
@@ -253,12 +253,6 @@ export default class Hud extends Phaser.Scene {
     }
 
     update(time: number, delta: number) {
-        this.woodCounter.setText(`${this.player.getWood()}`);
-        this.foodCounter.setText(`${this.player.getFood()}`);
-        this.goldCounter.setText(`${this.player.getGold()}`);
-
-        this.populationCounter.setText(`${this.player.getNPCs().length}/${this.player.getMaxPopulation()}`);
-
         if (this.displayedEntity) {
             const hudInfo = this.displayedEntity.getHudInfo();
 
@@ -316,5 +310,15 @@ export default class Hud extends Phaser.Scene {
         } else {
             this.flushHud();
         }
+    }
+
+    updateResources(resources: Resources) {
+        this.woodCounter.setText(`${resources.wood}`);
+        this.foodCounter.setText(`${resources.food}`);
+        this.goldCounter.setText(`${resources.gold}`);
+    }
+
+    updatePopulation(curPop, maxPop) {
+        this.populationCounter.setText(`${curPop}/${maxPop}`);
     }
 }

@@ -14,6 +14,7 @@ import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
 import { PhaserNavMesh } from "phaser-navMesh";
+import Hud from './Hud';
 
 // MAGIC NUMBER
 const MIN_ZOOM = 0.5;
