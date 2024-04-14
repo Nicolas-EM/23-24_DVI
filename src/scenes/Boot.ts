@@ -9,6 +9,8 @@ import map_desert from '../../assets/maps/desert.json';
 import map_mountain from '../../assets/maps/mountain.json';
 import map_river from '../../assets/maps/river.json';
 
+import { animationFactory } from '../animationFactory';
+
 
 /**
  * Escena para la precarga de los assets que se usarán en el juego.
@@ -26,6 +28,13 @@ export default class Boot extends Phaser.Scene {
 
   // Carga de los assets del juego
   preload() {
+    
+    // Sounds
+    this.load.audio('TroopsTheme', Sounds.Themes.Troops);
+    this.load.audio('War', Sounds.Themes.War);
+    this.load.audio('Game', Sounds.Themes.Game);
+    this.load.audio('VictoryTheme', Sounds.Themes.Victory);
+    this.load.audio('DefeatTheme', Sounds.Themes.Defeat);
 
     // -------- FONT --------
     this.load.script("webfont", "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
@@ -253,12 +262,6 @@ export default class Boot extends Phaser.Scene {
     this.load.image('King_Purple', Sprites.Kings.Purple);
     this.load.image('King_Red', Sprites.Kings.Red);
     this.load.image('King_Yellow', Sprites.Kings.Yellow);
-
-    // Sounds
-    this.load.audio('TroopsTheme', Sounds.Themes.Troops);
-    this.load.audio('War', Sounds.Themes.War);
-    this.load.audio('Game', Sounds.Themes.Game);
-
   }
 
   /**
@@ -267,6 +270,7 @@ export default class Boot extends Phaser.Scene {
    */
   create() {
     this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
+    animationFactory.createAnimations(this);
     this.scene.start('menu');
   }
 

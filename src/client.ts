@@ -47,6 +47,12 @@ export default class Client {
                 (<Game>(Client.scene)).setVillagerGatherTarget(villagerId, resourceSpawnerId);
             }
         });
+
+        Client.socket.on('end-game', (playerColor: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).endGame(playerColor === Client.getMyColor());
+            }
+        });
     }
 
     static setScene(scene: Phaser.Scene) {
@@ -55,6 +61,10 @@ export default class Client {
 
     static getMyColor(): string {
         return Client.lobby.players.find(player => player.id === Client.socket.id)?.color;
+    }
+
+    static getOthersColor(): string {
+        return Client.lobby.players.find(player => player.id !== Client.socket.id)?.color;
     }
 
     // Menu functions
@@ -69,6 +79,10 @@ export default class Client {
     // Lobby Functions
     static joinLobby(code: string): void {
         Client.socket.emit('joinLobby', code);
+    }
+
+    static leaveLobby() {
+        Client.socket.emit('leaveLobby');
     }
 
     static chooseColor(color: string): void {
@@ -90,6 +104,14 @@ export default class Client {
 
     static attackOrder(npcId: string, targetId: string) {
         Client.socket.emit('attack', Client.lobby.code, npcId, targetId);
+    }
+
+    static surrenderOrLose(playerColor: string) {
+        Client.socket.emit('end-game', Client.lobby.code, playerColor);
+    }
+
+    static returnHome() {
+        Client.socket.emit('returnHome');
     }
 
     static gatherOrder(villagerId: string, resourceSpawnerId: string) {

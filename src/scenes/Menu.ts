@@ -5,6 +5,7 @@ import { FontLoader } from '../utils';
 
 
 export default class Menu extends Phaser.Scene {
+  
   constructor() {
     super({ key: 'menu' });
   }
@@ -53,7 +54,8 @@ export default class Menu extends Phaser.Scene {
     });
 
     // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
+    if (!this.sound.get('TroopsTheme') || !this.sound.get('TroopsTheme').isPlaying)
+      this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
 
   startLobby(quickPlay: boolean) {

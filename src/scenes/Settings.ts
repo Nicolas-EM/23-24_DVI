@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
+import Client from '../client';
 
 
 export default class Settings extends Phaser.Scene {
@@ -78,14 +79,26 @@ export default class Settings extends Phaser.Scene {
         FontLoader.loadFonts(this, (self) => {
             if (self.sceneBase === "game") {
                 // Surrender button
-                let surrenderBtnImg = self.add.image(-125, 95, "Button_Red_Slide");
-                surrenderBtnImg.scale = 0.7;
-                surrenderBtnImg.setOrigin(0);
-                let surrenderBtnText = self.add.text(-105, 103, "SURRENDER", { fontFamily: "Quattrocento" });
+                let surrenderButton = self.add.image(-125, 95, "Button_Red_Slide").setInteractive();
+                surrenderButton.scale = 0.7;
+                surrenderButton.setOrigin(0);
+                let surrenderText = self.add.text(-105, 103, "SURRENDER", { fontFamily: "Quattrocento" });
                 let surrenderBtnContainer = self.add.container(0, 0);
-                surrenderBtnContainer.add(surrenderBtnImg);
-                surrenderBtnContainer.add(surrenderBtnText);
+                surrenderBtnContainer.add(surrenderButton);
+                surrenderBtnContainer.add(surrenderText);
                 self.optionsContainer.add(surrenderBtnContainer);
+                // Surrender function
+                surrenderButton.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+                    if (pointer.leftButtonDown()) {
+                        surrenderButton.setTexture("Button_Red_Slides_Pressed");
+                        surrenderText.setPosition(-105, 105);
+                    }
+                });
+                surrenderButton.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+                    if (pointer.leftButtonReleased()) {
+                        Client.surrenderOrLose(Client.getMyColor());
+                    }
+                });
             }
 
             // Silence button

@@ -13,7 +13,6 @@ import Soldier from '../classes/npcs/Soldier';
 import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
-import { animationFactory } from '../animationFactory';
 import { PhaserNavMesh } from "phaser-navMesh";
 
 // MAGIC NUMBER
@@ -69,8 +68,6 @@ export default class Game extends Phaser.Scene {
     this.events.on('menuClosed', () => {
       this.optionsMenuOpened = false;
     });
-
-    animationFactory.createAnimations(this);
 
     // Map
     this._map = new Map(this, this.mapId);
@@ -378,5 +375,16 @@ export default class Game extends Phaser.Scene {
 
   removeResourceSpawner(spawner: ResourceSpawner) {
     this._map.removeResourceSpawner(spawner);
+  }
+
+  endGame(defeat: boolean) {
+    // Stop music
+    this.sound.removeAll();
+
+    // Change screen
+    this.scene.pause();
+    this.scene.pause("hud");
+    this.scene.pause("settings");
+    this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
   }
 }

@@ -61,7 +61,7 @@ export default class Lobby extends Phaser.Scene {
 
     // Leave lobby button
     let leaveContainer = this.add.container(this.cameras.main.width - 120, 45);
-    let leaveButton = this.add.image(0, 0, 'Button_Red');
+    let leaveButton = this.add.image(0, 0, 'Button_Red').setInteractive();
     leaveButton.setDisplaySize(55, 55);
     leaveButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     leaveContainer.add(leaveButton);
@@ -69,6 +69,19 @@ export default class Lobby extends Phaser.Scene {
     leaveIcon.setDisplaySize(30, 30);
     leaveIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     leaveContainer.add(leaveIcon);
+
+    // Leave action
+    leaveButton.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonDown()) {
+        leaveButton.setTexture("Button_Red_Pressed");
+        leaveIcon.setPosition(0, -2);
+      }
+    });
+    leaveButton.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonReleased()) {
+        this.leaveLobby();
+      }
+    });
 
     // Load font
     FontLoader.loadFonts(this, (self) => {
@@ -179,7 +192,15 @@ export default class Lobby extends Phaser.Scene {
     Client.readyUp();
   }
 
-  startGame() {
+  startGame() {  
+    this.isReady = false;
+    this.scene.stop();    
     this.scene.start('game', { mapId: 'desert' });
+  }
+
+  leaveLobby() {   
+    Client.leaveLobby();  
+    this.scene.stop();  
+    this.scene.start('menu');
   }
 }
