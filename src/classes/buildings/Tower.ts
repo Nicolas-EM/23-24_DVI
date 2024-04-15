@@ -30,4 +30,14 @@ export default class TownHall extends SpawnerBuilding {
 
         (this.body as Phaser.Physics.Arcade.Body).setSize(90, 180, true);
     }
+
+    replaceDestroyed() {
+        const deletionX = this.x;
+        const deletionY = this.y;
+        const sceneReference = this.scene;
+        setTimeout(() => {
+
+            sceneReference.add.sprite(deletionX,deletionY, 'Tower_Destroyed');
+        },0);//0 is just a trick to delay the call in the call-stack (deferred call)
+    }
 }

@@ -42,4 +42,14 @@ export default class Townhall extends SpawnerBuilding {
             callbackScope: this
         });      
     }
+
+    replaceDestroyed() {
+        const deletionX = this.x;
+        const deletionY = this.y;
+        const sceneReference = this.scene;
+        setTimeout(() => {
+
+            sceneReference.add.sprite(deletionX,deletionY, 'Townhall_Destroyed');
+        },0);//0 is just a trick to delay the call in the call-stack (deferred call)
+    }
 }

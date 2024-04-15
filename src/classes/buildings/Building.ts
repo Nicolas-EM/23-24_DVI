@@ -14,6 +14,10 @@ export default abstract class Building extends PlayerEntity {
 
     dieOrDestroy() {
         this._owner.removeBuilding(this);
+        //before we delete this, we delay a call to add the destroyed building to the scene:
+        this.replaceDestroyed();
         this.destroy();
     }
+
+    abstract replaceDestroyed();
 }
