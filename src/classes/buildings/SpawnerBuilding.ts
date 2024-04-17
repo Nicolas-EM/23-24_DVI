@@ -34,6 +34,25 @@ export default abstract class SpawnerBuilding extends Building {
     
     cancelNPC() {
         this.spawnQueue.shift();
+        this.stopSpawnTimer();  // Stop current timer
+        // Update with new (or current) NPC about to be spawned (if any)
+        if (this.spawnQueue.length > 0) {
+            const npcType = this.spawnQueue[0];
+
+            // Always true
+            if ("queueIcon" in this._hudInfo.info && "queueTime" in this._hudInfo.info) {
+                this._hudInfo.info.queueIcon = npcType.ICON + this._owner.getColor();
+                this._hudInfo.info.queueTime = npcType.SPAWN_TIME_MS / 1000;
+            }
+            this.startSpawnTimer(npcType.SPAWN_TIME_MS);
+        }
+        else if (this.spawnQueue.length === 0) {
+            // Always true
+            if ("queueIcon" in this._hudInfo.info && "queueTime" in this._hudInfo.info) {
+                this._hudInfo.info.queueIcon = null;
+                this._hudInfo.info.queueTime = null;
+            }
+        }
     }
 
     spawn(): void {
@@ -95,11 +114,11 @@ export default abstract class SpawnerBuilding extends Building {
 
     stopSpawnTimer(): void {
         if (this.spawnTimer) {
-            this.spawnTimer.destroy();
+            this.spawnTimer.remove();
             this.spawnTimer = null;
         }
         if (this.spawnTimerHud) {
-            this.spawnTimerHud.destroy();
+            this.spawnTimerHud.remove();
             this.spawnTimerHud = null;
         }
     }
