@@ -33,7 +33,9 @@ export default abstract class SpawnerBuilding extends Building {
     }
     
     cancelNPC() {
-        this.spawnQueue.shift();
+        const cancelledNPC = this.spawnQueue.shift();
+        this._owner.addResources(cancelledNPC.COST);
+
         this.stopSpawnTimer();  // Stop current timer
         // Update with new (or current) NPC about to be spawned (if any)
         if (this.spawnQueue.length > 0) {
