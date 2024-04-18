@@ -83,9 +83,6 @@ export default class Map {
                 new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
                 new Goblin(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
                 new Villager(this.scene, <number>obj.x + 128, <number>obj.y - 192, p1);
-                new VillagerHouse(this.scene, <number>obj.x - 320, <number>obj.y + 180, p1);
-                new GoblinHut(this.scene, <number>obj.x + 400, <number>obj.y + 164, p1);
-                new TowerBuilding(this.scene, <number>obj.x - 320, <number>obj.y - 364, p1);
             } else if (obj.type === "Townhall_P2") {
                 const p2 = (<Game>(this.scene)).getP2();
 
@@ -94,7 +91,7 @@ export default class Map {
                     this.scene.cameras.main.zoom = 0.7;
                 }
                 new TownHall(this.scene, <number>obj.x, <number>obj.y, p2);
-                new Archer(this.scene, <number>obj.x + 64, <number>obj.y + 64, p2);
+
                 new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
                 new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
                 new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);
