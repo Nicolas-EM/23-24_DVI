@@ -3,6 +3,7 @@ import Player from '../classes/Player';
 import ResourceSpawner from '../classes/resources/ResourceSpawner';
 import PlayerEntity from '../classes/PlayerEntity';
 import { FontLoader } from '../utils';
+import SpawnerBuilding from '../classes/buildings/SpawnerBuilding';
 
 export default class Hud extends Phaser.Scene {
     // Attributes
@@ -25,6 +26,10 @@ export default class Hud extends Phaser.Scene {
 
     // Player
     private player: Player;
+
+    // Spawn Cancell
+    private closeBtnImg: Phaser.GameObjects.Image;
+    private closeBtnXImg: Phaser.GameObjects.Image;
 
     private optionsMenuOpened = false;
 
@@ -140,14 +145,23 @@ export default class Hud extends Phaser.Scene {
             self.queueTime = self.add.text(-10, -8, `0s`, { color: '#000000', fontFamily: "Quattrocento" });
             self.queueTime.setSize(20, 20);
             // Close button
-            let closeBtnImg = self.add.image(0, 0, "Button_Red");
-            closeBtnImg.scale = 0.5;
-            let closeIcon = self.add.image(-0.5, -0.8, "X");
-            closeIcon.setDisplaySize(25, 25);
-            closeIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+            self.closeBtnImg = self.add.image(0, 0, "Button_Red");
+            self.closeBtnImg.scale = 0.5;
+            
+            self.closeBtnXImg = self.add.image(-0.5, -0.8, "X");
+            self.closeBtnXImg.setDisplaySize(25, 25);
+            self.closeBtnXImg.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+
+            self.closeBtnImg.setInteractive();
+            self.closeBtnImg.on("pointerdown", () => {
+                self.closeBtnImg.setTexture("Button_Red_Pressed");
+                self.closeBtnXImg.setTexture("X_Pressed");
+            });
+            self.closeBtnImg.on("pointerup", self.cancelSpawn, self);
+
             let closeBtnContainer = self.add.container(45, 3);
-            closeBtnContainer.add(closeBtnImg);
-            closeBtnContainer.add(closeIcon);
+            closeBtnContainer.add(self.closeBtnImg);
+            closeBtnContainer.add(self.closeBtnXImg);
             // Add all to container and set it invisible
             self.queueContainer.add(self.queueIcon);
             self.queueContainer.add(self.queueTime);
@@ -194,9 +208,18 @@ export default class Hud extends Phaser.Scene {
                 this.displayedEntity = null;
                 this.flushHud();
             });
-
         });
+    }
 
+    cancelSpawn(pointer: Phaser.Input.Pointer): void {
+        this.closeBtnImg.setTexture("Button_Red");
+        this.closeBtnXImg.setTexture("X");
+
+        if (pointer.leftButtonReleased()) {
+            if(this.displayedEntity instanceof SpawnerBuilding) {
+                this.displayedEntity.cancelNPC();
+            }
+        }
     }
 
     createHealthBar(health: number, totalHealth: number) {

@@ -13,10 +13,7 @@ import Soldier from './npcs/Soldier';
 import Archer from './npcs/Archer';
 import Goblin from './npcs/Goblin';
 import ResourceSpawner from './resources/ResourceSpawner';
-import VillagerHouse from './buildings/VillagerHouse';
-import { Tower } from '../../assets/sprites/buildings';
-import SpawnerBuilding from './buildings/SpawnerBuilding';
-import TowerBuilding from './buildings/Tower';
+import Tower from './buildings/Tower';
 import GoblinHut from './buildings/GoblinHut';
 
 export default class Map {
@@ -78,6 +75,9 @@ export default class Map {
                     this.scene.cameras.main.zoom = 0.7;
                 }
                 new TownHall(this.scene, <number>obj.x, <number>obj.y, p1);
+
+                new Tower(this.scene, <number>obj.x + 500, <number>obj.y, p1);
+                new GoblinHut(this.scene, <number>obj.x + 500, <number>obj.y + 500, p1);
 
                 new Soldier(this.scene, <number>obj.x, <number>obj.y - 192, p1);
                 new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);

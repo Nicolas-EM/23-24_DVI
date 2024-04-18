@@ -91,11 +91,7 @@ function removePlayerFromLobby(socket: Socket) {
 }
 
 io.on('connection', socket => {
-    console.log('User connected');
-
     socket.on('quickPlay', () => {
-        console.log('Quick play requested');
-
         let availableLobby: Lobby | undefined = undefined;
 
         // Find a lobby with fewer than maxPlayers
@@ -135,12 +131,9 @@ io.on('connection', socket => {
         const lobby = lobbies[lobbyCode];
 
         if (!lobby || lobby.players.length >= maxPlayers) {
-            console.log(`Player failed to join lobby (doesn't exist or full)`);
             socket.emit(`exit`);    // TODO: Handle case client-side
         }
         else {
-            console.log(`Player joined the lobby ${lobbyCode}`);
-
             const color = assignColor(lobby);
 
             // Add player data to lobby
@@ -187,7 +180,6 @@ io.on('connection', socket => {
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
         if (playerIndex !== -1) {
             if (lobby.players[playerIndex].ready) {
-                console.log("Not ready anymore")
                 // Unready
                 lobby.players[playerIndex].ready = false;
                 lobby.readyPlayers--;
@@ -221,7 +213,6 @@ io.on('connection', socket => {
 
     // Villager gather order
     socket.on('gather', (lobbyCode: string, villagerId: string, resourceSpawnerId: string) => {
-        console.log("gather", villagerId, resourceSpawnerId);
         io.to(lobbyCode).emit('gather', villagerId, resourceSpawnerId);
     });
 
