@@ -15,6 +15,7 @@ import Goblin from './npcs/Goblin';
 import ResourceSpawner from './resources/ResourceSpawner';
 import Tower from './buildings/Tower';
 import GoblinHut from './buildings/GoblinHut';
+import VillagerHouse from './buildings/VillagerHouse';
 
 export default class Map {
     private _map: Phaser.Tilemaps.Tilemap;
@@ -76,13 +77,23 @@ export default class Map {
                 }
                 new TownHall(this.scene, <number>obj.x, <number>obj.y, p1);
 
-                new Tower(this.scene, <number>obj.x + 500, <number>obj.y, p1);
-                new GoblinHut(this.scene, <number>obj.x + 500, <number>obj.y + 500, p1);
+                new Tower(this.scene, <number>obj.x + 576, <number>obj.y + 192, p1);
+                new Tower(this.scene, <number>obj.x + 576, <number>obj.y - 192, p1);
+                new Tower(this.scene, <number>obj.x + 1024, <number>obj.y + 960, p1);
+                new Tower(this.scene, <number>obj.x + 1024, <number>obj.y - 960, p1);
+                new GoblinHut(this.scene, <number>obj.x + 192, <number>obj.y + 512, p1);
+                new GoblinHut(this.scene, <number>obj.x + 192, <number>obj.y - 512, p1);
 
-                new Soldier(this.scene, <number>obj.x, <number>obj.y - 192, p1);
-                new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
-                new Goblin(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
-                new Villager(this.scene, <number>obj.x + 128, <number>obj.y - 192, p1);
+                new VillagerHouse(this.scene, <number>obj.x + 960, <number>obj.y + 384, p1);
+                new VillagerHouse(this.scene, <number>obj.x + 1024, <number>obj.y - 320, p1);
+                new VillagerHouse(this.scene, <number>obj.x - 256, <number>obj.y + 448, p1);
+                new VillagerHouse(this.scene, <number>obj.x - 192, <number>obj.y - 448, p1);
+                new VillagerHouse(this.scene, <number>obj.x, <number>obj.y + 960, p1);
+                new VillagerHouse(this.scene, <number>obj.x + 64, <number>obj.y - 960, p1);
+
+                new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p1);
+                new Villager(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
+                new Villager(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
             } else if (obj.type === "Townhall_P2") {
                 const p2 = (<Game>(this.scene)).getP2();
 
@@ -92,6 +103,20 @@ export default class Map {
                 }
                 new TownHall(this.scene, <number>obj.x, <number>obj.y, p2);
 
+                new Tower(this.scene, <number>obj.x - 576, <number>obj.y + 192, p2);
+                new Tower(this.scene, <number>obj.x - 576, <number>obj.y - 192, p2);
+                new Tower(this.scene, <number>obj.x - 1024, <number>obj.y + 960, p2);
+                new Tower(this.scene, <number>obj.x - 1024, <number>obj.y - 960, p2);
+                new GoblinHut(this.scene, <number>obj.x - 192, <number>obj.y + 512, p2);
+                new GoblinHut(this.scene, <number>obj.x - 192, <number>obj.y - 512, p2);
+
+                new VillagerHouse(this.scene, <number>obj.x - 960, <number>obj.y + 384, p2);
+                new VillagerHouse(this.scene, <number>obj.x - 1024, <number>obj.y - 320, p2);
+                new VillagerHouse(this.scene, <number>obj.x + 256, <number>obj.y + 448, p2);
+                new VillagerHouse(this.scene, <number>obj.x + 192, <number>obj.y - 448, p2);
+                new VillagerHouse(this.scene, <number>obj.x, <number>obj.y + 960, p2);
+                new VillagerHouse(this.scene, <number>obj.x - 64, <number>obj.y - 960, p2);
+p2
                 new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
                 new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
                 new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);

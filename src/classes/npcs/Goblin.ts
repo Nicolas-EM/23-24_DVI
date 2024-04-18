@@ -5,6 +5,8 @@ import Player from "../Player";
 import Game from "../../scenes/Game";
 import { Resources } from "../../utils";
 import NPCsData from "../../magic_numbers/npcs_data";
+import PlayerEntity from "../PlayerEntity";
+import Soldier from "./Soldier";
 
 export default class Goblin extends AttackUnit {
     static readonly COST: Resources = NPCsData.Goblin.SPAWNING_COST;
@@ -14,7 +16,7 @@ export default class Goblin extends AttackUnit {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Goblin.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Goblin.HEALTH, NPCsData.Goblin.HEALTH, NPCsData.Goblin.SPAWNING_TIME, NPCsData.Goblin.SPAWNING_COST, NPCsData.Goblin.VISION_RANGE, NPCsData.Goblin.SPEED, iconInfo, NPCsData.Goblin.ATTACK_RANGE, NPCsData.Goblin.DAMAGE, NPCsData.Goblin.ATTACK_COOLDOWN, frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Goblin.HEALTH, NPCsData.Goblin.HEALTH, NPCsData.Goblin.SPAWNING_TIME, NPCsData.Goblin.SPAWNING_COST, NPCsData.Goblin.VISION_RANGE, NPCsData.Goblin.SPEED, iconInfo, NPCsData.Goblin.ATTACK_RANGE, NPCsData.Goblin.DAMAGE, NPCsData.Goblin.BONUS_DAMAGE, NPCsData.Goblin.ATTACK_COOLDOWN, frame);
     }
 
     protected attack(attackedEntity: NPC) {
@@ -88,5 +90,12 @@ export default class Goblin extends AttackUnit {
         else {
             this.playAnimation(`goblinWalkRight${this._owner.getColor()}`);
         }
+    }
+
+    calculateDamage(target: PlayerEntity) {
+        if(target instanceof Soldier){
+            return this._damage * 1.5;
+        }
+        return this._damage;
     }
 }

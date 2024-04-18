@@ -22,6 +22,8 @@ export default abstract class NPC extends PlayerEntity {
         this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);
 
+        this.setDepth(11);
+
         (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
     }
 
