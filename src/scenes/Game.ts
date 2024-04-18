@@ -55,6 +55,11 @@ export default class Game extends Phaser.Scene {
   create() {
     Client.setScene(this);
 
+    // Reset things to default values
+    this.optionsMenuOpened = false;
+    this._selectedEntity = undefined;
+    this.pointerInMap = true;
+
     // Players
     this.p1 = new Player(Client.lobby.players[0].color, Client.lobby.players[0].color, this);
     this.p2 = new Player(Client.lobby.players[1].color, Client.lobby.players[1].color, this);
@@ -177,11 +182,6 @@ export default class Game extends Phaser.Scene {
       else if (this.cursors.right.isDown) {
         this.cameraMoveRight(delta);
       }
-    }
-
-    if(!this._selectedEntity?.body) {
-      this._selectedEntity = undefined;
-      this.setCornersVisibility(false);
     }
 
     // If not NPC, position should not update
@@ -378,6 +378,8 @@ export default class Game extends Phaser.Scene {
   }
 
   endGame(defeat: boolean) {
+    this._selectedEntity = undefined;
+    
     // Stop music
     this.sound.removeAll();
 
