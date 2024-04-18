@@ -1,10 +1,15 @@
-/**
- * @summary contains all the game's starting information
- */
-enum starting_data {
-    STARTING_PLAYER_VILLAGERS = 5,
-    STARTING_PLAYER_GOLD = 100,
-    //TODO
+import { Resources } from "../utils";
+
+namespace StartingData {
+
+    export class InitData {
+        public static INIT_RESOURCES: Resources = {
+            wood: 100,
+            food: 100,
+            gold: 100
+        }
+        public static MAX_POPULATION: number = 10
+    }
 }
 
-export default starting_data;
+export default StartingData;
