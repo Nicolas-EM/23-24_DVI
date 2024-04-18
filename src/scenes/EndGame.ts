@@ -143,10 +143,10 @@ export default class EndGame extends Phaser.Scene {
 
     // Return to home menu
     Client.returnHome();
-    this.scene.stop();
     this.scene.stop("game");
     this.scene.stop("hud");
     this.scene.stop("settings");
+    this.scene.stop();
     this.scene.start('menu');
   }
 
