@@ -359,16 +359,20 @@ export default class Hud extends Phaser.Scene {
             if (entity instanceof ResourceSpawner) {
                 if (data > 0)
                     this.resourceAmount.text = `${data}`;
-                else
-                    this.displayedEntity = undefined
+                else {
+                    this.displayedEntity = undefined;
+                    this.flushHud();
+                }
             }
             else {
                 if (data > 0) {
                     this.healthAmount.text =  `${data}/${data_2}`;
                     this.healthBar.setFrame(this.calculateHealthBar(data, data_2));
                 }
-                else
-                    this.displayedEntity = undefined
+                else {
+                    this.displayedEntity = undefined;
+                    this.flushHud();
+                }
             }
     }
 
