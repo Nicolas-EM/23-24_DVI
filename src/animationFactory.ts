@@ -217,7 +217,15 @@ export namespace animationFactory {
             }),
             frameRate: 7,
         });
-
+        scene.anims.create({
+            key: 'fire',
+            frames: scene.anims.generateFrameNumbers('Flame', {
+                frames: [0, 1, 2, 3, 4, 5, 6],
+            }),
+            frameRate: 7,
+            repeat: -1,
+            randomFrame: true
+        })
         scene.anims.create({
             key: 'treeIdle',
             frames: scene.anims.generateFrameNumbers('Tree', {

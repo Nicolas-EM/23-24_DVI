@@ -94,7 +94,7 @@ export default class Map {
                     this.scene.cameras.main.zoom = 0.7;
                 }
                 new TownHall(this.scene, <number>obj.x, <number>obj.y, p2);
-                new Archer(this.scene, <number>obj.x + 320, <number>obj.y + 64, p2);
+                new Archer(this.scene, <number>obj.x + 64, <number>obj.y + 64, p2);
                 new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
                 new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
                 new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);
