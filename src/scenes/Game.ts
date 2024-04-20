@@ -136,14 +136,14 @@ export default class Game extends Phaser.Scene {
     if (this._selectedEntity instanceof AttackUnit && gameObject instanceof PlayerEntity) {
       if (!(gameObject as PlayerEntity).belongsToMe())
         Client.attackOrder(this._selectedEntity.getId(), gameObject.getId());
-    } else if(this._selectedEntity instanceof Villager && gameObject instanceof ResourceSpawner) {
+    } else if (this._selectedEntity instanceof Villager && gameObject instanceof ResourceSpawner) {
       Client.gatherOrder(this._selectedEntity.getId(), gameObject.getId());
     }
   }
 
   private handlePointerDown = (pointer: Phaser.Input.Pointer) => {
     // Cursor icon
-    if(this.input.manager.defaultCursor.includes("/pointer")) {
+    if (this.input.manager.defaultCursor.includes("/pointer")) {
       this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
     }
 
@@ -159,7 +159,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private handlePointerUp = (pointer: Phaser.Input.Pointer) => {
-    if(this.input.manager.defaultCursor.includes("/pointer_pressed")) {
+    if (this.input.manager.defaultCursor.includes("/pointer_pressed")) {
       this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     }
   }
