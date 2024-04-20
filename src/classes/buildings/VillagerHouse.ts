@@ -22,14 +22,4 @@ export default class VillagerHouse extends Building {
         
         (this.body as Phaser.Physics.Arcade.Body).setSize(90, 140, true);
     }
-
-    replaceDestroyed() {
-        const deletionX = this.x;
-        const deletionY = this.y;
-        const sceneReference = this.scene;
-        setTimeout(() => {
-
-            sceneReference.add.sprite(deletionX,deletionY, 'House_Destroyed');
-        },0);//0 is just a trick to delay the call in the call-stack (deferred call)
-    }
 }
