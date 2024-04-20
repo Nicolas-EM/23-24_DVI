@@ -4,6 +4,7 @@ import * as Sprites from "../../../assets/sprites";
 import Game from "../../scenes/Game";
 import Villager from "../npcs/Villager";
 import Player from "../Player";
+import Hud from "../../scenes/Hud";
 
 export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite {
     // Attributes
@@ -90,7 +91,7 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
 
     gather(player: Player)  {
         let amountGathered = 0;
-        if(this._remainingResources - this._resourceRate <= 0) {
+        if (this._remainingResources - this._resourceRate <= 0) {
             amountGathered = this._remainingResources;
             this._remainingResources = 0;
         } else {
@@ -100,6 +101,7 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
         
         // Update HUD
         (this._hudInfo.info as { remainingResources: number; resource: string; }).remainingResources = this._remainingResources;
+        ((<Hud>this.scene.scene.get('hud'))).updateInfo(this, this._remainingResources, undefined);
 
         this.addResourceToPlayer(player, amountGathered);
 

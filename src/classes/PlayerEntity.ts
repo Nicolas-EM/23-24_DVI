@@ -5,6 +5,7 @@ import { HudInfo, Resources } from '../utils';
 import * as Sprites from "../../assets/sprites";
 import Client from '../client';
 import AttackUnit from './npcs/AttackUnit';
+import Hud from '../scenes/Hud';
 
 export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     // protected attributes:
@@ -58,7 +59,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
             damage?: number;
         }).health = this._health;
 
-        if(this._health <= 0 && this.body) {
+        ((<Hud>this.scene.scene.get('hud'))).updateInfo(this, this._health, this._totalHealth);
+
+        if (this._health <= 0 && this.body) {
             this.dieOrDestroy();
         }
     }

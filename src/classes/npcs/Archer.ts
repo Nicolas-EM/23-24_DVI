@@ -100,9 +100,10 @@ export default class Archer extends AttackUnit {
             x: position.x,
             y: position.y,
             delay: 150,
-            duration: 400,
+            duration: 240,
             onComplete: () => {
                 arrow.destroy();
+                
             }
         });
         this.anims.resume();

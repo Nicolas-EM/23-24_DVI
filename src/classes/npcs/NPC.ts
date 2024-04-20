@@ -4,6 +4,7 @@ import PlayerEntity from '../PlayerEntity';
 import Game from '../../scenes/Game';
 import { PhaserNavMesh } from "phaser-navMesh";
 import { Resources } from '../../utils';
+import Hud from '../../scenes/Hud';
 
 export default abstract class NPC extends PlayerEntity {
     protected _path;
@@ -21,11 +22,28 @@ export default abstract class NPC extends PlayerEntity {
 
         this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);
+        if (this.belongsToMe()) {
+            this.waitUntilHudActive().then(() => {
+                (<Hud>(this.scene.scene.get("hud"))).updatePopulation(this._owner.getNPCs().length, this._owner.getMaxPopulation());
+            });
+        }
 
         this.setDepth(11);
 
         (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
     }
+
+    // Wait until scene HUD is ready to show player info
+    waitUntilHudActive = async () => {
+        return new Promise<void>((resolve, reject) => {
+            const interval = setInterval(() => {
+                if ((<Hud>(this.scene.scene.get("hud"))).scene.isActive()) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 100); // Check every 100 ms
+        });
+    };
 
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
         if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
@@ -64,6 +82,7 @@ export default abstract class NPC extends PlayerEntity {
 
     dieOrDestroy() {
         this._owner.removeNPC(this);
+        (<Hud>(this.scene.scene.get("hud"))).updatePopulation(this._owner.getNPCs().length, this._owner.getMaxPopulation());
         if (this.anims.isPlaying) {
             this.anims.stop();
         }

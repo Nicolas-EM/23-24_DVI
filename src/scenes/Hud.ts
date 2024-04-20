@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import Player from '../classes/Player';
 import ResourceSpawner from '../classes/resources/ResourceSpawner';
 import PlayerEntity from '../classes/PlayerEntity';
-import { FontLoader } from '../utils';
+import { FontLoader, Resources } from '../utils';
 import SpawnerBuilding from '../classes/buildings/SpawnerBuilding';
 
 export default class Hud extends Phaser.Scene {
@@ -19,6 +19,11 @@ export default class Hud extends Phaser.Scene {
     private infoContainer: Phaser.GameObjects.Container;
     private actionsContainer: Phaser.GameObjects.Container;
 
+    // Hud info
+    private resourceAmount: Phaser.GameObjects.Text;
+    private healthAmount: Phaser.GameObjects.Text;
+    private healthBar: Phaser.GameObjects.Image;
+
     // Queue
     private queueContainer: Phaser.GameObjects.Container;
     private queueIcon: Phaser.GameObjects.Image;
@@ -27,7 +32,7 @@ export default class Hud extends Phaser.Scene {
     // Player
     private player: Player;
 
-    // Spawn Cancell
+    // Spawn Cancel
     private closeBtnImg: Phaser.GameObjects.Image;
     private closeBtnXImg: Phaser.GameObjects.Image;
 
@@ -82,7 +87,7 @@ export default class Hud extends Phaser.Scene {
             let villagerIcon = self.add.image(-20, 2, `Villager_${self.player.getColor()}`);
             villagerIcon.setDisplaySize(60, 60);
             villagerIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-            self.populationCounter = self.add.text(0, -13, `0/${self.player.getMaxPopulation()}`,
+            self.populationCounter = self.add.text(0, -13, `${self.player.getNPCs.length}/${self.player.getMaxPopulation()}`,
                 { color: '#000000', fontFamily: "Quattrocento", fontSize: 18 });
 
             let populationContainer = self.add.container(midX, 45);
@@ -186,6 +191,47 @@ export default class Hud extends Phaser.Scene {
                 entityIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
                 this.selectedContainer.add(entityIcon);
 
+                // ----- Info -----
+                // ResourceSpawner
+                if ("remainingResources" in hudInfo.info) {
+                    let resourceIcon = self.add.image(-58, 0, hudInfo.info.resource);
+                    resourceIcon.setDisplaySize(60, 60);
+                    resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                    self.resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Quattrocento" });
+                    self.infoContainer.add(resourceIcon);
+                    self.infoContainer.add(self.resourceAmount);
+                }
+                // PlayerEntity
+                else {
+                    // Health
+                    self.createHealthBar(hudInfo.info.health, hudInfo.info.totalHealth);
+                    // if AttackUnit, show damage
+                    if ("damage" in hudInfo.info) {
+                        // Sword
+                        let sword = self.add.image(30, 0, 'Sword');
+                        sword.setDisplaySize(14, 30);
+                        sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                        sword.setFlipX(true);
+                        self.infoContainer.add(sword);
+                        // Damage
+                        let damageAmount = self.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Quattrocento" });
+                        self.infoContainer.add(damageAmount);
+                    }
+                    // if Building with queue, show queue data
+                    if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
+                        self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
+                        self.queueTime.text = hudInfo.info.queueTime === Infinity ? "Inf." : `${hudInfo.info.queueTime}s`;
+                        // If not visible, set visible
+                        if (!self.queueContainer.visible) {
+                            self.queueContainer.setVisible(true);
+                        }
+                    }
+                    // Queue empty
+                    else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
+                        self.queueContainer.setVisible(false);
+                    }
+                }
+
                 // ----- Actions -----
                 if ("isMine" in hudInfo.info && hudInfo.info.isMine) {
                     let startX = -45;
@@ -223,13 +269,13 @@ export default class Hud extends Phaser.Scene {
     }
 
     createHealthBar(health: number, totalHealth: number) {
-        let healthAmount = this.add.text(-45, -15, `${health}/${totalHealth}`, { color: '#000000', fontFamily: "Quattrocento" });
-        healthAmount.setFontSize(13);
-        let healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(health, totalHealth));
-        healthBar.setDisplaySize(80, 30);
-        healthBar.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-        this.infoContainer.add(healthAmount);
-        this.infoContainer.add(healthBar);
+        this.healthAmount = this.add.text(-45, -15, `${health}/${totalHealth}`, { color: '#000000', fontFamily: "Quattrocento" });
+        this.healthAmount.setFontSize(13);
+        this.healthBar = this.add.image(-30, 8, 'Health', this.calculateHealthBar(health, totalHealth));
+        this.healthBar.setDisplaySize(80, 30);
+        this.healthBar.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+        this.infoContainer.add(this.healthAmount);
+        this.infoContainer.add(this.healthBar);
     }
 
     // Add banner of a resource to TopHud
@@ -276,68 +322,58 @@ export default class Hud extends Phaser.Scene {
     }
 
     update(time: number, delta: number) {
-        this.woodCounter.setText(`${this.player.getWood()}`);
-        this.foodCounter.setText(`${this.player.getFood()}`);
-        this.goldCounter.setText(`${this.player.getGold()}`);
-
-        this.populationCounter.setText(`${this.player.getNPCs().length}/${this.player.getMaxPopulation()}`);
-
         if (this.displayedEntity) {
             const hudInfo = this.displayedEntity.getHudInfo();
-
-            this.infoContainer.removeAll(true);
-
             // Load fonts
             FontLoader.loadFonts(this, (self) => {
-                // ----- Info -----
-                // ResourceSpawner
-                if ("remainingResources" in hudInfo.info) {
-                    let resourceIcon = self.add.image(-58, 0, hudInfo.info.resource);
-                    resourceIcon.setDisplaySize(60, 60);
-                    resourceIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                    let resourceAmount = self.add.text(-36, -8, `${hudInfo.info.remainingResources}`, { color: '#000000', fontFamily: "Quattrocento" });
-                    self.infoContainer.add(resourceIcon);
-                    self.infoContainer.add(resourceAmount);
-
-                    if(hudInfo.info.remainingResources <= 0)
-                        self.displayedEntity = undefined;
+                // if Building with queue, show queue data
+                if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
+                    self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
+                    self.queueTime.text = hudInfo.info.queueTime === Infinity ? "Inf." : `${hudInfo.info.queueTime}s`;
+                    // If not visible, set visible
+                    if (!self.queueContainer.visible) {
+                        self.queueContainer.setVisible(true);
+                    }
                 }
-                // PlayerEntity
-                else {
-                    // Health
-                    self.createHealthBar(hudInfo.info.health, hudInfo.info.totalHealth);
-                    // if AttackUnit, show damage
-                    if ("damage" in hudInfo.info) {
-                        // Sword
-                        let sword = self.add.image(30, 0, 'Sword');
-                        sword.setDisplaySize(14, 30);
-                        sword.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                        sword.setFlipX(true);
-                        self.infoContainer.add(sword);
-                        // Damage
-                        let damageAmount = self.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Quattrocento" });
-                        self.infoContainer.add(damageAmount);
-                    }
-                    // if Building with queue, show queue data
-                    if ("queueIcon" in hudInfo.info && hudInfo.info.queueIcon != null && "queueTime" in hudInfo.info) {
-                        self.queueIcon.setTexture("Icons", hudInfo.info.queueIcon);
-                        self.queueTime.text = hudInfo.info.queueTime === Infinity ? "Inf." : `${hudInfo.info.queueTime}s`;
-                        // If not visible, set visible
-                        if (!self.queueContainer.visible) {
-                            self.queueContainer.setVisible(true);
-                        }
-                    }
-                    // Queue empty
-                    else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
-                        self.queueContainer.setVisible(false);
-                    }
-
-                    if(hudInfo.info.health <= 0)
-                        self.displayedEntity = undefined;
+                // Queue empty
+                else if ("queueIcon" in hudInfo.info && "queueTime" in hudInfo.info) {
+                    self.queueContainer.setVisible(false);
                 }
             });
-        } else {
-            this.flushHud();
         }
     }
+
+    updateResources(resources: Resources) {
+        this.woodCounter.setText(`${resources.wood}`);
+        this.foodCounter.setText(`${resources.food}`);
+        this.goldCounter.setText(`${resources.gold}`);
+    }
+
+    updatePopulation(curPop, maxPop) {
+        this.populationCounter.setText(`${curPop}/${maxPop}`);
+    }
+
+    updateInfo(entity: ResourceSpawner | PlayerEntity, data: number, data_2: number) {
+        // Update only if shown in hud
+        if (this.displayedEntity && entity.getId() == this.displayedEntity.getId())
+            if (entity instanceof ResourceSpawner) {
+                if (data > 0)
+                    this.resourceAmount.text = `${data}`;
+                else {
+                    this.displayedEntity = undefined;
+                    this.flushHud();
+                }
+            }
+            else {
+                if (data > 0) {
+                    this.healthAmount.text =  `${data}/${data_2}`;
+                    this.healthBar.setFrame(this.calculateHealthBar(data, data_2));
+                }
+                else {
+                    this.displayedEntity = undefined;
+                    this.flushHud();
+                }
+            }
+    }
+
 }
