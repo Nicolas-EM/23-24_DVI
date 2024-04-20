@@ -34,12 +34,11 @@ export default class Townhall extends SpawnerBuilding {
     }
 
     dieOrDestroy() {
-        this._owner.removeBuilding(this);
-        // this.doDeathAnimation();
         this.scene.time.addEvent({
             delay: 3000,
             callback: () => Client.surrenderOrLose(this._owner.getColor()),
             callbackScope: this
-        });      
+        });    
+        super.dieOrDestroy();  
     }
 }
