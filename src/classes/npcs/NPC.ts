@@ -28,6 +28,8 @@ export default abstract class NPC extends PlayerEntity {
             });
         }
 
+        this.setDepth(11);
+
         (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
     }
 
