@@ -3,19 +3,16 @@ import NPC from './npcs/NPC';
 import { Resources } from "../utils";
 import VillagerHouse from './buildings/VillagerHouse';
 import PlayerEntity from './PlayerEntity';
+import Hud from '../scenes/Hud';
+import StartingData from "../magic_numbers/starting_data";
+
 
 export default class Player {
   private buildings: Building[] = [];
   private npcs: NPC[] = [];
   private entityMap: Map<string, PlayerEntity> = new Map();
-  // TODO: Default starting resources
-  private resources: Resources = {
-    wood: 100,
-    food: 100,
-    gold: 100
-  };
-  // TODO: magic number - starting population
-  private maxPopulation: number = 10;
+  private resources: Resources = StartingData.InitData.INIT_RESOURCES;
+  private maxPopulation: number = StartingData.InitData.MAX_POPULATION;
   private entityId = 0;
 
   /**
@@ -102,12 +99,14 @@ export default class Player {
     this.resources.gold += resource.gold;
     this.resources.wood += resource.wood;
     this.resources.food += resource.food;
+    (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
   }
 
   pay(resources: Resources) {
     this.resources.gold -= resources.gold;
     this.resources.wood -= resources.wood;
     this.resources.food -= resources.food;
+    (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
   }
 
   getMaxPopulation(): number {
