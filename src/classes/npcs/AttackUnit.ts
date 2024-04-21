@@ -89,7 +89,9 @@ export default abstract class AttackUnit extends NPC {
                         this.scene.events.emit("attackEvent");
                         this.doAttackAnimation(new Phaser.Math.Vector2(target.x, target.y), (this.x >= target.x));
                         let damage = this.calculateDamage(target);
-                        target.onAttackReceived(damage, this);
+                        setTimeout(() => {
+                            target.onAttackReceived(damage, this);
+                        }, 500);
                         // Update last attack time
                         this._lastAttackTime = time;
                     }
