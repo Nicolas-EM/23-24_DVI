@@ -36,6 +36,14 @@ function createDefaultLobby(): Lobby {
 
 const lobbies: { [code: string]: Lobby } = {};
 
+app.use(function (req, res, next) {
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
+    );
+    next();
+});
+
 const environment = process.env.NODE_ENV || 'dev';
 if (environment === 'dev')
     app.use(express.static('./dist/'));
@@ -59,8 +67,8 @@ function generateLobbyCode(): string {
 }
 
 function removePlayerFromLobby(socket: Socket) {
-     // Find lobbies where the player is present
-     for (const lobbyCode in lobbies) {
+    // Find lobbies where the player is present
+    for (const lobbyCode in lobbies) {
         const lobby = lobbies[lobbyCode];
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
 
@@ -237,5 +245,5 @@ io.on('connection', socket => {
 });
 
 http.listen(port, () => {
-    console.log('Servidor listening on port ', port);
+    console.log('Server listening on port ', port);
 });
