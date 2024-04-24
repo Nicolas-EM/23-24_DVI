@@ -197,7 +197,7 @@ export default class Boot extends Phaser.Scene {
     this.load.image('X', Sprites.UI.Icons.X);
     this.load.image('RMB', Sprites.UI.Icons.RMB);
     this.load.image('LMB', Sprites.UI.Icons.LMB);
-    this.load.multiatlas('Icons');
+    this.load.multiatlas('Icons', 'icons.json');
 
     // UI - Menu&Lobby
     this.load.spritesheet('Clouds', Sprites.UI.MenuLobby.Clouds, { frameWidth: 512, frameHeight: 256 });

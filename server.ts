@@ -44,12 +44,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-const environment = process.env.NODE_ENV || 'dev';
-if (environment === 'dev')
-    app.use(express.static('./dist/'));
-else
-    app.use(express.static('./docs/'));
-
 function assignColor(lobby: Lobby) {
     const randomIndex = Math.floor(Math.random() * lobby.availableColors.length);
     const selectedColor = lobby.availableColors[randomIndex];
@@ -243,6 +237,30 @@ io.on('connection', socket => {
         }
     });
 });
+
+const environment = process.env.NODE_ENV || 'dev';
+if (environment === 'dev') {
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname + '/dist/index.html');
+    });
+
+    // Serve other files using wildcard route
+    app.get('/:file', (req, res) => {
+        const fileName = req.params.file;
+        res.sendFile(__dirname + '/dist/' + fileName);
+    });
+}
+else {
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname + '/docs/index.html');
+    });
+
+    // Serve other files using wildcard route
+    app.get('/:file', (req, res) => {
+        const fileName = req.params.file;
+        res.sendFile(__dirname + '/docs/' + fileName);
+    });
+}
 
 http.listen(port, () => {
     console.log('Server listening on port ', port);
