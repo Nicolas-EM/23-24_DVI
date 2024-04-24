@@ -39,7 +39,7 @@ const lobbies: { [code: string]: Lobby } = {};
 app.use(function (req, res, next) {
     res.setHeader(
         'Content-Security-Policy',
-        "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
+        "default-src 'self' https://troops-prod-yadfj.ondigitalocean.app https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js wss://troops-prod-yadfj.ondigitalocean.app/socket.io; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css https://fonts.googleapis.com; frame-src 'self'; connect-src 'self' wss://troops-prod-yadfj.ondigitalocean.app https://troops-prod-yadfj.ondigitalocean.app/socket.io/ https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js;"
     );
     next();
 });
