@@ -36,14 +36,6 @@ function createDefaultLobby(): Lobby {
 
 const lobbies: { [code: string]: Lobby } = {};
 
-app.use(function (req, res, next) {
-    res.setHeader(
-        'Content-Security-Policy',
-        "default-src 'self' https://troops-prod-yadfj.ondigitalocean.app https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js wss://troops-prod-yadfj.ondigitalocean.app/socket.io; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css https://fonts.googleapis.com; frame-src 'self'; connect-src 'self' wss://troops-prod-yadfj.ondigitalocean.app https://troops-prod-yadfj.ondigitalocean.app/socket.io/ https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js;"
-    );
-    next();
-});
-
 function assignColor(lobby: Lobby) {
     const randomIndex = Math.floor(Math.random() * lobby.availableColors.length);
     const selectedColor = lobby.availableColors[randomIndex];
@@ -238,7 +230,7 @@ io.on('connection', socket => {
     });
 });
 
-const environment = process.env.NODE_ENV || 'dev';
+const environment = process.env.NODE_ENV || 'prod';
 if (environment === 'dev') {
     app.get('/', (req, res) => {
         res.sendFile(__dirname + '/dist/index.html');
