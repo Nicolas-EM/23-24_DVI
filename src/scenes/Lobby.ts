@@ -102,11 +102,11 @@ export default class Lobby extends Phaser.Scene {
       self.add.text(self.cameras.main.width / 2, 270, 'Choose Color:', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
 
       self.colorButtons = [];
-      let startX = self.cameras.main.width / 2 - 150;
+      let startX = self.cameras.main.width / 2 - 225;
 
       // Buttons start disabled
       colors.forEach((color, index) => {
-        const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
+        const button = this.add.sprite(startX + index * 145, 350, `Soldier_${color}`).setInteractive({pixelPerfect: true });
         button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
           if (pointer.leftButtonReleased()) {
             this.selectColor(color);
