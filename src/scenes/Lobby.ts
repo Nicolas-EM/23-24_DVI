@@ -21,6 +21,7 @@ export default class Lobby extends Phaser.Scene {
 
   init(data) {
     this.quickPlay = data.quickPlay;
+    this.isReady = false;
   }
 
   create() {
