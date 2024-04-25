@@ -13,8 +13,14 @@ export default class Lobby extends Phaser.Scene {
   readyButton: Phaser.GameObjects.Image;
   isReady: boolean = false;
 
+  private quickPlay: boolean;
+
   constructor() {
     super('lobby');
+  }
+
+  init(data) {
+    this.quickPlay = data.quickPlay;
   }
 
   create() {
@@ -29,14 +35,12 @@ export default class Lobby extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings');
-    this.scene.get("settings").events.on('menuOpened', () => {
-      if(this.scene.isActive("lobby"))
-        this.scene.pause();
+    this.scene.run('settings', { scene: "lobby" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
     });
-    this.scene.get("settings").events.on('menuClosed', () => {
-      if(this.scene.isActive("lobby"))
-        this.scene.resume();
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
     });
 
     // Background
@@ -57,7 +61,7 @@ export default class Lobby extends Phaser.Scene {
 
     // Leave lobby button
     let leaveContainer = this.add.container(this.cameras.main.width - 120, 45);
-    let leaveButton = this.add.image(0, 0, 'Button_Red');
+    let leaveButton = this.add.image(0, 0, 'Button_Red').setInteractive();
     leaveButton.setDisplaySize(55, 55);
     leaveButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     leaveContainer.add(leaveButton);
@@ -66,14 +70,32 @@ export default class Lobby extends Phaser.Scene {
     leaveIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
     leaveContainer.add(leaveIcon);
 
+    // Leave action
+    leaveButton.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonDown()) {
+        leaveButton.setTexture("Button_Red_Pressed");
+        leaveIcon.setPosition(0, -2);
+      }
+    });
+    leaveButton.on("pointerup", (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonReleased()) {
+        this.leaveLobby();
+      }
+    });
+
     // Load font
     FontLoader.loadFonts(this, (self) => {
       // Display lobby UI elements (e.g., player list, color selection, ready button)
       let banner = this.add.nineslice(0, 0, 'Horizontal', undefined, 275, 99, 35, 35, 0, 10);
       let lobbyContainer = this.add.container(self.cameras.main.width / 2, 80);
-      self.lobbyText = self.add.text(0, 0, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
       lobbyContainer.add(banner);
-      lobbyContainer.add(self.lobbyText);
+      if (!this.quickPlay) {        
+        self.lobbyText = self.add.text(0, 0, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+        lobbyContainer.add(self.lobbyText);
+      }
+      else {
+        lobbyContainer.add(self.add.text(0, 0, 'QUICK PLAY', { fontSize: 24, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5));
+      }
 
       self.playerListText = self.add.text(self.cameras.main.width / 2, 200, '', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
 
@@ -99,7 +121,7 @@ export default class Lobby extends Phaser.Scene {
       let readyContainer = self.add.container(self.cameras.main.width / 2, 450);
       self.readyButton = self.add.image(0, 0, "Button_Yellow_Slides").setInteractive();
       self.readyButton.scale = 0.85;
-      let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontWeigth: "bold" })
+      let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontStyle: "bold" })
       self.readyButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonDown()) {
           if (!this.isReady)
@@ -122,12 +144,12 @@ export default class Lobby extends Phaser.Scene {
       readyContainer.add(self.readyButton);
       readyContainer.add(readyText);
     });
-
   }
 
   update(time: number, delta: number) {
     if (Client.lobby?.code) {
-      this.lobbyText.setText(`${Client.lobby.code}`);
+      if (!this.quickPlay)
+        this.lobbyText.setText(`${Client.lobby.code}`);
       this.updatePlayers(Client.lobby.players);
       this.updateAvailableColors(Client.lobby.availableColors);
 
@@ -170,7 +192,15 @@ export default class Lobby extends Phaser.Scene {
     Client.readyUp();
   }
 
-  startGame() {
+  startGame() {  
+    this.isReady = false;
+    this.scene.stop();    
     this.scene.start('game', { mapId: 'desert' });
+  }
+
+  leaveLobby() {   
+    Client.leaveLobby();  
+    this.scene.stop();  
+    this.scene.start('menu');
   }
 }

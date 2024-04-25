@@ -22,11 +22,11 @@ The people have divided and support the neighboring kings. The candidate from th
 
 The fate of Eliora is at stake and only war can decide it...
 
-![Kings of Troops](/assets/previews/kings/Troops_kings.png)
+![Kings of Troops](/assets/previews/kings/troops_kings.png)
 
 ## Game Session Overview
 The player enters the website and can choose from three different options:
-1. **PLAY**: Join a lobby and wait until matched with another player. Start a game on a randomly selected map (color selected by order of arrival, 1st blue and 2nd red).
+1. **QUICK PLAY**: Join a lobby and wait until matched with another player. Start a game on a randomly selected map (color selected by order of arrival, 1st blue and 2nd red).
 2. **CREATE A GAME**: Generate a code to share with a friend. The creator can choose a map (or select "random") and the team color (blue, red, yellow, purple).
 3. **JOIN A GAME**: Use a friend's code to join their game. The joiner can pick a team color, which must be different from the creator's team.
 
@@ -49,10 +49,10 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 
 |     Name      |                        Image                             |                        Description                          |
 |:-------------:|:--------------------------------------------------------:|:-----------------------------------------------------------:|
-| Villager      | ![Villager Sprite](/assets/previews/NPCs/villager.png)   | Can gather resources and build a village house or a tower.  |
-| Soldier       | ![Soldier Sprite](/assets/previews/NPCs/soldier.png)     | Can deal melee damage using a sword against enemies.        |
-| Archer        | ![Archer Sprite](/assets/previews/NPCs/archer.png)       | Can deal ranged damage by shooting arrows at enemies.       |
-| Goblin        | ![Goblin Sprite](/assets/previews/NPCs/goblin.png)       | Can deal melee damage using a torch against enemies.        |
+| Villager      | ![Villager Sprite](/assets/previews/npcs/villager.png)   | Can gather resources and build a village house or a tower.  |
+| Soldier       | ![Soldier Sprite](/assets/previews/npcs/soldier.png)     | Can deal melee damage using a sword against enemies.        |
+| Archer        | ![Archer Sprite](/assets/previews/npcs/archer.png)       | Can deal ranged damage by shooting arrows at enemies.       |
+| Goblin        | ![Goblin Sprite](/assets/previews/npcs/goblin.png)       | Can deal melee damage using a torch against enemies.        |
 
 ### Resources
 

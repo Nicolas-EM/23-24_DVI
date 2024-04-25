@@ -18,6 +18,7 @@ namespace NPCsData {
             food: 10,
             gold: 0
         }
+        public static GATHER_COOLDOWN = 2;
     }
     
     // Soldier
@@ -31,9 +32,10 @@ namespace NPCsData {
         public static VISION_RANGE = 5;
         public static SPEED = 2.5;
         public static DAMAGE = 10;
+        public static BONUS_DAMAGE = 1.5;
         public static ATTACK_RANGE = 1;     // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds
-        public static SPAWNING_TIME = 5000;    
+        public static SPAWNING_TIME = 5000;
         public static SPAWNING_COST: Resources = {
             wood: 10,
             food: 10,
@@ -52,6 +54,7 @@ namespace NPCsData {
         public static VISION_RANGE = 10;
         public static SPEED = 2.5;
         public static DAMAGE = 10;
+        public static BONUS_DAMAGE = 1.5;
         public static ATTACK_RANGE = 5;     // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds
         public static SPAWNING_TIME = 5000;    
@@ -73,6 +76,7 @@ namespace NPCsData {
         public static VISION_RANGE = 5;
         public static SPEED = 3.75;
         public static DAMAGE = 10;
+        public static BONUS_DAMAGE = 1.5;
         public static ATTACK_RANGE = 1;    // tiles
         public static ATTACK_COOLDOWN = 5;  // seconds
         public static SPAWNING_TIME = 5000;    

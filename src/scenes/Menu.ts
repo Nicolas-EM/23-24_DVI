@@ -5,6 +5,7 @@ import { FontLoader } from '../utils';
 
 
 export default class Menu extends Phaser.Scene {
+  
   constructor() {
     super({ key: 'menu' });
   }
@@ -21,14 +22,12 @@ export default class Menu extends Phaser.Scene {
     });
 
     // Settings button
-    this.scene.run('settings');
-    this.scene.get('settings').events.on('menuOpened', () => {
-      if(this.scene.isActive("menu"))
-        this.scene.pause();
+    this.scene.run('settings', { scene: "menu" });
+    this.events.on('menuOpened', () => {
+      this.scene.pause();
     });
-    this.scene.get('settings').events.on('menuClosed', () => {
-      if(this.scene.isActive("menu"))
-        this.scene.resume();
+    this.events.on('menuClosed', () => {
+      this.scene.resume();
     });
 
     // Background
@@ -49,12 +48,18 @@ export default class Menu extends Phaser.Scene {
     this.addButton("CREATE GAME", this.cameras.main.height / 2, this.createLobby);
     this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, this.joinLobby);
 
+    // On resume
+    this.events.on("resume", () => {
+      Client.setScene(this);
+    });
+
     // Sound
-    this.sound.add('TroopsTheme', { loop: true, volume: 0.5 }).play();
+    if (!this.sound.get('TroopsTheme') || !this.sound.get('TroopsTheme').isPlaying)
+      this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
 
-  startLobby() {
-    this.scene.start('lobby');
+  startLobby(quickPlay: boolean) {
+    this.scene.start('lobby', { quickPlay: quickPlay });
   }
 
   quickPlay() {
@@ -65,8 +70,9 @@ export default class Menu extends Phaser.Scene {
     Client.createLobby();
   }
 
-  joinLobby() {
-    Client.joinLobby(globalThis.lobbyCode);
+  joinLobby = () => {
+    this.scene.pause();
+    this.scene.run("join-lobby");
   }
 
   addCloud(texture: number, posX: number, posY: number, scale: number): void {
@@ -82,7 +88,7 @@ export default class Menu extends Phaser.Scene {
     // Add text with font
     FontLoader.loadFonts(this, (self) => {
       let menuText = self.add.text(0, 0,
-        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25, fontWeigth: "bold" })
+        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25 })
         .setOrigin(0.5, 0.9);
 
       let menuContainer = self.add.container(self.cameras.main.width / 2, posY)

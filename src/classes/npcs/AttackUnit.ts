@@ -8,6 +8,7 @@ import PlayerEntity from '../PlayerEntity';
 export default abstract class AttackUnit extends NPC {
     protected _attackRange: number;
     protected _damage: number;
+    protected bonus_damage: number;
     protected _attackTargetId: string;
     protected _lastAttackTime: number;
     protected _attackCooldown: number;
@@ -16,11 +17,12 @@ export default abstract class AttackUnit extends NPC {
      * @summary constructor for attacking class (must have offensive abilities)
      * @returns instance of attackUnit
      */
-    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, attackCooldown: number, frame?: string | number) {
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, bonus_damage: number, attackCooldown: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, movementSpeed, frame);
 
         this._attackRange = attackRange;
         this._damage = damage;
+        this.bonus_damage = bonus_damage;
         this._attackCooldown = attackCooldown;
 
         this._hudInfo = {
@@ -84,8 +86,10 @@ export default abstract class AttackUnit extends NPC {
                     // Check if enough time has passed since the last attack or if have never attacked
                     const timeSinceLastAttack = (time - this._lastAttackTime) / 1000;   // in seconds
                     if (this._lastAttackTime === undefined || timeSinceLastAttack >= this._attackCooldown) {
+                        this.scene.events.emit("attackEvent");
                         this.doAttackAnimation(new Phaser.Math.Vector2(target.x, target.y), (this.x >= target.x));
-                        target.onAttackReceived(this._damage, this);
+                        let damage = this.calculateDamage(target);
+                        target.onAttackReceived(damage, this);
                         // Update last attack time
                         this._lastAttackTime = time;
                     }
@@ -97,5 +101,8 @@ export default abstract class AttackUnit extends NPC {
 
         super.update(time, delta);
     }
+    
     abstract doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean): void;
+
+    abstract calculateDamage(target: PlayerEntity): number;
 }

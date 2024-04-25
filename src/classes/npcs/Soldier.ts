@@ -5,6 +5,8 @@ import NPC from "./NPC";
 import Game from "../../scenes/Game";
 import { Resources } from "../../utils";
 import NPCsData from "../../magic_numbers/npcs_data";
+import PlayerEntity from "../PlayerEntity";
+import Archer from "./Archer";
 
 export default class Soldier extends AttackUnit {
     static readonly COST: Resources = NPCsData.Soldier.SPAWNING_COST;
@@ -14,7 +16,7 @@ export default class Soldier extends AttackUnit {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Soldier.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Soldier.HEALTH, NPCsData.Soldier.HEALTH, NPCsData.Soldier.SPAWNING_TIME, NPCsData.Soldier.SPAWNING_COST, NPCsData.Soldier.VISION_RANGE, NPCsData.Soldier.SPEED, iconInfo, NPCsData.Soldier.ATTACK_RANGE, NPCsData.Soldier.DAMAGE, NPCsData.Soldier.ATTACK_COOLDOWN, frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Soldier.HEALTH, NPCsData.Soldier.HEALTH, NPCsData.Soldier.SPAWNING_TIME, NPCsData.Soldier.SPAWNING_COST, NPCsData.Soldier.VISION_RANGE, NPCsData.Soldier.SPEED, iconInfo, NPCsData.Soldier.ATTACK_RANGE, NPCsData.Soldier.DAMAGE,  NPCsData.Soldier.BONUS_DAMAGE, NPCsData.Soldier.ATTACK_COOLDOWN, frame);
     }
 
     protected attack(attackedEntity: NPC) {
@@ -83,5 +85,12 @@ export default class Soldier extends AttackUnit {
         }
 
         this.playAnimation(animationKey);
+    }
+
+    calculateDamage(target: PlayerEntity) {
+        if(target instanceof Archer){
+            return this._damage * 1.5;
+        }
+        return this._damage;
     }
 }

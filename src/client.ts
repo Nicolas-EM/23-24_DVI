@@ -4,16 +4,23 @@ import Game from './scenes/Game';
 import Menu from './scenes/Menu';
 
 export default class Client {
-    static socket: Socket = io(process.env.NODE_ENV == "production" ? "https://troops-prod-yadfj.ondigitalocean.app/": "http://localhost:8081");
+    static socket: Socket = io(process.env.NODE_ENV !== "dev" ? "https://troops-prod-yadfj.ondigitalocean.app/": "http://localhost:8081");
     static lobby: lobbyData;
     static scene: Phaser.Scene;
 
     static init() {
-        Client.socket.on('lobbyCreated', (code) => {
+        Client.socket.on('lobbyCreated', (code, quickPlay) => {
+            (<Menu>(Client.scene)).startLobby(quickPlay);
             Client.joinLobby(code);
         });
 
         Client.socket.on('updateLobby', (data: {lobby: lobbyData}) => {
+            if (Client.scene.scene.isActive('join-lobby')) {
+                (Client.scene).scene.stop();
+            }
+            if (!Client.scene.scene.isActive('lobby')) {
+                (Client.scene).scene.start("lobby");
+            }
             Client.lobby = data.lobby;
         });
 
@@ -34,6 +41,18 @@ export default class Client {
                 (<Game>(Client.scene)).setNPCAttackTarget(npcId, targetId);
             }
         });
+
+        Client.socket.on('gather', (villagerId: string, resourceSpawnerId: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).setVillagerGatherTarget(villagerId, resourceSpawnerId);
+            }
+        });
+
+        Client.socket.on('end-game', (playerColor: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).endGame(playerColor === Client.getMyColor());
+            }
+        });
     }
 
     static setScene(scene: Phaser.Scene) {
@@ -44,9 +63,8 @@ export default class Client {
         return Client.lobby.players.find(player => player.id === Client.socket.id)?.color;
     }
 
-    static sendTest(): void {
-        console.log("test sent");
-        Client.socket.emit('test');
+    static getOthersColor(): string {
+        return Client.lobby.players.find(player => player.id !== Client.socket.id)?.color;
     }
 
     // Menu functions
@@ -60,8 +78,11 @@ export default class Client {
 
     // Lobby Functions
     static joinLobby(code: string): void {
-        (<Menu>(Client.scene)).startLobby();
         Client.socket.emit('joinLobby', code);
+    }
+
+    static leaveLobby() {
+        Client.socket.emit('leaveLobby');
     }
 
     static chooseColor(color: string): void {
@@ -83,6 +104,18 @@ export default class Client {
 
     static attackOrder(npcId: string, targetId: string) {
         Client.socket.emit('attack', Client.lobby.code, npcId, targetId);
+    }
+
+    static surrenderOrLose(playerColor: string) {
+        Client.socket.emit('end-game', Client.lobby.code, playerColor);
+    }
+
+    static returnHome() {
+        Client.socket.emit('returnHome');
+    }
+
+    static gatherOrder(villagerId: string, resourceSpawnerId: string) {
+        Client.socket.emit('gather', Client.lobby.code, villagerId, resourceSpawnerId);
     }
 }
 

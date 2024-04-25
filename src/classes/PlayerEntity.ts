@@ -2,8 +2,10 @@ import * as Phaser from 'phaser';
 import Player from './Player';
 import Game from '../scenes/Game';
 import { HudInfo, Resources } from '../utils';
+import * as Sprites from "../../assets/sprites";
 import Client from '../client';
 import AttackUnit from './npcs/AttackUnit';
+import Hud from '../scenes/Hud';
 
 export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     // protected attributes:
@@ -38,6 +40,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         
         this.setInteractive( {pixelPerfect: true} );
         this.on('pointerup', this.onEntityClicked, this);
+        this.on('pointerdown', this.onDown, this);
+        this.on('pointerover', this.onHover, this);
+        this.on('pointerout', this.onOut, this);
 
         this.scene.events.on("update", this.update, this);
     }
@@ -54,18 +59,51 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
             damage?: number;
         }).health = this._health;
 
-        if(this._health <= 0) {
-            // TODO: Kill / Destroy entity
+        ((<Hud>this.scene.scene.get('hud'))).updateInfo(this, this._health, this._totalHealth);
+
+        if (this._health <= 0 && this.body) {
             this.dieOrDestroy();
         }
     }
 
     protected abstract dieOrDestroy();
 
-    onEntityClicked(pointer: Phaser.Input.Pointer): void {
+    private setSwordCursor(icon: any) {
+        let entity = (<Game>(this.scene)).getSelectedEntity();
+        const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
+
+        if (entity && entity instanceof PlayerEntity && isAttackUnit && entity.belongsToMe() && !this.belongsToMe()) {
+            this.scene.input.setDefaultCursor(`url(${icon}), pointer`);
+        }
+    }
+
+    private onEntityClicked(pointer: Phaser.Input.Pointer): void {
+        if(pointer.rightButtonReleased()) {
+            this.setSwordCursor(Sprites.UI.Pointers.Sword);
+        }
+
         if (pointer.leftButtonReleased()) {
             (<Game>(this.scene)).setSelectedEntity(this);
         }
+    }
+
+    private onDown(pointer: Phaser.Input.Pointer): void {
+        if (pointer.rightButtonDown()) {
+            this.setSwordCursor(Sprites.UI.Pointers.Sword_Pressed);
+        }
+    }
+
+    private onHover(): void {
+        const entity = (<Game>(this.scene)).getSelectedEntity();
+        const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
+
+        if (entity && isAttackUnit && entity instanceof PlayerEntity && entity.belongsToMe() && !this.belongsToMe()) {
+            this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Sword}), pointer`);
+        }
+    }
+
+    private onOut(): void {
+        this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     }
 
     destroy() {

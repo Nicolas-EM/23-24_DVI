@@ -2,10 +2,12 @@ import * as Phaser from 'phaser';
 import Boot from './scenes/Boot';
 import Menu from './scenes/Menu';
 import Lobby from './scenes/Lobby';
+import JoinLobby from './scenes/JoinLobby';
 import Game from './scenes/Game';
 import { PhaserNavMeshPlugin } from "phaser-navmesh";
 import Hud from './scenes/Hud';
 import Settings from './scenes/Settings';
+import EndGame from './scenes/EndGame';
 
 /**
  * Inicio del juego en Phaser. Creamos el archivo de configuración del juego y creamos
@@ -33,11 +35,11 @@ let config: Phaser.Types.Core.GameConfig = {
       },
     ],
   },
-  scene: [Boot, Menu, Lobby, Game, Hud, Settings],
+  scene: [Boot, Menu, Lobby, JoinLobby, Game, Hud, Settings, EndGame],
   physics: {
     default: 'arcade',
     arcade: {
-      debug: process.env.NODE_ENV !== "production"
+      debug: process.env.NODE_ENV === "dev"
     }
   }
 };

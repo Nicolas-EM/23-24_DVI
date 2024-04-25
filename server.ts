@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+import { Socket } from 'socket.io';
 
 const port = 8081;
 const maxPlayers = 2;
@@ -35,12 +36,6 @@ function createDefaultLobby(): Lobby {
 
 const lobbies: { [code: string]: Lobby } = {};
 
-const environment = process.env.NODE_ENV || 'dev';
-if (environment === 'dev')
-    app.use(express.static('./dist/'));
-else
-    app.use(express.static('./docs/'));
-
 function assignColor(lobby: Lobby) {
     const randomIndex = Math.floor(Math.random() * lobby.availableColors.length);
     const selectedColor = lobby.availableColors[randomIndex];
@@ -57,12 +52,40 @@ function generateLobbyCode(): string {
     return code;
 }
 
+function removePlayerFromLobby(socket: Socket) {
+    // Find lobbies where the player is present
+    for (const lobbyCode in lobbies) {
+        const lobby = lobbies[lobbyCode];
+        const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
+
+        // If player is found in the lobby
+        if (playerIndex !== -1) {
+            // Remove player from the lobby
+            const removedPlayer = lobby.players.splice(playerIndex, 1)[0];
+
+            // Update readyPlayers count if the player was ready
+            if (removedPlayer.ready) {
+                lobby.readyPlayers--;
+            }
+
+            // Add player's color back to available colors
+            if (removedPlayer.color) {
+                lobby.availableColors.push(removedPlayer.color);
+            }
+
+            // Update all players in the lobby
+            io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+
+            // If lobby becomes empty after the player leaves, remove the lobby
+            if (lobby.players.length === 0) {
+                delete lobbies[lobbyCode];
+            }
+        }
+    }
+}
+
 io.on('connection', socket => {
-    console.log('User connected');
-
     socket.on('quickPlay', () => {
-        console.log('Quick play requested');
-
         let availableLobby: Lobby | undefined = undefined;
 
         // Find a lobby with fewer than maxPlayers
@@ -76,14 +99,14 @@ io.on('connection', socket => {
 
         if (availableLobby) {
             // Join available lobby
-            socket.emit('lobbyCreated', availableLobby.code);
+            socket.emit('lobbyCreated', availableLobby.code, true);
         } else {
             // No available lobbies, create a new one
             const lobbyCode = generateLobbyCode(); // Function to generate a unique lobby code
             lobbies[lobbyCode] = createDefaultLobby();
             lobbies[lobbyCode].code = lobbyCode;
 
-            socket.emit('lobbyCreated', lobbyCode);
+            socket.emit('lobbyCreated', lobbyCode, true);
         }
     });
 
@@ -94,7 +117,7 @@ io.on('connection', socket => {
         // Make lobby private
         lobbies[lobbyCode].isPrivate = true;
 
-        socket.emit('lobbyCreated', lobbyCode);
+        socket.emit('lobbyCreated', lobbyCode, false);
     });
 
     // Handle lobby joining
@@ -102,12 +125,9 @@ io.on('connection', socket => {
         const lobby = lobbies[lobbyCode];
 
         if (!lobby || lobby.players.length >= maxPlayers) {
-            console.log(`Player failed to join lobby (doesn't exist or full)`);
             socket.emit(`exit`);    // TODO: Handle case client-side
         }
         else {
-            console.log(`Player joined the lobby ${lobbyCode}`);
-
             const color = assignColor(lobby);
 
             // Add player data to lobby
@@ -125,6 +145,12 @@ io.on('connection', socket => {
         }
     });
 
+    // Leave lobby
+    socket.on('leaveLobby', () => {
+        removePlayerFromLobby(socket);
+    });
+
+    // Color chosen
     socket.on('chooseColor', (lobbyCode: string, color: ('Red' | 'Blue' | 'Purple' | 'Yellow')) => {
         const lobby = lobbies[lobbyCode];
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
@@ -148,7 +174,6 @@ io.on('connection', socket => {
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
         if (playerIndex !== -1) {
             if (lobby.players[playerIndex].ready) {
-                console.log("not ready anymore")
                 // Unready
                 lobby.players[playerIndex].ready = false;
                 lobby.readyPlayers--;
@@ -162,35 +187,7 @@ io.on('connection', socket => {
 
     // Handle player disconnecting from lobby
     socket.on('disconnect', () => {
-        // Find lobbies where the player is present
-        for (const lobbyCode in lobbies) {
-            const lobby = lobbies[lobbyCode];
-            const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
-
-            // If player is found in the lobby
-            if (playerIndex !== -1) {
-                // Remove player from the lobby
-                const removedPlayer = lobby.players.splice(playerIndex, 1)[0];
-
-                // Update readyPlayers count if the player was ready
-                if (removedPlayer.ready) {
-                    lobby.readyPlayers--;
-                }
-
-                // Add player's color back to available colors
-                if (removedPlayer.color) {
-                    lobby.availableColors.push(removedPlayer.color);
-                }
-
-                // Update all players in the lobby
-                io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
-
-                // If lobby becomes empty after the player leaves, remove the lobby
-                if (lobby.players.length === 0) {
-                    delete lobbies[lobbyCode];
-                }
-            }
-        }
+        removePlayerFromLobby(socket);
     });
 
     // Set NPC Target
@@ -207,8 +204,56 @@ io.on('connection', socket => {
     socket.on('attack', (lobbyCode: string, npcId: string, targetId: string) => {
         io.to(lobbyCode).emit('attack', npcId, targetId);
     });
+
+    // Villager gather order
+    socket.on('gather', (lobbyCode: string, villagerId: string, resourceSpawnerId: string) => {
+        io.to(lobbyCode).emit('gather', villagerId, resourceSpawnerId);
+    });
+
+    // Surrender or Lose condition
+    socket.on('end-game', (lobbyCode: string, playerColor: string) => {
+        io.to(lobbyCode).emit('end-game', playerColor);
+    });
+
+    // Return to home menu
+    socket.on('returnHome', (lobbyCode: string, playerColor: string) => {
+        // Find lobbies where the player is present
+        for (const lobbyCode in lobbies) {
+            const lobby = lobbies[lobbyCode];
+            const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
+
+            // If player is found in the lobby
+            if (playerIndex !== -1) {
+                delete lobbies[lobbyCode];
+            }
+        }
+    });
 });
 
+const environment = process.env.NODE_ENV || 'prod';
+if (environment === 'dev') {
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname + '/dist/index.html');
+    });
+
+    // Serve other files using wildcard route
+    app.get('/:file', (req, res) => {
+        const fileName = req.params.file;
+        res.sendFile(__dirname + '/dist/' + fileName);
+    });
+}
+else {
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname + '/docs/index.html');
+    });
+
+    // Serve other files using wildcard route
+    app.get('/:file', (req, res) => {
+        const fileName = req.params.file;
+        res.sendFile(__dirname + '/docs/' + fileName);
+    });
+}
+
 http.listen(port, () => {
-    console.log('Servidor listening on port ', port);
+    console.log('Server listening on port ', port);
 });

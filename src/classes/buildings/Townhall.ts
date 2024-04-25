@@ -32,4 +32,13 @@ export default class Townhall extends SpawnerBuilding {
         
         (this.body as Phaser.Physics.Arcade.Body).setSize(280, 190, true);
     }
+
+    dieOrDestroy() {
+        this.scene.time.addEvent({
+            delay: 3000,
+            callback: () => Client.surrenderOrLose(this._owner.getColor()),
+            callbackScope: this
+        });    
+        super.dieOrDestroy();  
+    }
 }
