@@ -87,6 +87,8 @@ export default abstract class NPC extends PlayerEntity {
             this.anims.stop();
         }
         this.doDeathAnimation();
+
+        super.dieOrDestroy();
         this.destroy();
     }
 

@@ -21,6 +21,7 @@ export default abstract class Building extends PlayerEntity {
         
         this.scene.add.sprite(this.x, this.y, `${this._hudInfo.entity.name.split("_")[0]}_Destroyed`);
 
+        super.dieOrDestroy();
         this.destroy();
     }
 
