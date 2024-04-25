@@ -79,6 +79,8 @@ function removePlayerFromLobby(socket: Socket) {
                 lobby.availableColors.push(removedPlayer.color);
             }
 
+            socket.leave(lobbyCode);
+
             // Update all players in the lobby
             io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
 
