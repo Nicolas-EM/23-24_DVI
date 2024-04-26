@@ -9,7 +9,7 @@ namespace BuildingsData {
             width: 75,
             height: 65
         }
-        public static HEALTH = 200;
+        public static HEALTH = 1000;
         public static VISION_RANGE = 10;
     }
 
@@ -20,7 +20,7 @@ namespace BuildingsData {
             width: 55,
             height: 85
         }
-        public static HEALTH = 100;
+        public static HEALTH = 200;
         public static VISION_RANGE = 10;
         public static SPAWNING_TIME = 10000;
         public static SPAWNING_COST: Resources = {
@@ -38,7 +38,7 @@ namespace BuildingsData {
             width: 55,
             height: 110
         }
-        public static HEALTH = 100;
+        public static HEALTH = 600;
         public static VISION_RANGE = 10;
         public static SPAWNING_TIME = 10000;
         public static SPAWNING_COST: Resources = {
@@ -55,7 +55,7 @@ namespace BuildingsData {
             width: 55,
             height: 85
         }
-        public static HEALTH = 100;
+        public static HEALTH = 450;
         public static VISION_RANGE = 10;
         public static SPAWNING_TIME = 10000;
         public static SPAWNING_COST: Resources = {

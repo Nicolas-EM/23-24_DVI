@@ -1,7 +1,7 @@
 # Troops - Game Design Document
 ## Introduction
 ### Synopsis
-Troops is a competitive multiplayer RTS game set in the medieval era. Two players clash on an island and must manage their resources to build a base and form an army capable of defeating their opponent. The player will attempt to destroy the enemy Town Hall in a fast-paced game filled with thrill, challenging decisions and strategy.
+Troops is a competitive multiplayer RTS game set in the medieval era. Two players clash on an island and must gather and manage their resources to form an army capable of defeating their opponent. The player will attempt to destroy the enemy Town Hall in a fast-paced game filled with thrill, challenging decisions and strategy.
 
 ### Basic Information
 |                 |                                                                                               |
@@ -26,11 +26,11 @@ The fate of Eliora is at stake and only war can decide it...
 
 ## Game Session Overview
 The player enters the website and can choose from three different options:
-1. **QUICK PLAY**: Join a lobby and wait until matched with another player. Start a game on a randomly selected map (color selected by order of arrival, 1st blue and 2nd red).
-2. **CREATE A GAME**: Generate a code to share with a friend. The creator can choose a map (or select "random") and the team color (blue, red, yellow, purple).
-3. **JOIN A GAME**: Use a friend's code to join their game. The joiner can pick a team color, which must be different from the creator's team.
+1. **QUICK PLAY**: Join a lobby and wait until matched with another player. Meanwhile, they can choose their team color (blue, red, yellow, purple). Two players cannot choose the same team, as each represents one king.
+2. **CREATE GAME**: Generate a code to share with a friend. Same colour rules applied as in QUICK PLAY.
+3. **JOIN GAME**: Use a friend's code to join their game. Same colour rules applied as in QUICK PLAY.
 
-The game begins, with each player spawning randomly on the map with a Town Hall and three villagers. They will progressively explore the map and gather resources to build an army, and they will attempt to destroy the opponent's Town Hall by attacking them. The game has no time limit and cannot be paused, and a player wins by destroying the oponent's Town Hall, regardless of remaining resources or soldiers. There is no point system; it's a binary win or lose outcome. After the game ends, players return to the initial menu and can choose to play again or exit.
+The game begins, with each player spawning randomly on the map with a Town Hall and three villagers. They will progressively explore the map and gather resources to build an army, and they will attempt to destroy the opponent's Town Hall by attacking them. The game has no time limit and cannot be paused, and a player wins by destroying the oponent's Town Hall, regardless of remaining resources or soldiers. There is no point system; it's a binary win or lose outcome. After the game ends, players return to the initial menu.
 
 ## Goal
 The ultimate purpose of Troops is to provide an enjoyable gaming experience for individuals during their leisure time, allowing players to engage in a game that is not overly time-consuming and does not demand advanced skills. Despite this, Troops aims to captivate players with a complexity and depth that sets it apart from basic and repetitive smartphone games.
@@ -41,7 +41,7 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 |     Name      |                           Image                               |                        Description                            |
 |:-------------:|:-------------------------------------------------------------:|:-------------------------------------------------------------:|
 | Town Hall     | ![Town hall Sprite](/assets/previews/buildings/castle.png)    | Can spawn villagers. If destroyed, the player loses the game.|
-| Village House | ![Village House Sprite](/assets/previews/buildings/house.png) | Sets the maximum population.|
+| Village House | ![Village House Sprite](/assets/previews/buildings/house.png) | Home of the villagers. Just for decoration.|
 | Tower         | ![Tower Sprite](/assets/previews/buildings/tower.png)         | Can spawn soldiers and archers.|
 | Goblin Hut    | ![Goblin Hut Sprite](/assets/previews/buildings/goblin_hut.png)         | Can spawn goblins.|
 
@@ -49,7 +49,7 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 
 |     Name      |                        Image                             |                        Description                          |
 |:-------------:|:--------------------------------------------------------:|:-----------------------------------------------------------:|
-| Villager      | ![Villager Sprite](/assets/previews/npcs/villager.png)   | Can gather resources and build a village house or a tower.  |
+| Villager      | ![Villager Sprite](/assets/previews/npcs/villager.png)   | Can gather resources.  |
 | Soldier       | ![Soldier Sprite](/assets/previews/npcs/soldier.png)     | Can deal melee damage using a sword against enemies.        |
 | Archer        | ![Archer Sprite](/assets/previews/npcs/archer.png)       | Can deal ranged damage by shooting arrows at enemies.       |
 | Goblin        | ![Goblin Sprite](/assets/previews/npcs/goblin.png)       | Can deal melee damage using a torch against enemies.        |
@@ -58,31 +58,29 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 
 |     Name      |                    Resource Image                    |                                       Description                                     | Source Image                                                     |
 |:-------------:|:----------------------------------------------------:|:-------------------------------------------------------------------------------------:|:---------------------------------------------------------------:|
-| Gold          | ![Gold Sprite](/assets/previews/resources/gold.png)  | Gathered in gold mines. Used for building goblin huts and spawning goblins.  | ![Gold Source Sprite](/assets/previews/resources/gold_source.png) |
-| Wood          | ![Wood Sprite](/assets/previews/resources/wood.png)  | Obtained by chopping down trees. Used for building villager houses, towers and goblin huts, and spawning archers and goblins. | ![Wood Source Sprite](/assets/previews/resources/wood_source.png) |
-| Food          | ![Food Sprite](/assets/previews/resources/food.png)  | Obtained from sheeps. Used for building towers spawning villagers, soldiers and archers. | ![Food Source Sprite](/assets/previews/resources/food_source.png) |
+| Gold          | ![Gold Sprite](/assets/previews/resources/gold.png)  | Gathered in gold mines. Used for spawning goblins.  | ![Gold Source Sprite](/assets/previews/resources/gold_source.png) |
+| Wood          | ![Wood Sprite](/assets/previews/resources/wood.png)  | Obtained by chopping down trees. Used for spawning archers and goblins. | ![Wood Source Sprite](/assets/previews/resources/wood_source.png) |
+| Food          | ![Food Sprite](/assets/previews/resources/food.png)  | Obtained from sheeps. Used for spawning villagers, soldiers and archers. | ![Food Source Sprite](/assets/previews/resources/food_source.png) |
 
 ## Attributes
 ### Player
 - Resources (Gold, Wood, Food)
 - Current population
-- Maximum population
 
 ### Building
+- Owner
 - Health
-- Vision range
-- Size
-- Building cost
-- Building time
+- Queue (if it is a spawner building)
 
 ### NPC
+- Owner
 - Health
-- Vision range
-- Size (?)
 - Spawning cost
 - Spawning time
-- Attack Damage (soldiers and archers only)
-- Range (soldiers and archers only)
+- Attack Damage (soldiers, archers & goblins)
+- Attack Range (soldiers, archers & goblins)
+- Cooldown (soldiers, archers & goblins)
+- Attack bonus (soldiers, archers & goblins)
 - Movement speed
 
 ## MDA
@@ -93,75 +91,57 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 | Select entities  | Allows the player to choose one or more entities to perform actions upon.                                                                |
 | Move NPC         | NPCs can move around the map to explore it.                                                                                              |
 | Gather           | Villagers gather resources (gold/wood/food) from their sources (mine/tree/sheep). They continue gathering until the source is depleted.  |
-| Build            | Villagers build their houses, goblin houses or towers by spending resources. The building process takes time to complete.                                     |
 | Attack           | Soldiers, archers and goblins deal damage to enemy NPCs or buildings within range.                                                                 |
 | Spawn            | A building is used to spawn NPCs at full health. Spawning takes time, only 1 NPC can be spawned at a time and the others will be queued. |
 | Camera movement  | Allows players to navigate the map by moving the in-game camera, enabling exploration and control.    |
+| Surrender        | A player can surrender and the opponent will automatically win the game.    |
 
 ### Dynamics
 Some of the most interesting dynamics arising from the mechanics of Troops include:
 - Exploring the map to familiarize oneself with it.
-- Building a quaint town (just for fun).
 - Allocating all troops to maximize resource acquisition.
 - Creating the largest possible army.
 - Establishing non-aggression pacts, whether temporary or permanent, with opponents (friends).
 - Rushing the opponent by attacking as soon as possible, leaving them with no room to develop.
-- Using buildings as a barrier to protect the Town Hall.
 - Always assigning a soldier to accompany villagers for their protection.
-- Facing limited construction options due to restricted available space (on mountain maps).
-- Deploying troops across various fronts for offense/defense (on desert maps).
-- Concentrating all troops on a single front to consolidate forces (on desert maps).
-- Exerting control over bridges to prevent enemy crossings (on river maps).
-- Using only one type of troop.
+- Deploying troops across various fronts for offense/defense.
+- Concentrating all troops on a single front to consolidate forces.
+- Using only one type of attacking unit.
 - Securing control of the center to monopolize gold gathering (and consequently spawning goblins).
-- Surrounding the enemy by constructing buildings around them.
 - Negotiating with the opponent to limit the use resources (just the initial ones or others, such as forbidding the use of gold).
 
 ### Aesthetics
 The overall aesthetic of the videogame is medieval-themed. Despite the game's aggressive nature, Troops aims to be a friendly and enjoyable experience for players of all kinds.
 #### Graphics
 The chosen art style features pixel art, suggesting a classic and easy-to-learn videogame experience, particularly suitable for novice players. Damage animations will be minimalistic, limited to health bars, to reduce the sense of violence. The color palette is not overly saturated to avoid overwhelming the player and maintain the peaceful atmosphere Troops aims to convey. The entire game will adhere to the medieval aesthetic, including the main menu, option menus, and any on-screen text, to keep the player immersed in the context and lore of Troops.
-#### Sound
+#### Music
 There will be four main tracks:
-- Troops' main theme, which will play in the Main Menu.
+- Troops' main theme, which will play in the Main Menu and Lobby.
 - Village music, heard during regular gameplay to convey the peace of villagers' daily lives.
-- Combat music. When a player's team initiates an attack on the opponent, both parties will hear a new action-themed track signaling the onset of battle. This alerts players and conveys the tension of the fight. After <T> seconds of inactivity between NPCs, the music will cease, returning to the village theme.
+- Combat music. When a player's team initiates an attack on the opponent, both parties will hear a new action-themed track signaling the onset of battle. This alerts players and conveys the tension of the fight. After 5 seconds of inactivity between NPCs, the music will cease, returning to the village theme.
 - Victory/defeat music. When a player wins or loses, the final screen will be accompanied by music appropriate to the player's outcome.
-
-Additionally, each action performed by NPCs will have corresponding sound effects to inform the player of ongoing events. Sounds will play when villagers gather resources or build, when an NPC takes damage, or when soldiers/archers use their attacks.
 
 ## Controls
 ### Keyboard
 - The keys `W` `A` `S` `D` can be used to move the camera around the map.
-- Pressing `Esc` will open a menu to change the settings of the game (enable/disable sound, fullscreen options...), read the help page (game controls or rules) or surrender and exit the current game.
-- Shortcuts:
-    - While the Town Hall is selected, pressing `1` adds a villager to the spawning queue as long as the player has enough resources.
-    - While a tower is selected, pressing `1` adds a soldier to the spawning queue as long as the player has enough resources.
-    - While a tower is selected, pressing `2` adds an archer to the spawning queue as long as the player has enough resources.
-    - While a villager is selected, pressing `1` allows you to build a new house as long as the player has enough resources.
-    - While a villager is selected, pressing `2` allows you to build a new tower as long as the player has enough resources.
 
 ### Mouse
-- The mouse can be used to select individual (left-click) or a group of NPCs (click&drag), or a building (left-click).
+- The mouse (left-click) can be used to select a NPC, a building or a resource spawner. Just by clicking on them the player will see its information (health, damage, etc) and available actions to perform.
     - While a NPC(s) is selected, right-clicking in an empty location prompts the NPC(s) to move to that position.
     - While a villager is selected, right-clicking on a source (mine/tree/sheep) prompts the villager to move there and gather the resource.
-    - While a villager is selected, the player can left-click on the type of building the villager will build.
-    - While a villager is selected, right-clicking with a chosen building in an empty location prompts the villager to move there and start building it.
     - While a soldier or an archer is selected, right-clicking on an enemy NPC or building prompts the unit to attack.
     - While the Town Hall is selected, the player can left-click on the villager to add it to the spawning queue.
-    - While a tower is selected, the player can left-click on the type of NPC (soldier/archer) that will be added to the spawning queue.
+    - While a tower is selected, the player can left-click on the type of NPC (soldier/archer) that will be added to the spawning queue.- While a goblin hut is selected, the player can left-click on the goblin to add it to the spawning queue.
+- The mouse can also be used to interact with the UI. The player will be able to open a menu to learn the controls, change the settings of the game (enable/disable sound, fullscreen options) or surrender and exit the current game. Navigating through the main menu and lobby will also require the use of a mouse.
 
 ## Tables and data
-### Spawning/Building Cost
+### Spawning Cost
 | Type         | Gold Cost     | Wood Cost     | Food Cost     |
 |--------------|:-------------:|:-------------:|:-------------:|
 | Villager     | 0             | 0             | FCV           |
 | Soldier      | 0             | 0             | 3 * FCV       |
-| Archer       | 0             | 2 * WCV       | 1 * FCV       |
-| Goblin       | 2 * GCV       | 1 * WCV       | 0             |
-| House        | 0             | 3 * WCV       | 0             |
-| Tower        | 0             | 7 * WCV       | 3 * FCV       |
-| Goblin House | 4 * GCV       | 6 * WCV       | 0             |
+| Archer       | 0             | 1.6 * WCV     | FCV           |
+| Goblin       | GCV           | WCV           | 0             |
 
 **GCV** = Gold cost variable
 
@@ -169,20 +149,15 @@ Additionally, each action performed by NPCs will have corresponding sound effect
 
 **FCV** = Food cost variable
 
-### Spawning/Building Time
+### Spawning Time
 | Type         | Time (s)                |
 |--------------|:-----------------------:|
 | Villager     |         S_TIME          |
-| Soldier      |     1.75 * S_TIME       |
-| Archer       |     1.5 * S_TIME        |
-| Goblin       |     1.25 * S_TIME       |
-| House        |         B_TIME          |
-| Tower        |       3 * B_TIME        |
-| Goblin House |       2 * B_TIME        |
+| Soldier      |      1.5 * S_TIME       |
+| Archer       |      1.3 * S_TIME       |
+| Goblin       |      1.2 * S_TIME       |
 
 **S_TIME** = Spawning time variable
-
-**B_TIME** = Building time variable
 
 ### Health
 | Type         | Health             |
@@ -194,25 +169,11 @@ Additionally, each action performed by NPCs will have corresponding sound effect
 | Town Hall    |       5 * B_H      |
 | House        |        B_H         |
 | Tower        |       3 * B_H      |
-| Goblin House |       2 * B_H      |
+| Goblin House |     2.25 * B_H     |
 
 **N_H** = NPC health variable
 
 **B_H** = Building health variable
-
-### Vision Range
-| Type         | Vision Range       |
-|--------------|:------------------:|
-| Villager     |         VRV        |
-| Soldier      |         VRV        |
-| Archer       |      1.5 * VRV     |
-| Goblin       |         VRV        |
-| Town Hall    |       5 * VRV      |
-| House        |         VRV        |
-| Tower        |       3 * VRV      |
-| Goblin House |         VRV        |
-
-**VRV** = Vision Range Variable
 
 ### Size
 | Type         | Size (width, height)       |
@@ -242,7 +203,7 @@ Additionally, each action performed by NPCs will have corresponding sound effect
 | Type      | Damage             | Range              |
 |-----------|:------------------:|:------------------:|
 | Soldier   |  1.5 * ATK         | 0                  |
-| Archer    |  1.25 * ATK        | RNG                |
+| Archer    |  1.2 * ATK         | RNG                |
 | Goblin    |  ATK               | 0                  |
 
 **ATK** = Attack damage variable
@@ -256,21 +217,59 @@ Additionally, each action performed by NPCs will have corresponding sound effect
 | Archer    |  1.25 * BDG        | Goblin             |
 | Goblin    |  1.25 * BDG        | Soldier            |
 
-**DMG** = Base Damage variable
+**BDG** = Base Damage variable
 
 ### Resource Stats
-| Type      | Production Rate       | Total Resources      |
-|-----------|:---------------------:|:--------------------:|
-| Gold      |       G_Rate          | G_Ttl                |
-| Wood      |       W_Rate          | W_Ttl                |
-| Food      |       F_Rate          | F_Ttl                |
+| Type      | Production Rate     | Total Resources      |
+|-----------|:-------------------:|:--------------------:|
+| Gold      |         RT          | G_Ttl                |
+| Wood      |         RT          | W_Ttl                |
+| Food      |         RT          | F_Ttl                |
 
-_Note:_ Total resources per source (e.g. each gold mine generates 500 gold max, after which it no longer generates gold).
+**RT** = Rate variable (resources obtained every time a villager gathers)
+
+**W_Ttl < F_Ttl < G_Ttl**
 
 ## Map Design
-The game will feature three distinct maps, each equipped with a set of resource spawning points to achieve a balanced resource distribution in every game. Players can choose from these maps based on the gaming experience they seek.
+The game currently has one map available: Desert Oasis. It features a central oasis surrounded by open terrain. Players are encouraged to launch fast attacks due to the vulnerability they face in this open environment.
+
+## Future features
+Pixl Studios is already working on new features to enrich Troops and enhance its gameplay. Here are some of the most exciting ones:
+
+### Building
+Currently, players start with a set of predefined buildings to manage their troops. Soon, they will also become architects, as they will need to send villagers to construct buildings of their choice. These buildings will require resources and take time to build. This new functionality aims not only to complicate resource management but also to introduce new dynamics that will make Troops an even better game. For example,
+- Building a quaint town (just for fun).
+- Using buildings as a barrier to protect the Town Hall.
+- Surrounding the enemy by constructing buildings around them.
+
+### Fog-of-war
+The fog-of-war is a crucial element in RTS video games. The Pixl Studios team will add fog-of-war to allow players to explore an initially unknown map, leading to new dynamics. Another important point is that, even though the player may have explored a certain territory, they will only see the situation as it was left the last time an NPC passed through. Therefore, they will not be able to monitor the opponent's movements unless they have units specifically tasked with occupying their territory for that purpose.
+
+### Shortcuts
+Some shortcuts will be added to help our high-skilled and experienced players, such as:
+- Pressing `Esc` will open the settings menu.
+- While the Town Hall is selected, pressing `1` adds a villager to the spawning queue as long as the player has enough resources.
+- While a tower is selected, pressing `1` adds a soldier to the spawning queue as long as the player has enough resources.
+- While a tower is selected, pressing `2` adds an archer to the spawning queue as long as the player has enough resources.
+- While a villager is selected, pressing `1` allows you to build a new house as long as the player has enough resources.
+- While a villager is selected, pressing `2` allows you to build a new tower as long as the player has enough resources.
+
+### New maps
+Eliora is a very diverse country, and kings are about to start their fights in other biomes. Therefore, the game will soon feature three distinct maps, each equipped with a set of resource spawning points to achieve a balanced resource distribution in every game. Players can choose from these maps based on the gaming experience they seek.
 
 The maps include:
-- River Crossing: A symmetrical map with a river running through the middle, and only <B_Amnt> bridges to cross it. This design creates a high-pressure zone on the bridges, making them the primary route for attacking the opponent.
-- Desert Oasis: This map features a central oasis surrounded by open terrain. Players are encouraged to launch fast attacks due to the vulnerability they face in this open environment.
+- Desert Oasis: Today's existing map.
+- River Crossing: A symmetrical map with a river running through the middle, and only 3 bridges to cross it. This design creates a high-pressure zone on the bridges, making them the primary route for attacking the opponent.
 - Mountain Pass: Players spawn in a forest at one of the four corners of the map, with a very low visibility level, and limited paths to explore it. This map enables swift attacks along defined routes while offering a strategic advantage for defense, as players can anticipate the directions of potential attacks.
+
+### Sounds
+Each action performed by NPCs will have corresponding sound effects to inform the player of ongoing events. Sounds will play when villagers gather resources or build, when an NPC takes damage, or when soldiers/archers use their attacks.
+
+### Other improvements
+Last but not least, here are some future ideas to enhance the player experience:
+- Drag&Drop: Players will be able to select multiple units at once by dragging the mouse, instead of selecting them one by one.
+- Creator Privileges: The creator of a game will have priority in choosing color and selecting the map for the game.
+- Random Spawn: Townhalls will spawn at different locations on the map.
+- Lose on AFK: Players will be kicked out of the game if they remain inactive for too long.
+- Population Limit: Since villagers will be able to build, villager houses will limit the maximum population of the player, adding utility to these buildings.
+- Performance: Changes will be made to improve the game's performance.
