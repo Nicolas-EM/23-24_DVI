@@ -73,8 +73,14 @@ function removePlayerFromLobby(socket: Socket) {
                 lobby.availableColors.push(removedPlayer.color);
             }
 
-            // Update all players in the lobby
-            io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+            socket.leave(lobbyCode);
+
+            if (lobby.readyPlayers === 1)
+                // End game for remaining player
+                io.to(lobbyCode).emit('end-game', removedPlayer.color);
+            else
+                // Update all players in the lobby
+                io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
 
             // If lobby becomes empty after the player leaves, remove the lobby
             if (lobby.players.length === 0) {

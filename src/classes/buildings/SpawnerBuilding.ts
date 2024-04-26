@@ -124,4 +124,14 @@ export default abstract class SpawnerBuilding extends Building {
             this.spawnTimerHud = null;
         }
     }
+
+    dieOrDestroy() {
+        while(this.spawnQueue.length) {
+            const npcType = this.spawnQueue.pop();
+            this._owner.addResources(npcType.COST);
+        }
+        this.stopSpawnTimer();
+
+        super.dieOrDestroy();
+    }
 };

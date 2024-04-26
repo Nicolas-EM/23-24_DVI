@@ -66,7 +66,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         }
     }
 
-    protected abstract dieOrDestroy();
+    protected dieOrDestroy() {
+        (<Game>(this.scene)).removeSelectedEntity(this);
+    }
 
     private setSwordCursor(icon: any) {
         let entity = (<Game>(this.scene)).getSelectedEntity();
