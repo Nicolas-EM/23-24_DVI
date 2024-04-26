@@ -39,7 +39,7 @@ let config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: process.env.NODE_ENV !== "production"
+      debug: process.env.NODE_ENV === "dev"
     }
   }
 };

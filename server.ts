@@ -36,12 +36,6 @@ function createDefaultLobby(): Lobby {
 
 const lobbies: { [code: string]: Lobby } = {};
 
-const environment = process.env.NODE_ENV || 'dev';
-if (environment === 'dev')
-    app.use(express.static('./dist/'));
-else
-    app.use(express.static('./docs/'));
-
 function assignColor(lobby: Lobby) {
     const randomIndex = Math.floor(Math.random() * lobby.availableColors.length);
     const selectedColor = lobby.availableColors[randomIndex];
@@ -59,8 +53,8 @@ function generateLobbyCode(): string {
 }
 
 function removePlayerFromLobby(socket: Socket) {
-     // Find lobbies where the player is present
-     for (const lobbyCode in lobbies) {
+    // Find lobbies where the player is present
+    for (const lobbyCode in lobbies) {
         const lobby = lobbies[lobbyCode];
         const playerIndex = lobby.players.findIndex(player => player.id === socket.id);
 
@@ -81,8 +75,12 @@ function removePlayerFromLobby(socket: Socket) {
 
             socket.leave(lobbyCode);
 
-            // Update all players in the lobby
-            io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+            if (lobby.readyPlayers === 1)
+                // End game for remaining player
+                io.to(lobbyCode).emit('end-game', removedPlayer.color);
+            else
+                // Update all players in the lobby
+                io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
 
             // If lobby becomes empty after the player leaves, remove the lobby
             if (lobby.players.length === 0) {
@@ -238,6 +236,30 @@ io.on('connection', socket => {
     });
 });
 
+const environment = process.env.NODE_ENV || 'prod';
+if (environment === 'dev') {
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname + '/dist/index.html');
+    });
+
+    // Serve other files using wildcard route
+    app.get('/:file', (req, res) => {
+        const fileName = req.params.file;
+        res.sendFile(__dirname + '/dist/' + fileName);
+    });
+}
+else {
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname + '/docs/index.html');
+    });
+
+    // Serve other files using wildcard route
+    app.get('/:file', (req, res) => {
+        const fileName = req.params.file;
+        res.sendFile(__dirname + '/docs/' + fileName);
+    });
+}
+
 http.listen(port, () => {
-    console.log('Servidor listening on port ', port);
+    console.log('Server listening on port ', port);
 });

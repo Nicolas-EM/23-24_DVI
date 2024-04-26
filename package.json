@@ -7,7 +7,7 @@
         "build": "npx parcel build index.html --public-url ./ --dist-dir docs",
         "watch": "concurrently \"set NODE_ENV=dev&& npm start\" \"set NODE_ENV=dev&& nodemon server.ts\"",
         "serve": "set NODE_ENV=prod&& nodemon server.ts",
-        "build:digitalocean": "npm install --production=false"
+        "build:digitalocean": "npm install --production=false && npm run build"
     },
     "repository": {
         "type": "git",
