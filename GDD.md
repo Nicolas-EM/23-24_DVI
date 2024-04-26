@@ -59,7 +59,7 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 |     Name      |                    Resource Image                    |                                       Description                                     | Source Image                                                     |
 |:-------------:|:----------------------------------------------------:|:-------------------------------------------------------------------------------------:|:---------------------------------------------------------------:|
 | Gold          | ![Gold Sprite](/assets/previews/resources/gold.png)  | Gathered in gold mines. Used for spawning goblins.  | ![Gold Source Sprite](/assets/previews/resources/gold_source.png) |
-| Wood          | ![Wood Sprite](/assets/previews/resources/wood.png)  | Obtained by chopping down trees. Used for spawning soldiers, archers and goblins. | ![Wood Source Sprite](/assets/previews/resources/wood_source.png) |
+| Wood          | ![Wood Sprite](/assets/previews/resources/wood.png)  | Obtained by chopping down trees. Used for spawning archers and goblins. | ![Wood Source Sprite](/assets/previews/resources/wood_source.png) |
 | Food          | ![Food Sprite](/assets/previews/resources/food.png)  | Obtained from sheeps. Used for spawning villagers, soldiers and archers. | ![Food Source Sprite](/assets/previews/resources/food_source.png) |
 
 ## Attributes
@@ -135,13 +135,13 @@ There will be four main tracks:
 - The mouse can also be used to interact with the UI. The player will be able to open a menu to learn the controls, change the settings of the game (enable/disable sound, fullscreen options) or surrender and exit the current game. Navigating through the main menu and lobby will also require the use of a mouse.
 
 ## Tables and data
-### Spawning/Building Cost
+### Spawning Cost
 | Type         | Gold Cost     | Wood Cost     | Food Cost     |
 |--------------|:-------------:|:-------------:|:-------------:|
 | Villager     | 0             | 0             | FCV           |
 | Soldier      | 0             | 0             | 3 * FCV       |
-| Archer       | 0             | 2 * WCV       | 1 * FCV       |
-| Goblin       | 2 * GCV       | 1 * WCV       | 0             |
+| Archer       | 0             | 1.6 * WCV     | FCV           |
+| Goblin       | GCV           | WCV           | 0             |
 
 **GCV** = Gold cost variable
 
@@ -149,13 +149,13 @@ There will be four main tracks:
 
 **FCV** = Food cost variable
 
-### Spawning/Building Time
+### Spawning Time
 | Type         | Time (s)                |
 |--------------|:-----------------------:|
 | Villager     |         S_TIME          |
-| Soldier      |     1.75 * S_TIME       |
-| Archer       |     1.5 * S_TIME        |
-| Goblin       |     1.25 * S_TIME       |
+| Soldier      |      1.5 * S_TIME       |
+| Archer       |      1.3 * S_TIME       |
+| Goblin       |      1.2 * S_TIME       |
 
 **S_TIME** = Spawning time variable
 
@@ -169,7 +169,7 @@ There will be four main tracks:
 | Town Hall    |       5 * B_H      |
 | House        |        B_H         |
 | Tower        |       3 * B_H      |
-| Goblin House |       2 * B_H      |
+| Goblin House |     2.25 * B_H     |
 
 **N_H** = NPC health variable
 
@@ -203,7 +203,7 @@ There will be four main tracks:
 | Type      | Damage             | Range              |
 |-----------|:------------------:|:------------------:|
 | Soldier   |  1.5 * ATK         | 0                  |
-| Archer    |  1.25 * ATK        | RNG                |
+| Archer    |  1.2 * ATK         | RNG                |
 | Goblin    |  ATK               | 0                  |
 
 **ATK** = Attack damage variable
@@ -217,16 +217,18 @@ There will be four main tracks:
 | Archer    |  1.25 * BDG        | Goblin             |
 | Goblin    |  1.25 * BDG        | Soldier            |
 
-**DMG** = Base Damage variable
+**BDG** = Base Damage variable
 
 ### Resource Stats
-| Type      | Production Rate       | Total Resources      |
-|-----------|:---------------------:|:--------------------:|
-| Gold      |       G_Rate          | G_Ttl                |
-| Wood      |       W_Rate          | W_Ttl                |
-| Food      |       F_Rate          | F_Ttl                |
+| Type      | Production Rate     | Total Resources      |
+|-----------|:-------------------:|:--------------------:|
+| Gold      |         RT          | G_Ttl                |
+| Wood      |         RT          | W_Ttl                |
+| Food      |         RT          | F_Ttl                |
 
-_Note:_ Total resources per source (e.g. each gold mine generates 500 gold max, after which it no longer generates gold).
+**RT** = Rate variable (resources obtained every time a villager gathers)
+
+**W_Ttl < F_Ttl < G_Ttl**
 
 ## Map Design
 The game currently has one map available: Desert Oasis. It features a central oasis surrounded by open terrain. Players are encouraged to launch fast attacks due to the vulnerability they face in this open environment.
