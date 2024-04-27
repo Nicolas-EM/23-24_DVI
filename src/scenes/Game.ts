@@ -281,7 +281,7 @@ export default class Game extends Phaser.Scene {
   }
 
   removeSelectedEntity(entity: PlayerEntity | ResourceSpawner) {
-    if(this._selectedEntity === entity) {
+    if (this._selectedEntity === entity) {
       this.setSelectedEntity(undefined);
     }
   }
@@ -295,12 +295,12 @@ export default class Game extends Phaser.Scene {
 
   setCornersPosition() {
     const physicsBody = (this._selectedEntity.body as Phaser.Physics.Arcade.Body);
-    if(!physicsBody)
+    if (!physicsBody)
       return;
-    
+
     const width = physicsBody.width / 2;
     const height = physicsBody.height / 2;
-    
+
     this._topLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y - (height));
     this._topRight.setPosition(this._selectedEntity.x + (width), this._selectedEntity.y - (height));
     this._bottomLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y + (height));
@@ -328,7 +328,7 @@ export default class Game extends Phaser.Scene {
   setVillagerGatherTarget(villagerId: string, resourceSpawnerId: string) {
     const villager = this.getEntityById(villagerId);
     const spawner = this.getResourceSpawnerById(resourceSpawnerId);
-    if(villager && villager instanceof Villager && spawner) {
+    if (villager && villager instanceof Villager && spawner) {
       villager.setGatherTarget(spawner);
     }
   }
@@ -389,7 +389,7 @@ export default class Game extends Phaser.Scene {
 
   endGame(defeat: boolean) {
     this._selectedEntity = undefined;
-    
+
     // Stop music
     this.sound.removeAll();
 
@@ -398,5 +398,15 @@ export default class Game extends Phaser.Scene {
     this.scene.pause("hud");
     this.scene.pause("settings");
     this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
+  }
+
+  destroyEntity(entityId: string) {
+    const entity = this.getEntityById(entityId);
+    if (entity)
+      entity.dieOrDestroy();
+
+    const resourceSpanwer = this.getResourceSpawnerById(entityId);
+    if (resourceSpanwer)
+      resourceSpanwer.setDestroyed();
   }
 }

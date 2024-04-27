@@ -53,6 +53,12 @@ export default class Client {
                 (<Game>(Client.scene)).endGame(playerColor === Client.getMyColor());
             }
         });
+
+        Client.socket.on('setDestroyed', (entityId: string) => {
+            if (Client.scene.scene.isActive('game')) {
+                (<Game>(Client.scene)).destroyEntity(entityId);
+            }
+        });
     }
 
     static setScene(scene: Phaser.Scene) {
@@ -116,6 +122,10 @@ export default class Client {
 
     static gatherOrder(villagerId: string, resourceSpawnerId: string) {
         Client.socket.emit('gather', Client.lobby.code, villagerId, resourceSpawnerId);
+    }
+
+    static setDestroyed(entityId: string) {
+        Client.socket.emit('setDestroyed', Client.lobby.code, entityId);
     }
 }
 

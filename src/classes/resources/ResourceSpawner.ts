@@ -5,6 +5,7 @@ import Game from "../../scenes/Game";
 import Villager from "../npcs/Villager";
 import Player from "../Player";
 import Hud from "../../scenes/Hud";
+import Client from "../../client";
 
 export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite {
     // Attributes
@@ -105,8 +106,10 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
 
         this.addResourceToPlayer(player, amountGathered);
 
-        if(this._remainingResources <= 0)
+        if(this._remainingResources <= 0) {
             this.setDestroyed();
+            Client.setDestroyed(this.getId());
+        }
     }
 
     protected abstract setDestroyedFrame();

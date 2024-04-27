@@ -223,6 +223,11 @@ io.on('connection', socket => {
         io.to(lobbyCode).emit('gather', villagerId, resourceSpawnerId);
     });
 
+    // Set NPC, Building or Resource as destroyed/killed
+    socket.on('setDestroyed', (lobbyCode: string, entityId: string) => {
+        io.to(lobbyCode).emit('setDestroyed', entityId);
+    })
+
     // Surrender or Lose condition
     socket.on('end-game', (lobbyCode: string, playerColor: string) => {
         io.to(lobbyCode).emit('end-game', playerColor);

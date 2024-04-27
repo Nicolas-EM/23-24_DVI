@@ -57,10 +57,11 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
 
         if (this._health <= 0 && this.body) {
             this.dieOrDestroy();
+            Client.setDestroyed(this.getId());
         }
     }
 
-    protected dieOrDestroy() {
+    dieOrDestroy() {
         (<Game>(this.scene)).removeSelectedEntity(this);
     }
 
