@@ -7,12 +7,10 @@ import BuildingsData from "../../magic_numbers/buildings_data";
 
 export default class GoblinHut extends SpawnerBuilding {
 
-    static readonly COST: Resources = BuildingsData.Hut.SPAWNING_COST;
-
     constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Hut.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Hut.HEALTH, BuildingsData.Hut.HEALTH, BuildingsData.Hut.SPAWNING_TIME, BuildingsData.Hut.SPAWNING_COST, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Hut.HEALTH, BuildingsData.Hut.HEALTH, frame);
         
         // Build hud info
         this._hudInfo = {

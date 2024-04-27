@@ -9,13 +9,11 @@ import SpawnerBuilding from "./SpawnerBuilding";
 
 export default class Townhall extends SpawnerBuilding {
     
-    static readonly COST: Resources = null;
-
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
         iconInfo.name += owner.getColor();
 
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, frame);
     
         // Build hud info
         this._hudInfo = {

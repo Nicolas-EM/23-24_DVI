@@ -13,8 +13,6 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     protected _id: string;
     protected _health: number;
     protected _totalHealth: number;
-    protected _spawningTime: number;
-    protected _spawningCost: Resources;
     protected _hudInfo: HudInfo;
 
     static readonly COST: Resources;
@@ -25,13 +23,11 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
      * @param owner is the player who created the entity, not optional.
      * @returns Object
      */
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, frame?: string | number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
         super(scene, x, y, texture, frame);
         this._owner = owner;
         this._health = health;
-        this._totalHealth = totalHealth;
-        this._spawningTime = spawningTime;
-        this._spawningCost = spawningCost;
+        this._totalHealth = totalHealth;        
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);

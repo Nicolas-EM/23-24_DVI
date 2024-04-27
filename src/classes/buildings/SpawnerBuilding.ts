@@ -12,8 +12,8 @@ export default abstract class SpawnerBuilding extends Building {
     protected spawnTimer: Phaser.Time.TimerEvent;
     protected spawnTimerHud: Phaser.Time.TimerEvent;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, frame);
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
+        super(scene, x, y, texture, owner, health, totalHealth, frame);
     }
 
     queueNPC(npcType: typeof Archer | typeof Goblin | typeof Soldier | typeof Villager): void {

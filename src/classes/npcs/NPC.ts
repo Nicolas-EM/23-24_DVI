@@ -2,14 +2,16 @@ import * as Phaser from 'phaser';
 import Player from '../Player'
 import PlayerEntity from '../PlayerEntity';
 import Game from '../../scenes/Game';
-import { PhaserNavMesh } from "phaser-navMesh";
 import { Resources } from '../../utils';
 import Hud from '../../scenes/Hud';
 
 export default abstract class NPC extends PlayerEntity {
+
     protected _path;
     protected _currentTarget;
     protected _movementSpeed: number;
+    protected _spawningTime: number;
+    protected _spawningCost: Resources;
 
     /**
      * @constructor
@@ -17,8 +19,10 @@ export default abstract class NPC extends PlayerEntity {
      * @returns NPC instance
      */
     constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, frame);
+        super(scene, x, y, texture, owner, health, totalHealth, frame);
         this._movementSpeed = movementSpeed;
+        this._spawningTime = spawningTime;
+        this._spawningCost = spawningCost;
 
         this._id = `${owner.getColor()}_NPC_${owner.getNextEntityId()}`;
         owner.addNPC(this);

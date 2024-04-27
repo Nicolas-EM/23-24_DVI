@@ -20,12 +20,6 @@ namespace BuildingsData {
             height: 85
         }
         public static HEALTH = 200;
-        public static SPAWNING_TIME = 10000;
-        public static SPAWNING_COST: Resources = {
-            wood: 10,
-            food: 0,
-            gold: 0
-        }
         public static LIMIT_NPCS = 5;
     }
 
@@ -37,12 +31,6 @@ namespace BuildingsData {
             height: 110
         }
         public static HEALTH = 600;
-        public static SPAWNING_TIME = 10000;
-        public static SPAWNING_COST: Resources = {
-            wood: 10,
-            food: 10,
-            gold: 0
-        }
     }
     
     // Hut
@@ -53,12 +41,6 @@ namespace BuildingsData {
             height: 85
         }
         public static HEALTH = 450;
-        public static SPAWNING_TIME = 10000;
-        public static SPAWNING_COST: Resources = {
-            wood: 10,
-            food: 0,
-            gold: 10
-        }
     }
 }
 

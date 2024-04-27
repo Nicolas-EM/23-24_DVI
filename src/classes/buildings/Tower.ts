@@ -8,12 +8,10 @@ import BuildingsData from "../../magic_numbers/buildings_data";
 
 export default class TownHall extends SpawnerBuilding {
 
-    static readonly COST: Resources = BuildingsData.Tower.SPAWNING_COST;
-
     constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Tower.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Tower.HEALTH, BuildingsData.Tower.HEALTH, BuildingsData.Tower.SPAWNING_TIME, BuildingsData.Tower.SPAWNING_COST, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Tower.HEALTH, BuildingsData.Tower.HEALTH, frame);
     
         // Build hud info
         this._hudInfo = {

@@ -33,7 +33,7 @@ namespace NPCsData {
         public static BONUS_DAMAGE = 1.25;
         public static ATTACK_RANGE = 1; // tiles
         public static ATTACK_COOLDOWN = 3; // seconds
-        public static SPAWNING_TIME = 22500;
+        public static SPAWNING_TIME = 23000;
         public static SPAWNING_COST: Resources = {
             wood: 0,
             food: 150,
@@ -75,7 +75,7 @@ namespace NPCsData {
         public static BONUS_DAMAGE = 1.25;
         public static ATTACK_RANGE = 1;
         public static ATTACK_COOLDOWN = 3;
-        public static SPAWNING_TIME = 17500;
+        public static SPAWNING_TIME = 18000;
         public static SPAWNING_COST: Resources = {
             wood: 50,
             food: 0,
