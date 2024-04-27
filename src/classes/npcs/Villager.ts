@@ -27,25 +27,8 @@ export default class Villager extends NPC {
                 health: this._health,
                 totalHealth: this._totalHealth,
             },
-            actions: [{ run: () => { }, actionFrame: `House_${this._owner.getColor()}` }, { run: () => { }, actionFrame: `Tower_${this._owner.getColor()}` }, { run: () => { }, actionFrame: `Hut_${this._owner.getColor()}` }] // TODO: set build functions
+            actions: []
         };
-    }
-
-    /**
-     * @param buildingId id of the building (town hall, hut, etc...)
-     * @param X x coordinate of the soon-to-be built building.
-     * @param Y y coordinate of the soon-to-be built building.
-     */
-    buildOrder(buildingId: number, X: number, Y: number) {
-
-    }
-
-    /**
-     * @summary build order complete, spawn completed building
-     * //TODO
-     */
-    build() {
-
     }
 
     doIdleAnimation() {
