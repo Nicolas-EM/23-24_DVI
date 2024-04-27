@@ -69,10 +69,6 @@ export default class Player {
   addBuilding(building: Building) {
     this.buildings.push(building);
     this.entityMap[building.getId()] = building;
-
-    if(typeof building === typeof VillagerHouse) {
-      this.maxPopulation += 5;
-    }
   }
 
   getBuildings(): Building[] {
