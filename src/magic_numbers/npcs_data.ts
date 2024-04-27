@@ -10,7 +10,7 @@ namespace NPCsData {
             height: 200
         }
         public static HEALTH = 100;
-        public static SPEED = 2.5;
+        public static SPEED = 1;
         public static SPAWNING_TIME = 15000;
         public static SPAWNING_COST: Resources = {
             wood: 0,

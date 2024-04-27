@@ -1,16 +1,18 @@
 import * as Phaser from "phaser"
 import PlayerEntity from "../PlayerEntity";
 import Player from "../Player";
-import { Resources } from "../../utils";
+import Game from '../../scenes/Game';
 import AttackUnit from "../npcs/AttackUnit";
 
 export default abstract class Building extends PlayerEntity {
+    
     private fireSprites: Phaser.GameObjects.Sprite[];
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, frame);
         this.fireSprites = [];
         this._id = `${owner.getColor()}_Building_${owner.getNextEntityId()}`;
         owner.addBuilding(this);
+        (<Game>(this.scene)).getBuildingGroup().add(this);
     }
 
     dieOrDestroy() {

@@ -31,23 +31,6 @@ export default class Villager extends NPC {
         };
     }
 
-    /**
-     * @param buildingId id of the building (town hall, hut, etc...)
-     * @param X x coordinate of the soon-to-be built building.
-     * @param Y y coordinate of the soon-to-be built building.
-     */
-    buildOrder(buildingId: number, X: number, Y: number) {
-
-    }
-
-    /**
-     * @summary build order complete, spawn completed building
-     * //TODO
-     */
-    build() {
-
-    }
-
     doIdleAnimation() {
         if (this.anims.isPlaying) {
             if (this.anims.currentAnim.key !== `villagerIdle${this._owner.getColor()}`) {
@@ -120,19 +103,20 @@ export default class Villager extends NPC {
         }
 
     }
-
-    // doLiftAnimation(){
-    //     if(this.anims.isPlaying){
-    //         if(this.anims.currentAnim.key !== `villagerLift${this._owner.getColor()}`){
-    //             this.anims.stop();
-    //         }
-    //     }
-    //     this.playAnimation(`villagerLift${this._owner.getColor()}`);
-    // }
+    
+    getGatherTarget(): string {
+        return this._gatherTargetId;
+    }
 
     setGatherTarget(resourceSpawner: ResourceSpawner) {
-        this._gatherTargetId = resourceSpawner.getId();
-        if(this._gatherTargetId){
+        if (resourceSpawner) {
+            this._gatherTargetId = resourceSpawner.getId();
+        }
+        else {
+            this._gatherTargetId = undefined;
+        }
+        
+        if (this._gatherTargetId) {
             this.setMovementTarget(new Phaser.Math.Vector2(resourceSpawner.x, resourceSpawner.y));
         }
     }

@@ -37,6 +37,10 @@ export default abstract class AttackUnit extends NPC {
         }
     }
 
+    getAttackTarget(): string {
+        return this._attackTargetId;
+    }
+
     setAttackTarget(entityId: string) {
         this._attackTargetId = entityId;
     }
@@ -55,9 +59,9 @@ export default abstract class AttackUnit extends NPC {
     }
 
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
-        if(this._attackTargetId) {
+        if (this._attackTargetId) {
             const target = (this.scene as Game).getEntityById(this._attackTargetId);
-            if(target && Phaser.Math.Distance.Between(targetPoint.x, targetPoint.y, target.x, target.y) > 64) { // TODO: magic number - tile size
+            if (target && Phaser.Math.Distance.Between(targetPoint.x, targetPoint.y, target.x, target.y) > 64) {
                 this._attackTargetId = undefined;
             }
         }

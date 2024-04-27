@@ -14,7 +14,6 @@ import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
 import { PhaserNavMesh } from "phaser-navMesh";
-import Hud from './Hud';
 
 // MAGIC NUMBER
 const MIN_ZOOM = 0.5;
@@ -27,12 +26,17 @@ export default class Game extends Phaser.Scene {
 
   private p1: Player;
   private p2: Player;
+
   private pointerInMap = true;
   private mapId: string;
   private _map: Map;
+  private _npcGroup: Phaser.Physics.Arcade.Group;
+  private _buildingGroup: Phaser.Physics.Arcade.Group;
+
   private _selectedEntity: PlayerEntity | ResourceSpawner;
   private cursors: any;
   private optionsMenuOpened = false;
+
   private _topLeft: Phaser.GameObjects.Image;
   private _topRight: Phaser.GameObjects.Image;
   private _bottomLeft: Phaser.GameObjects.Image;
@@ -74,6 +78,13 @@ export default class Game extends Phaser.Scene {
     this.events.on('menuClosed', () => {
       this.optionsMenuOpened = false;
     });
+
+    // Collisions
+    this._npcGroup = this.physics.add.group();
+    this._buildingGroup = this.physics.add.group();
+    // Define overlap
+    this.physics.add.collider(this._npcGroup, this._npcGroup, this.handleCollide);
+    this.physics.add.collider(this._npcGroup, this._buildingGroup, this.handleCollide);
 
     // Map
     this._map = new Map(this, this.mapId);
@@ -264,6 +275,14 @@ export default class Game extends Phaser.Scene {
     return this._selectedEntity;
   }
 
+  getNPCGroup(): Phaser.Physics.Arcade.Group {
+    return this._npcGroup;
+  }
+
+  getBuildingGroup(): Phaser.Physics.Arcade.Group {
+    return this._buildingGroup;
+  }
+
   setSelectedEntity(entity: PlayerEntity | ResourceSpawner) {
     if (!this.optionsMenuOpened) {
       this._selectedEntity = entity;
@@ -281,7 +300,7 @@ export default class Game extends Phaser.Scene {
   }
 
   removeSelectedEntity(entity: PlayerEntity | ResourceSpawner) {
-    if(this._selectedEntity === entity) {
+    if (this._selectedEntity === entity) {
       this.setSelectedEntity(undefined);
     }
   }
@@ -295,12 +314,12 @@ export default class Game extends Phaser.Scene {
 
   setCornersPosition() {
     const physicsBody = (this._selectedEntity.body as Phaser.Physics.Arcade.Body);
-    if(!physicsBody)
+    if (!physicsBody)
       return;
-    
+
     const width = physicsBody.width / 2;
     const height = physicsBody.height / 2;
-    
+
     this._topLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y - (height));
     this._topRight.setPosition(this._selectedEntity.x + (width), this._selectedEntity.y - (height));
     this._bottomLeft.setPosition(this._selectedEntity.x - (width), this._selectedEntity.y + (height));
@@ -328,7 +347,7 @@ export default class Game extends Phaser.Scene {
   setVillagerGatherTarget(villagerId: string, resourceSpawnerId: string) {
     const villager = this.getEntityById(villagerId);
     const spawner = this.getResourceSpawnerById(resourceSpawnerId);
-    if(villager && villager instanceof Villager && spawner) {
+    if (villager && villager instanceof Villager && spawner) {
       villager.setGatherTarget(spawner);
     }
   }
@@ -389,7 +408,7 @@ export default class Game extends Phaser.Scene {
 
   endGame(defeat: boolean) {
     this._selectedEntity = undefined;
-    
+
     // Stop music
     this.sound.removeAll();
 
@@ -398,5 +417,68 @@ export default class Game extends Phaser.Scene {
     this.scene.pause("hud");
     this.scene.pause("settings");
     this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
+  }
+
+  handleCollide = (npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite) => {
+    if (npc instanceof NPC && !npc.getCollisionProcessed()) {
+      (npc as NPC).setCollisionProcessed(true);
+      // If npc is Villager or collider isn't attackTarget of npc
+      if (npc instanceof Villager ||
+        (npc instanceof AttackUnit && collider instanceof PlayerEntity && (!(npc as AttackUnit).getAttackTarget() || (npc as AttackUnit).getAttackTarget() != (collider as PlayerEntity).getId()))) {
+
+        // Save old movement target
+        let oldTarget = undefined;
+        if (npc instanceof NPC) {
+          console.log("Soy NPC");
+          oldTarget = (npc as NPC).getMovementTarget();
+          if (!oldTarget) return; // If not moving do nothing
+        }
+        // Save old gather target if Villager
+        let oldGatherTarget = undefined;
+        if (npc instanceof Villager) {
+          oldGatherTarget = (npc as Villager).getGatherTarget();
+          // Remove attackTarget from unit
+          if (oldGatherTarget) {
+            (npc as Villager).setGatherTarget(undefined);
+          }
+        }
+        // Save old attack target if AttackUnit
+        let oldAttackTarget = undefined;
+        if (npc instanceof AttackUnit) {
+          oldAttackTarget = (npc as AttackUnit).getAttackTarget();
+          // Remove attackTarget from unit
+          if (oldAttackTarget) {
+            (npc as AttackUnit).setAttackTarget(undefined);
+          }
+        }
+
+        // Calculate new target
+        let currentPosition = new Phaser.Math.Vector2(npc.x, npc.y);
+        let oldDirection = new Phaser.Math.Vector2(oldTarget.x, oldTarget.y).subtract(currentPosition);
+        let oldAngle = Phaser.Math.RadToDeg(oldDirection.angle());
+        let newAngleRad = Phaser.Math.DegToRad(oldAngle + 90);
+        let newX = currentPosition.x + Math.cos(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
+        let newY = currentPosition.y + Math.sin(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
+        (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(newX, newY));
+        console.log(newX, newY);
+
+
+        // Wait and return to original target
+        this.time.addEvent({
+          delay: 900,
+          callback: () => {
+            (npc as NPC).setCollisionProcessed(false);
+            if (npc instanceof NPC)
+              (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
+            if (npc instanceof AttackUnit)
+              (npc as AttackUnit).setAttackTarget(oldAttackTarget);
+            if (npc instanceof Villager)
+              (npc as Villager).setGatherTarget(this.getResourceSpawnerById(oldGatherTarget));          
+          },
+          callbackScope: this
+        });
+
+      }
+    }
   }
 }

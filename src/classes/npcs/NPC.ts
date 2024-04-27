@@ -12,6 +12,7 @@ export default abstract class NPC extends PlayerEntity {
     protected _movementSpeed: number;
     protected _spawningTime: number;
     protected _spawningCost: Resources;
+    protected _collisionProcessed: boolean = false;
 
     /**
      * @constructor
@@ -34,6 +35,7 @@ export default abstract class NPC extends PlayerEntity {
 
         this.setDepth(11);
 
+        (<Game>(this.scene)).getNPCGroup().add(this);
         (this.body as Phaser.Physics.Arcade.Body).setSize(70, 70, true);
     }
 
@@ -49,9 +51,21 @@ export default abstract class NPC extends PlayerEntity {
         });
     };
 
+    getCollisionProcessed(): boolean {
+        return this._collisionProcessed;
+    }
+
+    setCollisionProcessed(collisionProcessed: boolean) {
+        this._collisionProcessed = collisionProcessed;
+    }
+
+    getMovementTarget(): Phaser.Math.Vector2 {
+        return this._currentTarget;
+    }    
+
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
         if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
-            this._currentTarget = null;
+            this._currentTarget = undefined;
             return;
         }
 
@@ -60,7 +74,7 @@ export default abstract class NPC extends PlayerEntity {
         if (this._path && this._path.length > 0) {
             this._currentTarget = this._path.shift();
         }
-        else this._currentTarget = null;
+        else this._currentTarget = undefined;
     }
 
     moveToTarget(elapsedSeconds: number) {
