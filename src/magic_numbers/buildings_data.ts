@@ -20,7 +20,6 @@ namespace BuildingsData {
             height: 85
         }
         public static HEALTH = 200;
-        public static LIMIT_NPCS = 5;
     }
 
     // Tower

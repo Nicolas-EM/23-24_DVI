@@ -14,7 +14,7 @@ namespace NPCsData {
         public static SPAWNING_TIME = 15000;
         public static SPAWNING_COST: Resources = {
             wood: 0,
-            food: 50,
+            food: 25,
             gold: 0
         }
         public static GATHER_COOLDOWN = 7.5;
@@ -36,7 +36,7 @@ namespace NPCsData {
         public static SPAWNING_TIME = 23000;
         public static SPAWNING_COST: Resources = {
             wood: 0,
-            food: 150,
+            food: 75,
             gold: 0
         }
     }
@@ -56,8 +56,8 @@ namespace NPCsData {
         public static ATTACK_COOLDOWN = 3;
         public static SPAWNING_TIME = 20000; 
         public static SPAWNING_COST: Resources = {
-            wood: 80,
-            food: 50,
+            wood: 40,
+            food: 25,
             gold: 0
         }
     }
@@ -77,9 +77,9 @@ namespace NPCsData {
         public static ATTACK_COOLDOWN = 3;
         public static SPAWNING_TIME = 18000;
         public static SPAWNING_COST: Resources = {
-            wood: 50,
+            wood: 25,
             food: 0,
-            gold: 80
+            gold: 40
         }
     }
 };
