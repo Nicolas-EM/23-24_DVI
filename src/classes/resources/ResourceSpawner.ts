@@ -105,7 +105,7 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
 
         this.addResourceToPlayer(player, amountGathered);
 
-        if(this._remainingResources <= 0)
+        if (this._remainingResources <= 0)
             this.setDestroyed();
     }
 

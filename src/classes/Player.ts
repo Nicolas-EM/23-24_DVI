@@ -103,7 +103,7 @@ export default class Player {
     this.resources.wood += resource.wood;
     this.resources.food += resource.food;
 
-    if(this.getColor() === Client.getMyColor())
+    if (this.getColor() === Client.getMyColor())
       (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
   }
 
