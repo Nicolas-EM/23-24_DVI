@@ -107,7 +107,7 @@ export default class Lobby extends Phaser.Scene {
 
       // Buttons start disabled
       colors.forEach((color, index) => {
-        const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive();
+        const button = this.add.sprite(startX + index * 100, 350, `Soldier_${color}`).setInteractive({pixelPerfect: true});
         button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
           if (pointer.leftButtonReleased()) {
             this.selectColor(color);
@@ -175,7 +175,7 @@ export default class Lobby extends Phaser.Scene {
 
       // Enable or disable the button accordingly
       if (isEnabled) {
-        button.setInteractive();
+        button.setInteractive({pixelPerfect: true});
         button.clearTint(); // Remove any tint
       } else {
         button.disableInteractive();
