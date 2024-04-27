@@ -20,7 +20,8 @@ interface Lobby {
         color: ('Red' | 'Blue' | 'Purple' | 'Yellow')
     }[],
     availableColors: ('Red' | 'Blue' | 'Purple' | 'Yellow')[],
-    readyPlayers: number
+    readyPlayers: number,
+    hasStarted: boolean
 }
 
 // Default lobby
@@ -30,7 +31,8 @@ function createDefaultLobby(): Lobby {
         isPrivate: false,
         players: [],
         availableColors: ['Red', 'Blue', 'Purple', 'Yellow'],
-        readyPlayers: 0
+        readyPlayers: 0,
+        hasStarted: false
     };
 }
 
@@ -97,7 +99,7 @@ io.on('connection', socket => {
         // Find a lobby with fewer than maxPlayers
         for (const lobbyCode in lobbies) {
             const lobby = lobbies[lobbyCode];
-            if (lobby.players.length < maxPlayers && !lobby.isPrivate) {
+            if (lobby.players.length < maxPlayers && !lobby.isPrivate && !lobby.hasStarted) {
                 availableLobby = lobby;
                 break;
             }
@@ -187,6 +189,11 @@ io.on('connection', socket => {
                 lobby.players[playerIndex].ready = true;
                 lobby.readyPlayers++;
             }
+
+            if (lobby.readyPlayers >= maxPlayers) {
+                lobby.hasStarted = true;
+            }
+
             io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
         }
     });
