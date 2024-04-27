@@ -12,7 +12,7 @@ export default class GoblinHut extends SpawnerBuilding {
     constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Hut.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Hut.HEALTH, BuildingsData.Hut.HEALTH, BuildingsData.Hut.SPAWNING_TIME, BuildingsData.Hut.SPAWNING_COST, BuildingsData.Hut.VISION_RANGE, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Hut.HEALTH, BuildingsData.Hut.HEALTH, BuildingsData.Hut.SPAWNING_TIME, BuildingsData.Hut.SPAWNING_COST, frame);
         
         // Build hud info
         this._hudInfo = {

@@ -13,7 +13,7 @@ export default class TownHall extends SpawnerBuilding {
     constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Tower.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Tower.HEALTH, BuildingsData.Tower.HEALTH, BuildingsData.Tower.SPAWNING_TIME, BuildingsData.Tower.SPAWNING_COST, BuildingsData.Tower.VISION_RANGE, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Tower.HEALTH, BuildingsData.Tower.HEALTH, BuildingsData.Tower.SPAWNING_TIME, BuildingsData.Tower.SPAWNING_COST, frame);
     
         // Build hud info
         this._hudInfo = {

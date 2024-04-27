@@ -6,8 +6,8 @@ import AttackUnit from "../npcs/AttackUnit";
 
 export default abstract class Building extends PlayerEntity {
     private fireSprites: Phaser.GameObjects.Sprite[];
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, frame?: string | number) {
+        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, frame);
         this.fireSprites = [];
         this._id = `${owner.getColor()}_Building_${owner.getNextEntityId()}`;
         owner.addBuilding(this);

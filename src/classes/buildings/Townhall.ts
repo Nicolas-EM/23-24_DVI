@@ -15,7 +15,7 @@ export default class Townhall extends SpawnerBuilding {
         let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
         iconInfo.name += owner.getColor();
 
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, BuildingsData.Townhall.VISION_RANGE, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, frame);
     
         // Build hud info
         this._hudInfo = {
