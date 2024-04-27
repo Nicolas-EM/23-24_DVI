@@ -4,6 +4,7 @@ import PlayerEntity from '../PlayerEntity';
 import Game from '../../scenes/Game';
 import { Resources } from '../../utils';
 import Hud from '../../scenes/Hud';
+import Client from '../../client';
 
 export default abstract class NPC extends PlayerEntity {
 
@@ -84,9 +85,10 @@ export default abstract class NPC extends PlayerEntity {
         this.y += velocityY;
     }
 
-    dieOrDestroy() {
-        this._owner.removeNPC(this);
-        (<Hud>(this.scene.scene.get("hud"))).updatePopulation(this._owner.getNPCs().length, this._owner.getMaxPopulation());
+    dieOrDestroy() {        
+        this._owner.removeNPC(this);        
+        if (this._owner.getColor() === Client.getMyColor())
+            (<Hud>(this.scene.scene.get("hud"))).updatePopulation(this._owner.getNPCs().length, this._owner.getMaxPopulation());
         if (this.anims.isPlaying) {
             this.anims.stop();
         }
