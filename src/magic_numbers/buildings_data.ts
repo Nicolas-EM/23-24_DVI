@@ -9,8 +9,7 @@ namespace BuildingsData {
             width: 75,
             height: 65
         }
-        public static HEALTH = 200;
-        public static VISION_RANGE = 10;
+        public static HEALTH = 1000;
     }
 
     // Villager House
@@ -20,15 +19,7 @@ namespace BuildingsData {
             width: 55,
             height: 85
         }
-        public static HEALTH = 100;
-        public static VISION_RANGE = 10;
-        public static SPAWNING_TIME = 10000;
-        public static SPAWNING_COST: Resources = {
-            wood: 10,
-            food: 0,
-            gold: 0
-        }
-        public static LIMIT_NPCS = 5;
+        public static HEALTH = 200;
     }
 
     // Tower
@@ -38,14 +29,7 @@ namespace BuildingsData {
             width: 55,
             height: 110
         }
-        public static HEALTH = 100;
-        public static VISION_RANGE = 10;
-        public static SPAWNING_TIME = 10000;
-        public static SPAWNING_COST: Resources = {
-            wood: 10,
-            food: 10,
-            gold: 0
-        }
+        public static HEALTH = 600;
     }
     
     // Hut
@@ -55,14 +39,7 @@ namespace BuildingsData {
             width: 55,
             height: 85
         }
-        public static HEALTH = 100;
-        public static VISION_RANGE = 10;
-        public static SPAWNING_TIME = 10000;
-        public static SPAWNING_COST: Resources = {
-            wood: 10,
-            food: 0,
-            gold: 10
-        }
+        public static HEALTH = 450;
     }
 }
 

@@ -5,6 +5,7 @@ import VillagerHouse from './buildings/VillagerHouse';
 import PlayerEntity from './PlayerEntity';
 import Hud from '../scenes/Hud';
 import StartingData from "../magic_numbers/starting_data";
+import Client from '../client';
 
 
 export default class Player {
@@ -26,6 +27,8 @@ export default class Player {
    * @param {Scene  } scene - The scene where the player is created.
    */
   constructor(private id: string, private color: string, private scene: Phaser.Scene) {
+    // Create copy of startin resources
+    this.resources = { ...StartingData.InitData.INIT_RESOURCES };
   }
 
   getColor(): string {
@@ -99,14 +102,18 @@ export default class Player {
     this.resources.gold += resource.gold;
     this.resources.wood += resource.wood;
     this.resources.food += resource.food;
-    (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
+
+    if(this.getColor() === Client.getMyColor())
+      (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
   }
 
   pay(resources: Resources) {
     this.resources.gold -= resources.gold;
     this.resources.wood -= resources.wood;
     this.resources.food -= resources.food;
-    (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
+
+    if(this.getColor() === Client.getMyColor())
+      (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
   }
 
   getMaxPopulation(): number {

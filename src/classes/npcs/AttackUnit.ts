@@ -17,8 +17,8 @@ export default abstract class AttackUnit extends NPC {
      * @summary constructor for attacking class (must have offensive abilities)
      * @returns instance of attackUnit
      */
-    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, bonus_damage: number, attackCooldown: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, movementSpeed, frame);
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, bonus_damage: number, attackCooldown: number, frame?: string | number) {
+        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, movementSpeed, frame);
 
         this._attackRange = attackRange;
         this._damage = damage;
@@ -89,7 +89,9 @@ export default abstract class AttackUnit extends NPC {
                         this.scene.events.emit("attackEvent");
                         this.doAttackAnimation(new Phaser.Math.Vector2(target.x, target.y), (this.x >= target.x));
                         let damage = this.calculateDamage(target);
-                        target.onAttackReceived(damage, this);
+                        setTimeout(() => {
+                            target.onAttackReceived(damage, this);
+                        }, 500);
                         // Update last attack time
                         this._lastAttackTime = time;
                     }

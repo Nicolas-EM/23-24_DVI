@@ -214,7 +214,7 @@ export default class Hud extends Phaser.Scene {
                         sword.setFlipX(true);
                         self.infoContainer.add(sword);
                         // Damage
-                        let damageAmount = self.add.text(45, -5, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Quattrocento" });
+                        let damageAmount = self.add.text(45, -10, `${hudInfo.info.damage}`, { color: '#000000', fontFamily: "Quattrocento" });
                         self.infoContainer.add(damageAmount);
                     }
                     // if Building with queue, show queue data

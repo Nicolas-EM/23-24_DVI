@@ -115,6 +115,7 @@ export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite 
         if(this.body) {
             (this.scene as Game).removeResourceSpawner(this);
             this.setDestroyedFrame();
+            (this.scene as Game).removeSelectedEntity(this);
             this.destroy();
         }
     }

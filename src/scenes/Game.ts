@@ -280,6 +280,12 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  removeSelectedEntity(entity: PlayerEntity | ResourceSpawner) {
+    if(this._selectedEntity === entity) {
+      this.setSelectedEntity(undefined);
+    }
+  }
+
   setCornersVisibility(active: boolean) {
     this._topLeft.setVisible(active);
     this._topRight.setVisible(active);
@@ -289,6 +295,9 @@ export default class Game extends Phaser.Scene {
 
   setCornersPosition() {
     const physicsBody = (this._selectedEntity.body as Phaser.Physics.Arcade.Body);
+    if(!physicsBody)
+      return;
+    
     const width = physicsBody.width / 2;
     const height = physicsBody.height / 2;
     

@@ -12,8 +12,8 @@ export default abstract class SpawnerBuilding extends Building {
     protected spawnTimer: Phaser.Time.TimerEvent;
     protected spawnTimerHud: Phaser.Time.TimerEvent;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, frame?: string | number) {
-        super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, visionRange, frame);
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
+        super(scene, x, y, texture, owner, health, totalHealth, frame);
     }
 
     queueNPC(npcType: typeof Archer | typeof Goblin | typeof Soldier | typeof Villager): void {
@@ -123,5 +123,15 @@ export default abstract class SpawnerBuilding extends Building {
             this.spawnTimerHud.remove();
             this.spawnTimerHud = null;
         }
+    }
+
+    dieOrDestroy() {
+        while(this.spawnQueue.length) {
+            const npcType = this.spawnQueue.pop();
+            this._owner.addResources(npcType.COST);
+        }
+        this.stopSpawnTimer();
+
+        super.dieOrDestroy();
     }
 };

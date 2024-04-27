@@ -4,11 +4,11 @@ namespace StartingData {
 
     export class InitData {
         public static INIT_RESOURCES: Resources = {
-            wood: 100,
-            food: 100,
-            gold: 100
+            wood: 50,
+            food: 50,
+            gold: 0
         }
-        public static MAX_POPULATION: number = 10
+        public static MAX_POPULATION: number = 50
     }
 }
 

@@ -20,7 +20,8 @@ interface Lobby {
         color: ('Red' | 'Blue' | 'Purple' | 'Yellow')
     }[],
     availableColors: ('Red' | 'Blue' | 'Purple' | 'Yellow')[],
-    readyPlayers: number
+    readyPlayers: number,
+    hasStarted: boolean
 }
 
 // Default lobby
@@ -30,7 +31,8 @@ function createDefaultLobby(): Lobby {
         isPrivate: false,
         players: [],
         availableColors: ['Red', 'Blue', 'Purple', 'Yellow'],
-        readyPlayers: 0
+        readyPlayers: 0,
+        hasStarted: false
     };
 }
 
@@ -73,8 +75,14 @@ function removePlayerFromLobby(socket: Socket) {
                 lobby.availableColors.push(removedPlayer.color);
             }
 
-            // Update all players in the lobby
-            io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+            socket.leave(lobbyCode);
+
+            if (lobby.readyPlayers === 1)
+                // End game for remaining player
+                io.to(lobbyCode).emit('end-game', removedPlayer.color);
+            else
+                // Update all players in the lobby
+                io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
 
             // If lobby becomes empty after the player leaves, remove the lobby
             if (lobby.players.length === 0) {
@@ -91,7 +99,7 @@ io.on('connection', socket => {
         // Find a lobby with fewer than maxPlayers
         for (const lobbyCode in lobbies) {
             const lobby = lobbies[lobbyCode];
-            if (lobby.players.length < maxPlayers && !lobby.isPrivate) {
+            if (lobby.players.length < maxPlayers && !lobby.isPrivate && !lobby.hasStarted) {
                 availableLobby = lobby;
                 break;
             }
@@ -181,6 +189,11 @@ io.on('connection', socket => {
                 lobby.players[playerIndex].ready = true;
                 lobby.readyPlayers++;
             }
+
+            if (lobby.readyPlayers >= maxPlayers) {
+                lobby.hasStarted = true;
+            }
+
             io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
         }
     });
