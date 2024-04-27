@@ -10,8 +10,8 @@ namespace ResourcesData {
             height: 85
         }
         public static ICON = "Wood";
-        public static CAPACITY = 800;
-        public static RATE = 10;
+        public static CAPACITY = 400;
+        public static RATE = 5;
     }
     
     // Food
@@ -22,8 +22,8 @@ namespace ResourcesData {
             height: 100
         }
         public static ICON = "Food";
-        public static CAPACITY = 1500;
-        public static RATE = 10;
+        public static CAPACITY = 750;
+        public static RATE = 5;
     }
     
     // Gold
@@ -34,8 +34,8 @@ namespace ResourcesData {
             height: 58
         }
         public static ICON = "Gold";
-        public static CAPACITY = 3000;
-        public static RATE = 10;
+        public static CAPACITY = 1500;
+        public static RATE = 5;
     }
 };
 

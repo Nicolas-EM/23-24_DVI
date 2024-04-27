@@ -79,7 +79,7 @@ The ultimate purpose of Troops is to provide an enjoyable gaming experience for 
 - Spawning time
 - Attack Damage (soldiers, archers & goblins)
 - Attack Range (soldiers, archers & goblins)
-- Cooldown (soldiers, archers & goblins)
+- Cooldown
 - Attack bonus (soldiers, archers & goblins)
 - Movement speed
 

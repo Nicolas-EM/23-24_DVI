@@ -17,7 +17,7 @@ export default class Villager extends NPC {
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Villager.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Villager.HEALTH, NPCsData.Villager.HEALTH, NPCsData.Villager.SPAWNING_TIME, NPCsData.Villager.SPAWNING_COST, NPCsData.Villager.VISION_RANGE, NPCsData.Villager.SPEED, frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Villager.HEALTH, NPCsData.Villager.HEALTH, NPCsData.Villager.SPAWNING_TIME, NPCsData.Villager.SPAWNING_COST, NPCsData.Villager.SPEED, frame);
 
         // Build hud info
         this._hudInfo = {
