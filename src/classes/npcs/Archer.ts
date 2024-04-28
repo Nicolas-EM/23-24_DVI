@@ -93,7 +93,7 @@ export default class Archer extends AttackUnit {
 
         this.anims.pause(this.anims.currentAnim.frames[5]);
         //create arrow and do animation:
-        let arrow = this.scene.add.sprite(this.x, this.y, "Arrow",0);
+        let arrow = this.scene.add.sprite(this.x, this.y, "Arrow", 0);
         arrow.angle = angleDeg;
         this.scene.tweens.add({
             targets: arrow,
