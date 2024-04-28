@@ -1,6 +1,5 @@
 import Client from "../../client";
 import Game from "../../scenes/Game";
-import { Resources } from "../../utils";
 import Villager from "../npcs/Villager";
 import Player from "../Player";
 import BuildingsData from "../../magic_numbers/buildings_data";
@@ -9,6 +8,7 @@ import SpawnerBuilding from "./SpawnerBuilding";
 
 export default class Townhall extends SpawnerBuilding {
     
+    // Constructor
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
         iconInfo.name += owner.getColor();
@@ -32,8 +32,9 @@ export default class Townhall extends SpawnerBuilding {
     }
 
     dieOrDestroy() {
+        // Townhall destroyed -> End game
         this.scene.time.addEvent({
-            delay: 3000,
+            delay: 3000,  // Wait so user can see its destroy animation
             callback: () => Client.surrenderOrLose(this._owner.getColor()),
             callbackScope: this
         });    

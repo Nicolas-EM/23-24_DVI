@@ -101,7 +101,7 @@ export default class Game extends Phaser.Scene {
 
     // Sound
     this.sound.removeAll();
-    this.gameTheme = this.sound.add('Game', { volume: 0.2, loop: true });
+    this.gameTheme = this.sound.add('Game', { volume: 0.3, loop: true });
     this.gameTheme.play();
 
     this.warTheme = null;

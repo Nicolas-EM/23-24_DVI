@@ -83,36 +83,6 @@ export default class Villager extends NPC {
 
     }
 
-    doBuildAnimation(isLeft?: boolean) {
-        if (isLeft) {
-            this.flipX = true;
-        }
-        if (!isLeft && this.flipX) {
-            this.flipX = false;
-        }
-        if (this.anims.isPlaying) {
-            if (this.anims.currentAnim.key !== `villagerHammer${this._owner.getColor()}`) {
-                this.anims.stop();
-
-                this.playAnimation(`villagerHammer${this._owner.getColor()}`);
-            }
-        }
-        else {
-            this.playAnimation(`villagerHammer${this._owner.getColor()}`);
-
-        }
-
-    }
-
-    // doLiftAnimation(){
-    //     if(this.anims.isPlaying){
-    //         if(this.anims.currentAnim.key !== `villagerLift${this._owner.getColor()}`){
-    //             this.anims.stop();
-    //         }
-    //     }
-    //     this.playAnimation(`villagerLift${this._owner.getColor()}`);
-    // }
-
     setGatherTarget(resourceSpawner: ResourceSpawner) {
         this._gatherTargetId = resourceSpawner.getId();
         if(this._gatherTargetId){

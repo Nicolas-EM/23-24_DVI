@@ -9,24 +9,27 @@ import Game from '../scenes/Game';
 
 import { PhaserNavMesh } from "phaser-navmesh";
 import Client from '../client';
-import Soldier from './npcs/Soldier';
-import Archer from './npcs/Archer';
-import Goblin from './npcs/Goblin';
 import ResourceSpawner from './resources/ResourceSpawner';
 import Tower from './buildings/Tower';
 import GoblinHut from './buildings/GoblinHut';
 import VillagerHouse from './buildings/VillagerHouse';
+import Player from './Player';
+
 
 export default class Map {
+
+    // Attributes
     private _map: Phaser.Tilemaps.Tilemap;
     public navMesh: PhaserNavMesh;
     private spawners: ResourceSpawner[] = [];
 
+    // Constructor
     constructor(private scene: Game, private mapId: string) {
-        // Crear mapa
+        // Create map
         this._map = this.scene.make.tilemap({ key: this.mapId });
 
-        // Fondo
+        // --- Background ---
+        // Water
         let waterTileset = this._map.addTilesetImage("Water");
         const waterLayer = this._map.createLayer("Fondo/Water", waterTileset!);
         waterLayer?.setCollisionByProperty({ collides: true });
@@ -37,20 +40,20 @@ export default class Map {
         this._map.createFromObjects('Fondo/Rocks', { type: 'Rock2', key: 'Rocks', frame: 8 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock2"));
         this._map.createFromObjects('Fondo/Rocks', { type: 'Rock3', key: 'Rocks', frame: 16 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock3"));
         this._map.createFromObjects('Fondo/Rocks', { type: 'Rock4', key: 'Rocks', frame: 24 }).forEach(obj => (obj as Phaser.GameObjects.Sprite).anims.play("Rock4"));
-
+        // Sand & Grass
         let groundTileset = this._map.addTilesetImage('Ground');
         const groundLayer = this._map.createLayer('Fondo/Ground', groundTileset!);
         const grassLayer = this._map.createLayer('Fondo/Grass', groundTileset!);
 
-        // Resources
+        // --- Resource Spawners ---
         const sheeps = this._map.createFromObjects('Resources/Food', { type: "Sheep", key: 'Sheep', classType: Sheep });
         const trees = this._map.createFromObjects('Resources/Wood', { type: "Tree", key: 'Tree', classType: Tree });
         const mines = this._map.createFromObjects('Resources/Gold', { type: "GoldMine", key: 'GoldMine', classType: GoldMine });
 
+        // Adjust size of sprites and add them to spawners[]
         sheeps.forEach( s => {
             ((<Sheep>s).body as Phaser.Physics.Arcade.Body).setSize(50, 50, true);
         });
-        this.spawners.push();
         this.spawners = this.spawners.concat(<ResourceSpawner[]>sheeps);
 
         trees.forEach( t => {
@@ -63,11 +66,14 @@ export default class Map {
         });
         this.spawners = this.spawners.concat(<ResourceSpawner[]>mines);
 
-        // Decoration
+        // --- Decoration ---
         let decoTileset = this._map.addTilesetImage('Decoration');
         this._map.createLayer('Decoration', [decoTileset!, groundTileset!]);
 
+        // Add PlayerEntities
         this._map.getObjectLayer("Buildings")?.objects.forEach(obj => {
+            console.log(typeof(obj));
+            // Player 1
             if (obj.type === "Townhall_P1") {
                 const p1 = (<Game>(this.scene)).getP1();
 
@@ -75,97 +81,57 @@ export default class Map {
                     this.scene.cameras.main.centerOn(<number>obj.x, <number>obj.y);
                     this.scene.cameras.main.zoom = 0.7;
                 }
-                new TownHall(this.scene, <number>obj.x, <number>obj.y, p1);
-
-                new Tower(this.scene, <number>obj.x + 576, <number>obj.y + 192, p1);
-                new Tower(this.scene, <number>obj.x + 576, <number>obj.y - 192, p1);
-                new Tower(this.scene, <number>obj.x + 1024, <number>obj.y + 960, p1);
-                new Tower(this.scene, <number>obj.x + 1024, <number>obj.y - 960, p1);
-                new GoblinHut(this.scene, <number>obj.x + 192, <number>obj.y + 512, p1);
-                new GoblinHut(this.scene, <number>obj.x + 192, <number>obj.y - 512, p1);
-
-                new VillagerHouse(this.scene, <number>obj.x + 960, <number>obj.y + 384, p1);
-                new VillagerHouse(this.scene, <number>obj.x + 1024, <number>obj.y - 320, p1);
-                new VillagerHouse(this.scene, <number>obj.x - 256, <number>obj.y + 448, p1);
-                new VillagerHouse(this.scene, <number>obj.x - 192, <number>obj.y - 448, p1);
-                new VillagerHouse(this.scene, <number>obj.x, <number>obj.y + 960, p1);
-                new VillagerHouse(this.scene, <number>obj.x + 64, <number>obj.y - 960, p1);
-
-                new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p1);
-                new Villager(this.scene, <number>obj.x + 320, <number>obj.y + 64, p1);
-                new Villager(this.scene, <number>obj.x + 64, <number>obj.y + 320, p1);
-            } else if (obj.type === "Townhall_P2") {
+                this.addStartingEntities(obj, 1, p1);
+            } 
+            
+            // Player 2
+            else if (obj.type === "Townhall_P2") {
                 const p2 = (<Game>(this.scene)).getP2();
 
                 if(Client.getMyColor() === p2.getColor()){
                     this.scene.cameras.main.centerOn(<number>obj.x, <number>obj.y);
                     this.scene.cameras.main.zoom = 0.7;
                 }
-                new TownHall(this.scene, <number>obj.x, <number>obj.y, p2);
-
-                new Tower(this.scene, <number>obj.x - 576, <number>obj.y + 192, p2);
-                new Tower(this.scene, <number>obj.x - 576, <number>obj.y - 192, p2);
-                new Tower(this.scene, <number>obj.x - 1024, <number>obj.y + 960, p2);
-                new Tower(this.scene, <number>obj.x - 1024, <number>obj.y - 960, p2);
-                new GoblinHut(this.scene, <number>obj.x - 192, <number>obj.y + 512, p2);
-                new GoblinHut(this.scene, <number>obj.x - 192, <number>obj.y - 512, p2);
-
-                new VillagerHouse(this.scene, <number>obj.x - 960, <number>obj.y + 384, p2);
-                new VillagerHouse(this.scene, <number>obj.x - 1024, <number>obj.y - 320, p2);
-                new VillagerHouse(this.scene, <number>obj.x + 256, <number>obj.y + 448, p2);
-                new VillagerHouse(this.scene, <number>obj.x + 192, <number>obj.y - 448, p2);
-                new VillagerHouse(this.scene, <number>obj.x, <number>obj.y + 960, p2);
-                new VillagerHouse(this.scene, <number>obj.x - 64, <number>obj.y - 960, p2);
-p2
-                new Villager(this.scene, <number>obj.x, <number>obj.y - 192, p2);
-                new Villager(this.scene, <number>obj.x - 320, <number>obj.y + 64, p2);
-                new Villager(this.scene, <number>obj.x - 64, <number>obj.y + 320, p2);
+                this.addStartingEntities(obj, -1, p2);
             }
         });
 
-        // (<Game>this.scene).setSelectedEntity(this.NPCs[0]);
-
-        ////////////////////////////// NAVMESH PATHFINDER //////////////////////////////    
         const layers = [waterLayer, groundLayer, grassLayer];
-
         this.navMesh = (<Game>this.scene).navMeshPlugin.buildMeshFromTilemap("mesh", this._map, layers, (tile) => this.navMeshIsWalkable(tile));
-        // this.navMesh.enableDebug(); // Creates a Phaser.Graphics overlay on top of the screen
-        // this.navMesh.debugDrawClear(); // Clears the overlay
-        // Visualize the underlying navmesh
 
-        // -->  okay wtf ? 
-        // this.navMesh.debugDrawMesh({
-        //     drawCentroid: true,
-        //     drawBounds: false,
-        //     drawNeighbors: true,
-        //     drawPortals: true
-        // });
-
-        // Prueba de colision con spawner
-        // let testSpawner: Sheep = <Sheep>foodSpawners[0];
-        // const path = this.navMesh.findPath({ x: 4050, y: 3500 }, { x: testSpawner.x, y: testSpawner.y });
-
-        // // Visualize an individual path
-        // this.navMesh.debugDrawPath(path, 0xffd900);
     }
 
-    tileHasObject(tile: Phaser.Tilemaps.Tile): boolean {
-        const allBuildings = (<Game>(this.scene)).getAllBuildings();
-        for (let building of allBuildings) {
-            if (tile.x >= building.x && tile.x + tile.width <= building.x && tile.y >= building.y && tile.y + tile.height <= building.y)
-                return true;
-        }
+    addStartingEntities(obj: any, side: number, player: Player) {
+        new TownHall(this.scene, <number>obj.x, <number>obj.y, player);
 
-        return false;
+        new Tower(this.scene, <number>obj.x + side * 576, <number>obj.y + 192, player);
+        new Tower(this.scene, <number>obj.x + side * 576, <number>obj.y - 192, player);
+        new Tower(this.scene, <number>obj.x + side * 1024, <number>obj.y + 960, player);
+        new Tower(this.scene, <number>obj.x + side * 1024, <number>obj.y - 960, player);
+        new GoblinHut(this.scene, <number>obj.x + side * 192, <number>obj.y + 512, player);
+        new GoblinHut(this.scene, <number>obj.x + side * 192, <number>obj.y - 512, player);
+
+        new VillagerHouse(this.scene, <number>obj.x + side * 960, <number>obj.y + 384, player);
+        new VillagerHouse(this.scene, <number>obj.x + side * 1024, <number>obj.y - 320, player);
+        new VillagerHouse(this.scene, <number>obj.x - side * 256, <number>obj.y + 448, player);
+        new VillagerHouse(this.scene, <number>obj.x - side * 192, <number>obj.y - 448, player);
+        new VillagerHouse(this.scene, <number>obj.x, <number>obj.y + 960, player);
+        new VillagerHouse(this.scene, <number>obj.x + side * 64, <number>obj.y - 960, player);
+
+        new Villager(this.scene, <number>obj.x, <number>obj.y - 192, player);
+        new Villager(this.scene, <number>obj.x + side * 320, <number>obj.y + 64, player);
+        new Villager(this.scene, <number>obj.x + side * 64, <number>obj.y + 320, player);
     }
 
+    // Check if a tile is walkable (water is not)
     navMeshIsWalkable(tile: Phaser.Tilemaps.Tile): boolean {
-        if (tile.properties.collides || this.tileHasObject(tile)) {
+        if (tile.properties.collides) {
             return false;
         }
         return true;
     }
 
+    // --- MAP BOUNDS ---
     getWidthInPixel(): number {
         return this._map.widthInPixels;
     }
@@ -173,7 +139,10 @@ p2
     getHeightInPixel(): number {
         return this._map.heightInPixels;
     }
+    // ------------------
 
+
+    // --- Manage Resource Spawners ---
     getResourceSpawnerById(id: string): ResourceSpawner {
         return this.spawners.find((spawner: ResourceSpawner) => spawner.getId() === id);
     }
@@ -181,4 +150,6 @@ p2
     removeResourceSpawner(spawner: ResourceSpawner) {
         this.spawners = this.spawners.filter(s => s.getId() !== spawner.getId());
     }
+    // --------------------------------
+
 }
