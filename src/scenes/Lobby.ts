@@ -49,17 +49,6 @@ export default class Lobby extends Phaser.Scene {
     background.displayWidth = this.sys.canvas.width;
     background.displayHeight = this.sys.canvas.height;
 
-    // Lore button
-    let loreContainer = this.add.container(65, 60);
-    let loreButton = this.add.image(0, 0, 'Button_Yellow');
-    loreButton.setDisplaySize(80, 80);
-    loreButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-    loreContainer.add(loreButton);
-    let loreIcon = this.add.image(0, -10, 'Book');
-    loreIcon.setDisplaySize(40, 40);
-    loreIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-    loreContainer.add(loreIcon);
-
     // Leave lobby button
     let leaveContainer = this.add.container(this.cameras.main.width - 120, 45);
     let leaveButton = this.add.image(0, 0, 'Button_Red').setInteractive();
