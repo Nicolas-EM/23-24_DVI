@@ -68,7 +68,6 @@ export default abstract class AttackUnit extends NPC {
     update(time: number, delta: number) {
         if (this._attackTargetId) {
             const target = (this.scene as Game).getEntityById(this._attackTargetId);
-
             if (target && !this.entityIsWithinRange(target)) {
                 // Not within range - move towards target
                 this.setMovementTarget(new Phaser.Math.Vector2(target.x, target.y));

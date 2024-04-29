@@ -69,10 +69,6 @@ export default class Player {
   addBuilding(building: Building) {
     this.buildings.push(building);
     this.entityMap[building.getId()] = building;
-
-    if(typeof building === typeof VillagerHouse) {
-      this.maxPopulation += 5;
-    }
   }
 
   getBuildings(): Building[] {
@@ -103,7 +99,7 @@ export default class Player {
     this.resources.wood += resource.wood;
     this.resources.food += resource.food;
 
-    if(this.getColor() === Client.getMyColor())
+    if (this.getColor() === Client.getMyColor())
       (<Hud>(this.scene.scene.get("hud"))).updateResources({ wood: this.resources.wood, food: this.resources.food, gold: this.resources.gold });
   }
 

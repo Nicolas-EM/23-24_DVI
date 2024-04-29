@@ -49,17 +49,6 @@ export default class Lobby extends Phaser.Scene {
     background.displayWidth = this.sys.canvas.width;
     background.displayHeight = this.sys.canvas.height;
 
-    // Lore button
-    let loreContainer = this.add.container(65, 60);
-    let loreButton = this.add.image(0, 0, 'Button_Yellow');
-    loreButton.setDisplaySize(80, 80);
-    loreButton.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-    loreContainer.add(loreButton);
-    let loreIcon = this.add.image(0, -10, 'Book');
-    loreIcon.setDisplaySize(40, 40);
-    loreIcon.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-    loreContainer.add(loreIcon);
-
     // Leave lobby button
     let leaveContainer = this.add.container(this.cameras.main.width - 120, 45);
     let leaveButton = this.add.image(0, 0, 'Button_Red').setInteractive();
@@ -91,11 +80,11 @@ export default class Lobby extends Phaser.Scene {
       let lobbyContainer = this.add.container(self.cameras.main.width / 2, 80);
       lobbyContainer.add(banner);
       if (!this.quickPlay) {        
-        self.lobbyText = self.add.text(0, 0, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
+        self.lobbyText = self.add.text(0, -5, 'Lobby', { fontSize: 30, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
         lobbyContainer.add(self.lobbyText);
       }
       else {
-        lobbyContainer.add(self.add.text(0, 0, 'QUICK PLAY', { fontSize: 24, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5));
+        lobbyContainer.add(self.add.text(0, -5, 'QUICK PLAY', { fontSize: 24, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5));
       }
 
       self.playerListText = self.add.text(self.cameras.main.width / 2, 200, '', { fontSize: 25, color: "#000000", fontFamily: "Quattrocento" }).setOrigin(0.5);
@@ -122,7 +111,7 @@ export default class Lobby extends Phaser.Scene {
       let readyContainer = self.add.container(self.cameras.main.width / 2, 450);
       self.readyButton = self.add.image(0, 0, "Button_Yellow_Slides").setInteractive();
       self.readyButton.scale = 0.85;
-      let readyText = self.add.text(-35, -20, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontStyle: "bold" })
+      let readyText = self.add.text(-37, -15, 'READY', { color: "#000000", fontFamily: "Quattrocento", fontSize: 22, fontStyle: "bold" })
       self.readyButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonDown()) {
           if (!this.isReady)
