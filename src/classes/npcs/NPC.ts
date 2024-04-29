@@ -59,6 +59,10 @@ export default abstract class NPC extends PlayerEntity {
         this._collisionProcessed = collisionProcessed;
     }
 
+    getMovementSpeed(): number {
+        return this._movementSpeed;
+    }
+    
     getMovementTarget(): Phaser.Math.Vector2 {
         return this._currentTarget;
     }    
@@ -86,10 +90,9 @@ export default abstract class NPC extends PlayerEntity {
         else {
             this.doMoveAnimation();
         }
+
         const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
-        const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
-        const targetSpeed = distance / elapsedSeconds;
-        const magnitude = Math.min(this._movementSpeed, targetSpeed);
+        const magnitude = (this._movementSpeed / 64 ) / elapsedSeconds;
 
         const velocityX = Math.cos(angle) * magnitude;
         const velocityY = Math.sin(angle) * magnitude;

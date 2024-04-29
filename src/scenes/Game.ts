@@ -440,15 +440,47 @@ export default class Game extends Phaser.Scene {
 
   // Calculate new target to avoid a PlayerEntity
   calculateNewTarget(npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite, oldTarget: Phaser.Math.Vector2) {
-    let currentPosition = new Phaser.Math.Vector2(npc.x, npc.y);
-    let oldDirection = new Phaser.Math.Vector2(oldTarget.x, oldTarget.y).subtract(currentPosition);
-    let oldAngle = Phaser.Math.RadToDeg(oldDirection.angle());
-    let newAngleRad = Phaser.Math.DegToRad(oldAngle + 90);
-    let newX = currentPosition.x + Math.cos(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
-    let newY = currentPosition.y + Math.sin(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
+    
+    // STEP 1: From which side did the NPC collide?
+    let side = "";
+    let diffX = Math.ceil(Math.abs(npc.x - collider.x));
+    let diffY = Math.ceil(Math.abs(npc.y - collider.y));
+    // Left or right
+    if (diffX >= npc.body.width / 2 + collider.body.width / 2) {
+      if (npc.x < collider.x) { side = "LEFT"; }
+      else { side = "RIGHT"; }
+    }
+    // Up or down
+    else {
+      if (npc.y < collider.y) { side = "UP"; }
+      else { side = "DOWN"; }
+    }
 
+    // STEP 2: New direction?
+    let alpha = undefined;
+    if (side == "LEFT" || side == "RIGHT") {
+      if (npc.y > oldTarget.y) { alpha = -1; }  // Go up
+      else { alpha = 1; }  // Go down
+    }
+    else {
+      if (npc.x > oldTarget.x) { alpha = -1; }  // Go left
+      else { alpha = 1; }  // Go right
+    }
 
+    // STEP 3: How much distance?
+    let newX = npc.x;
+    let newY = npc.y;
+    if (side == "LEFT" || side == "RIGHT") {
+      if (npc.y < collider.y) { newY += alpha * (collider.body.height / 2 + alpha * diffY + npc.body.height + 10) }  // 10px extra just in case
+      else { newY += alpha * (collider.body.height / 2 - alpha * diffY + npc.body.height + 10) }  // 10px extra just in case
+    }
+    else {
+      if (npc.x < collider.x) { newX += alpha * (collider.body.width / 2 + alpha * diffX + npc.body.width + 10) }  // 10px extra just in case
+      else { newX += alpha * (collider.body.width / 2 - alpha * diffX + npc.body.width + 10) }  // 10px extra just in case
+    } 
+    
     return [newX, newY];
+
   }
 
 
@@ -462,7 +494,6 @@ export default class Game extends Phaser.Scene {
       // Save old movement target
       let oldTarget = undefined;
       if (npc instanceof NPC) {
-        console.log("Soy NPC");
         oldTarget = (npc as NPC).getMovementTarget();
         if (!oldTarget) return; // If not moving do nothing
       }
@@ -489,10 +520,15 @@ export default class Game extends Phaser.Scene {
       let newTarget = this.calculateNewTarget(npc, collider, oldTarget);
       (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(newTarget[0], newTarget[1]));
 
+      // Calculate time to avoid entity
+      let npcPosition = new Phaser.Math.Vector2(npc.x, npc.y);
+      let newPosition = new Phaser.Math.Vector2(newTarget[0], newTarget[1]);
+      let dist = Math.abs(npcPosition.distance(newPosition));
+      let avoidTime = (dist / (npc.getMovementSpeed() * 64)) * 1000;
 
       // Wait and return to original target
       this.time.addEvent({
-        delay: 900,
+        delay: avoidTime,
         callback: () => {
           (npc as NPC).setCollisionProcessed(false);
           if (npc instanceof NPC)
