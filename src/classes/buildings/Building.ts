@@ -36,9 +36,9 @@ export default abstract class Building extends PlayerEntity {
         this.fireSprites.push(fire);
     }
 
-    onAttackReceived(damage: number,attackUnit: AttackUnit) {
+    onAttackReceived(damage: number, attackUnit: AttackUnit) {
 
-        super.onAttackReceived(damage,attackUnit);
+        super.onAttackReceived(damage, attackUnit);
 
         // Fire animation
         if (this.fireSprites.length < 1 && this._health <= this._totalHealth * 0.75 && this._health > this._totalHealth * 0.5) {
