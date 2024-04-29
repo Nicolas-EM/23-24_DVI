@@ -419,66 +419,91 @@ export default class Game extends Phaser.Scene {
     this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
   }
 
+  // Check if a collision must be handled
+  checkCollision(npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite): boolean {
+    return (
+      npc instanceof NPC &&  // Always true
+      !npc.getCollisionProcessed() &&  // If collision isn't already being processed
+      (
+        npc instanceof Villager ||  // A villager always collides with other PlayerEntities
+        (
+          npc instanceof AttackUnit &&
+          collider instanceof PlayerEntity &&  // Always true
+          (
+            !(npc as AttackUnit).getAttackTarget() ||  // Attacker has no target
+            (npc as AttackUnit).getAttackTarget() != (collider as PlayerEntity).getId()  // The target is not the one they're colliding with
+          )
+        )
+      )
+    );
+  }
+
+  // Calculate new target to avoid a PlayerEntity
+  calculateNewTarget(npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite, oldTarget: Phaser.Math.Vector2) {
+    let currentPosition = new Phaser.Math.Vector2(npc.x, npc.y);
+    let oldDirection = new Phaser.Math.Vector2(oldTarget.x, oldTarget.y).subtract(currentPosition);
+    let oldAngle = Phaser.Math.RadToDeg(oldDirection.angle());
+    let newAngleRad = Phaser.Math.DegToRad(oldAngle + 90);
+    let newX = currentPosition.x + Math.cos(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
+    let newY = currentPosition.y + Math.sin(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
+
+
+    return [newX, newY];
+  }
+
+
+  // Handle collision
   handleCollide = (npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite) => {
-    if (npc instanceof NPC && !npc.getCollisionProcessed()) {
+    if (npc instanceof NPC && this.checkCollision(npc, collider)) {
+
+      // Collision is being processed
       (npc as NPC).setCollisionProcessed(true);
-      // If npc is Villager or collider isn't attackTarget of npc
-      if (npc instanceof Villager ||
-        (npc instanceof AttackUnit && collider instanceof PlayerEntity && (!(npc as AttackUnit).getAttackTarget() || (npc as AttackUnit).getAttackTarget() != (collider as PlayerEntity).getId()))) {
 
-        // Save old movement target
-        let oldTarget = undefined;
-        if (npc instanceof NPC) {
-          console.log("Soy NPC");
-          oldTarget = (npc as NPC).getMovementTarget();
-          if (!oldTarget) return; // If not moving do nothing
-        }
-        // Save old gather target if Villager
-        let oldGatherTarget = undefined;
-        if (npc instanceof Villager) {
-          oldGatherTarget = (npc as Villager).getGatherTarget();
-          // Remove attackTarget from unit
-          if (oldGatherTarget) {
-            (npc as Villager).setGatherTarget(undefined);
-          }
-        }
-        // Save old attack target if AttackUnit
-        let oldAttackTarget = undefined;
-        if (npc instanceof AttackUnit) {
-          oldAttackTarget = (npc as AttackUnit).getAttackTarget();
-          // Remove attackTarget from unit
-          if (oldAttackTarget) {
-            (npc as AttackUnit).setAttackTarget(undefined);
-          }
-        }
-
-        // Calculate new target
-        let currentPosition = new Phaser.Math.Vector2(npc.x, npc.y);
-        let oldDirection = new Phaser.Math.Vector2(oldTarget.x, oldTarget.y).subtract(currentPosition);
-        let oldAngle = Phaser.Math.RadToDeg(oldDirection.angle());
-        let newAngleRad = Phaser.Math.DegToRad(oldAngle + 90);
-        let newX = currentPosition.x + Math.cos(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
-        let newY = currentPosition.y + Math.sin(newAngleRad) * (Math.max(collider.width, collider.height) + 32);
-        (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(newX, newY));
-        console.log(newX, newY);
-
-
-        // Wait and return to original target
-        this.time.addEvent({
-          delay: 900,
-          callback: () => {
-            (npc as NPC).setCollisionProcessed(false);
-            if (npc instanceof NPC)
-              (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
-            if (npc instanceof AttackUnit)
-              (npc as AttackUnit).setAttackTarget(oldAttackTarget);
-            if (npc instanceof Villager)
-              (npc as Villager).setGatherTarget(this.getResourceSpawnerById(oldGatherTarget));          
-          },
-          callbackScope: this
-        });
-
+      // Save old movement target
+      let oldTarget = undefined;
+      if (npc instanceof NPC) {
+        console.log("Soy NPC");
+        oldTarget = (npc as NPC).getMovementTarget();
+        if (!oldTarget) return; // If not moving do nothing
       }
+      // Save old gather target if Villager
+      let oldGatherTarget = undefined;
+      if (npc instanceof Villager) {
+        oldGatherTarget = (npc as Villager).getGatherTarget();
+        // Remove attackTarget from unit
+        if (oldGatherTarget) {
+          (npc as Villager).setGatherTarget(undefined);
+        }
+      }
+      // Save old attack target if AttackUnit
+      let oldAttackTarget = undefined;
+      if (npc instanceof AttackUnit) {
+        oldAttackTarget = (npc as AttackUnit).getAttackTarget();
+        // Remove attackTarget from unit
+        if (oldAttackTarget) {
+          (npc as AttackUnit).setAttackTarget(undefined);
+        }
+      }
+
+      // Calculate new target
+      let newTarget = this.calculateNewTarget(npc, collider, oldTarget);
+      (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(newTarget[0], newTarget[1]));
+
+
+      // Wait and return to original target
+      this.time.addEvent({
+        delay: 900,
+        callback: () => {
+          (npc as NPC).setCollisionProcessed(false);
+          if (npc instanceof NPC)
+            (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
+          if (npc instanceof AttackUnit)
+            (npc as AttackUnit).setAttackTarget(oldAttackTarget);
+          if (npc instanceof Villager)
+            (npc as Villager).setGatherTarget(this.getResourceSpawnerById(oldGatherTarget));          
+        },
+        callbackScope: this
+      });
     }
   }
 }

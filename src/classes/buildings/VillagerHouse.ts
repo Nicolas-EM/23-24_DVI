@@ -2,10 +2,11 @@ import Client from "../../client";
 import Player from "../Player";
 import Building from "./Building";
 import BuildingsData from "../../magic_numbers/buildings_data";
+import Game from "../../scenes/Game";
 
 export default class VillagerHouse extends Building {
     
-    constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
+    constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.VillagerHouse.ICON_INFO };
         iconInfo.name += owner.getColor();
         super(scene, x, y, iconInfo.name, owner, BuildingsData.VillagerHouse.HEALTH, BuildingsData.VillagerHouse.HEALTH, frame);

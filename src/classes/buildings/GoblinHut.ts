@@ -4,10 +4,11 @@ import Player from "../Player";
 import Goblin from "../npcs/Goblin";
 import SpawnerBuilding from "./SpawnerBuilding";
 import BuildingsData from "../../magic_numbers/buildings_data";
+import Game from "../../scenes/Game";
 
 export default class GoblinHut extends SpawnerBuilding {
 
-    constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
+    constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Hut.ICON_INFO };
         iconInfo.name += owner.getColor();
         super(scene, x, y, iconInfo.name, owner, BuildingsData.Hut.HEALTH, BuildingsData.Hut.HEALTH, frame);

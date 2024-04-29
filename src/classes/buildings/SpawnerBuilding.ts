@@ -1,4 +1,5 @@
 import Client from "../../client";
+import Game from "../../scenes/Game";
 import { Resources } from "../../utils";
 import Archer from "../npcs/Archer";
 import Goblin from "../npcs/Goblin";
@@ -12,7 +13,7 @@ export default abstract class SpawnerBuilding extends Building {
     protected spawnTimer: Phaser.Time.TimerEvent;
     protected spawnTimerHud: Phaser.Time.TimerEvent;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
+    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, frame);
     }
 
