@@ -1,7 +1,7 @@
 import * as WebFont from 'webfontloader';
 
 // Lobby data
-export default interface lobbyData {
+export default interface LobbyData {
     code: string;
     players: { id: string, color: string, ready: boolean }[],
     availableColors: ('Red' | 'Blue' | 'Purple' | 'Yellow')[],
@@ -49,4 +49,10 @@ export class FontLoader {
             active: callback(scene)
         });
     }
+}
+
+// Position
+export interface Pos {
+    x: number;
+    y: number;
 }

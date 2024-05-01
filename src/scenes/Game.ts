@@ -15,6 +15,8 @@ import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
 import { PhaserNavMesh } from "phaser-navMesh";
 import Hud from './Hud';
+import SceneUtils from "./sceneUtils"
+
 
 // MAGIC NUMBER
 const MIN_ZOOM = 0.5;
@@ -54,7 +56,11 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    
+    // Init config
     Client.setScene(this);
+    this.scene.run('settings', { scene: "game" });
+    SceneUtils.settingsConfig(this);
 
     // Reset things to default values
     this.optionsMenuOpened = false;
@@ -67,13 +73,6 @@ export default class Game extends Phaser.Scene {
 
     // Hud
     this.scene.run('hud', { player: (this.p1.getColor() === Client.getMyColor() ? this.p1 : this.p2) });
-    this.scene.run('settings', { scene: "game" });
-    this.events.on('menuOpened', () => {
-      this.optionsMenuOpened = true;
-    });
-    this.events.on('menuClosed', () => {
-      this.optionsMenuOpened = false;
-    });
 
     // Map
     this._map = new Map(this, this.mapId);
@@ -398,5 +397,9 @@ export default class Game extends Phaser.Scene {
     this.scene.pause("hud");
     this.scene.pause("settings");
     this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
+  }
+
+  setOptionsMenuOpened(opened: boolean) {
+    this.optionsMenuOpened = opened;
   }
 }

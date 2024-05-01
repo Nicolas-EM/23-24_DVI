@@ -4,6 +4,7 @@ import ResourceSpawner from '../classes/resources/ResourceSpawner';
 import PlayerEntity from '../classes/PlayerEntity';
 import { FontLoader, Resources } from '../utils';
 import SpawnerBuilding from '../classes/buildings/SpawnerBuilding';
+import SceneUtils from './sceneUtils';
 
 export default class Hud extends Phaser.Scene {
     // Attributes
@@ -48,15 +49,10 @@ export default class Hud extends Phaser.Scene {
     }
 
     create() {
+        SceneUtils.settingsConfig(this);
+        
         this.createTopHud();
         this.createBottomHud();
-
-        this.scene.get('settings').events.on('menuOpened', () => {
-            this.optionsMenuOpened = true;
-        });
-        this.scene.get('settings').events.on('menuClosed', () => {
-            this.optionsMenuOpened = false;
-        });
     }
 
     createTopHud() {
@@ -152,7 +148,7 @@ export default class Hud extends Phaser.Scene {
             // Close button
             self.closeBtnImg = self.add.image(0, 0, "Button_Red");
             self.closeBtnImg.scale = 0.5;
-            
+
             self.closeBtnXImg = self.add.image(-0.5, -0.8, "X");
             self.closeBtnXImg.setDisplaySize(25, 25);
             self.closeBtnXImg.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
@@ -242,7 +238,7 @@ export default class Hud extends Phaser.Scene {
                         // Funcionalidad acción
                         actionIcon.setInteractive();
                         actionIcon.on("pointerdown", () => {
-                            if(!this.optionsMenuOpened)
+                            if (!this.optionsMenuOpened)
                                 action.run();
                         });
                         this.actionsContainer.add(actionIcon);
@@ -262,7 +258,7 @@ export default class Hud extends Phaser.Scene {
         this.closeBtnXImg.setTexture("X");
 
         if (pointer.leftButtonReleased()) {
-            if(this.displayedEntity instanceof SpawnerBuilding) {
+            if (this.displayedEntity instanceof SpawnerBuilding) {
                 this.displayedEntity.cancelNPC();
             }
         }
@@ -366,7 +362,7 @@ export default class Hud extends Phaser.Scene {
             }
             else {
                 if (data > 0) {
-                    this.healthAmount.text =  `${data}/${data_2}`;
+                    this.healthAmount.text = `${data}/${data_2}`;
                     this.healthBar.setFrame(this.calculateHealthBar(data, data_2));
                 }
                 else {
@@ -374,6 +370,10 @@ export default class Hud extends Phaser.Scene {
                     this.flushHud();
                 }
             }
+    }
+
+    setOptionsMenuOpened(opened: boolean) {
+        this.optionsMenuOpened = opened;
     }
 
 }

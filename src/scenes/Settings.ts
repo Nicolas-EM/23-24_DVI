@@ -21,13 +21,6 @@ export default class Settings extends Phaser.Scene {
     }
 
     create() {
-        // Cursor
-        this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-            this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
-        });
-        this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-            this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
-        });
 
         // Options button
         let optionsContainer = this.add.container(this.cameras.main.width - 55, 45);

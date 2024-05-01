@@ -2,34 +2,22 @@ import * as Phaser from 'phaser'
 
 import * as Sprites from '../../assets/sprites';
 import * as Sounds from '../../assets/sound';
-
-// maps
-import map_test from '../../assets/maps/test.json';
 import map_desert from '../../assets/maps/desert.json';
-import map_mountain from '../../assets/maps/mountain.json';
-import map_river from '../../assets/maps/river.json';
 
 import { animationFactory } from '../animationFactory';
 
 
-/**
- * Escena para la precarga de los assets que se usarán en el juego.
- * Esta escena se puede mejorar añadiendo una imagen del juego y una 
- * barra de progreso de carga de los assets
- * @see {@link https://gamedevacademy.org/creating-a-preloading-screen-in-phaser-3/} como ejemplo
- * sobre cómo hacer una barra de progreso.
- */
 export default class Boot extends Phaser.Scene {
 
-  // Constructor de la escena
+  // Constructor
   constructor() {
     super({ key: 'boot' });
   }
 
-  // Carga de los assets del juego
+  // Assets load
   preload() {
     
-    // Sounds
+    // Sounds first
     this.load.audio('TroopsTheme', Sounds.Themes.Troops);
     this.load.audio('War', Sounds.Themes.War);
     this.load.audio('Game', Sounds.Themes.Game);
@@ -39,12 +27,8 @@ export default class Boot extends Phaser.Scene {
     // -------- FONT --------
     this.load.script("webfont", "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
 
-    // -------- MAPS --------
-    this.load.tilemapTiledJSON('test', map_test);
+    // -------- MAP --------
     this.load.tilemapTiledJSON('desert', map_desert);
-    this.load.tilemapTiledJSON('mountain', map_mountain);
-    this.load.tilemapTiledJSON('river', map_river);
-
     // Background
     this.load.image('Ground', Sprites.Terrain.Ground.Ground);
     this.load.image('Water', Sprites.Terrain.Water.Water);
@@ -52,7 +36,6 @@ export default class Boot extends Phaser.Scene {
     this.load.spritesheet('Foam', Sprites.Terrain.Water.Foam, { frameWidth: 192, frameHeight: 192 });
     // Rocks
     this.load.spritesheet('Rocks', Sprites.Terrain.Water.Rocks, { frameWidth: 128, frameHeight: 128 });
-
     // Decoration
     this.load.image('Decoration', Sprites.Decoration.Decoration);
 
@@ -190,8 +173,10 @@ export default class Boot extends Phaser.Scene {
     this.load.image('King_Purple', Sprites.Kings.Purple);
     this.load.image('King_Red', Sprites.Kings.Red);
     this.load.image('King_Yellow', Sprites.Kings.Yellow);
+
   }
 
+  // Create
   create() {
     this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     animationFactory.createAnimations(this);

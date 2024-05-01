@@ -1,49 +1,41 @@
 import * as Phaser from 'phaser';
 import Client from '../client';
-import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
+import SceneUtils from "./sceneUtils";
 
 const WIN_TITLE = "YOU WON !";
 const LOSE_TITLE = "YOU LOST";
 
 export default class EndGame extends Phaser.Scene {
-  
-    private defeat: Boolean;
-    private color: String;
-  
-    constructor() {
+
+  // Logical attributes
+  private defeat: Boolean;
+  private color: String;
+
+  // Constructor
+  constructor() {
     super({ key: 'endgame' });
   }
 
+  // Init
   init(data) {
     this.defeat = data.defeat;
     this.color = data.color;
   }
 
+  // Create
   create() {
+
+    // Init config
     Client.setScene(this);
+    SceneUtils.setCursor(this);
 
-    // Cursor
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
-    });
-    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
-    });
+    // Darken background
+    this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.7).setOrigin(0);
 
-    const midX = this.cameras.main.width / 2;
-    const midY = this.cameras.main.height / 2;
-
-    let endBackground = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.7);
-    endBackground.setOrigin(0);
-
-    let endContainer = this.add.container(midX, midY);
-
-    // Banner
-    let endBanner = this.add.image(0, 0, "Carved_Big");
-    endBanner.scale = 1.85;
-    endContainer.add(endBanner);
-
+    // End banner
+    let endContainer = this.add.container(SceneUtils.getMidX(this), SceneUtils.getMidY(this));
+    endContainer.add(SceneUtils.addImageScale(this, {x: 0, y: 0}, "Carved_Big", 1.85));
     this.createEndBanner(endContainer);
 
     // Sound
@@ -53,71 +45,49 @@ export default class EndGame extends Phaser.Scene {
     else {
       this.sound.add('VictoryTheme', { volume: 0.2 }).play();
     }
-    
+
   }
 
+  // --- Aux functions ---
   createEndBanner(endContainer: Phaser.GameObjects.Container) {
     let endTitle = this.defeat ? LOSE_TITLE : WIN_TITLE;
-    let endText = this.buildText();
+    let endText = this.buildEndText();
 
     // Lose
-    if (this.defeat) {
-        let dead = this.add.image(0, 10, "Death", 6);
-        dead.scale = 1.4;
-        endContainer.add(dead);
-    }
+    if (this.defeat)
+      endContainer.add(SceneUtils.addImageScale(this, {x: 0, y: 10}, "Death", 1.4, undefined, 6));
+    
     // Win
     else {
-        let villager = this.add.image(-15, 34, `Villager_${this.color}`, 25);
-        villager.scale = 0.65;
-        let archer = this.add.image(45, 27, `Archer_${this.color}`, 30);
-        archer.setScale(-0.65, 0.65);
-        let soldier = this.add.image(-47, 37, `Soldier_${this.color}`, 13);   
-        soldier.scale = 0.65;
-        let goblin = this.add.image(15, 40, `Goblin_${this.color}`, 16);
-        goblin.setScale(-0.65, 0.65);
-        
-        endContainer.add(villager);
-        endContainer.add(archer);
-        endContainer.add(soldier);
-        endContainer.add(goblin);
+      endContainer.add(SceneUtils.addImageScale(this, {x: -15, y: 34}, `Villager_${this.color}`, 0.65, undefined, 25));
+      endContainer.add(SceneUtils.addImageScale(this, {x: 45, y: 27}, `Archer_${this.color}`, -0.65, 0.65, 30));
+      endContainer.add(SceneUtils.addImageScale(this, {x: -47, y: 37}, `Soldier_${this.color}`, 0.65, undefined, 13));
+      endContainer.add(SceneUtils.addImageScale(this, {x: 15, y: 40}, `Goblin_${this.color}`, -0.65, 0.65, 16));
     }
 
     // Load font
     FontLoader.loadFonts(this, (self) => {
-        let title = self.add.text(0, -110, endTitle, { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 30 }).setOrigin(0.5);
-        let text = self.add.text(0, -55, endText, 
-            { color: '#000000', fontFamily: "Quattrocento", wordWrap: { width: 280, useAdvancedWrap: true }, align: "center", fontSize: 16 })
-            .setOrigin(0.5);
 
-        // Return home button
-        let exitButton = self.add.nineslice(0, 5, "Button_Yellow_Slides", undefined, 210, 60, 15, 15, 0, 5).setInteractive();
-        exitButton.scale = 0.85;
-        let exitText = self.add.text(-60, -10, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 17 });
-        let exitContainer = self.add.container(0, 110);
-        exitContainer.add(exitButton);
-        exitContainer.add(exitText);
+      // End title & text
+      endContainer.add(self.add.text(0, -110, endTitle, { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 30 }).setOrigin(0.5));
+      endContainer.add(self.add.text(0, -55, endText,
+        { color: '#000000', fontFamily: "Quattrocento", wordWrap: { width: 280, useAdvancedWrap: true }, align: "center", fontSize: 16 })
+        .setOrigin(0.5));
 
-        // Return home action
-        exitButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonDown()) {
-                exitButton.setTexture("Button_Yellow_Slides_Pressed");
-                exitText.setPosition(-60, -7);
-            }
-        });
-        exitButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-            if (pointer.leftButtonReleased())
-                this.returnHome();
-        });
-
-        endContainer.add(title);
-        endContainer.add(text);
-        endContainer.add(exitContainer);
+      // Return home button
+      let exitButton = self.add.nineslice(0, 5, "Button_Yellow_Slides", undefined, 210, 60, 15, 15, 0, 5).setInteractive().setScale(0.85, 0.85);
+      let exitText = self.add.text(-60, -10, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 17 });
+      let exitContainer = self.add.container(0, 110);
+      SceneUtils.addListenerButtonText(exitButton, "Button_Yellow_Slides", "Button_Yellow_Slides_Pressed", exitText, {x: -60, y: -10}, {x: -60, y: -7}, this.returnHome);
+      
+      exitContainer.add(exitButton);
+      exitContainer.add(exitText);
+      endContainer.add(exitContainer);
     });
 
   }
 
-  buildText(): String {
+  buildEndText(): String {
     let pron1 = this.color == "Yellow" ? "She" : "He";
     let pron2 = this.color == "Yellow" ? "her" : "him";
 
@@ -131,13 +101,13 @@ export default class EndGame extends Phaser.Scene {
     else
       kingName = "Jabari Purpleheart";
 
-    if (this.defeat) 
+    if (this.defeat)
       return `${kingName} won the war. Now you will have to bow before ${pron2}. Better luck next time...`;
     else
       return `${kingName} has oficially conquered Eliora thanks to your help! ${pron1} will forever be in debt to you.`;
   }
 
-  returnHome() {
+  returnHome = () => {
     // Sound
     this.sound.removeAll();
 

@@ -1,11 +1,11 @@
 import { io, Socket } from 'socket.io-client';
-import lobbyData from './utils';
+import LobbyData from './utils';
 import Game from './scenes/Game';
 import Menu from './scenes/Menu';
 
 export default class Client {
     static socket: Socket = io(process.env.NODE_ENV !== "dev" ? "https://troops-prod-yadfj.ondigitalocean.app/": "http://localhost:8081");
-    static lobby: lobbyData;
+    static lobby: LobbyData;
     static scene: Phaser.Scene;
 
     static init() {
@@ -16,7 +16,7 @@ export default class Client {
         });
 
         // --- UPDATE LOBBY ---
-        Client.socket.on('updateLobby', (data: {lobby: lobbyData}) => {
+        Client.socket.on('updateLobby', (data: {lobby: LobbyData}) => {
             if (Client.scene.scene.isActive('join-lobby')) {
                 (Client.scene).scene.stop();
             }

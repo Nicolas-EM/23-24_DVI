@@ -1,34 +1,23 @@
 import * as Phaser from 'phaser';
 import Client from '../client';
-import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
+import SceneUtils from "./sceneUtils"
 
 
 export default class Menu extends Phaser.Scene {
   
+  // Constructor
   constructor() {
     super({ key: 'menu' });
   }
 
+  // Create
   create() {
+
+    // Init config
     Client.setScene(this);
-
-    // Cursor
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
-    });
-    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
-    });
-
-    // Settings button
-    this.scene.run('settings', { scene: "menu" });
-    this.events.on('menuOpened', () => {
-      this.scene.pause();
-    });
-    this.events.on('menuClosed', () => {
-      this.scene.resume();
-    });
+    SceneUtils.setCursor(this);
+    SceneUtils.settingsPauseConfig(this, "menu");
 
     // Background
     this.cameras.main.setBackgroundColor("#47aba9");

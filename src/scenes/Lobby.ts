@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import Client from '../client';
 import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
+import SceneUtils from "./sceneUtils"
 
 const colors = ['Red', 'Blue', 'Purple', 'Yellow'];
 
@@ -25,24 +26,11 @@ export default class Lobby extends Phaser.Scene {
   }
 
   create() {
+    
+    // Init config
     Client.setScene(this);
-
-    // Cursor
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
-    });
-    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
-    });
-
-    // Settings button
-    this.scene.run('settings', { scene: "lobby" });
-    this.events.on('menuOpened', () => {
-      this.scene.pause();
-    });
-    this.events.on('menuClosed', () => {
-      this.scene.resume();
-    });
+    SceneUtils.setCursor(this);
+    SceneUtils.settingsPauseConfig(this, "lobby");
 
     // Background
     const background = this.add.image(0, 0, 'Texture').setOrigin(0);
