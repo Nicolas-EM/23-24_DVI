@@ -2,6 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import LobbyData from './utils';
 import Game from './scenes/Game';
 import Menu from './scenes/Menu';
+import Lobby from './scenes/Lobby';
 
 export default class Client {
     static socket: Socket = io(process.env.NODE_ENV !== "dev" ? "https://troops-prod-yadfj.ondigitalocean.app/": "http://localhost:8081");
@@ -24,6 +25,9 @@ export default class Client {
                 (Client.scene).scene.start("lobby");
             }
             Client.lobby = data.lobby;
+            Client.waitUntilLobbyScene().then(() => {
+                (<Lobby>(Client.scene)).updateLobby();
+            });
         });
 
         // --- NPC TARGET ---
@@ -61,6 +65,18 @@ export default class Client {
             }
         });
     }
+
+    // Wait until lobby scene is set as Client.scene
+    static waitUntilLobbyScene = async () => {
+        return new Promise<void>((resolve, reject) => {
+            const interval = setInterval(() => {
+                if (Client.scene instanceof Lobby) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 15);
+        });
+    };
 
     static setScene(scene: Phaser.Scene) {
         Client.scene = scene;

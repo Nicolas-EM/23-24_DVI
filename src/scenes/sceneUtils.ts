@@ -59,14 +59,17 @@ export default class SceneUtils {
     }
 
     // --- Buttons ---
-    static addButtonTextScale(scene: Phaser.Scene, container: Phaser.GameObjects.Container, pos: Pos, texture: string, text: string, fontSize: number = 16, fontStyle: string = "normal", scaleWidth?: number, scaleHeight?: number, frame?: number) {
+    static addButtonText(scene: Phaser.Scene, container: Phaser.GameObjects.Container, pos: Pos, texture: string, yText: number, text: string, fontSize: number = 16, fontStyle: string = "normal", scale: boolean = true, width?: number, height?: number, frame?: number) {
         let buttonContainer = scene.add.container(pos.x, pos.y);
-        let buttonImg = SceneUtils.addImageScale(scene, {x: 0, y: 0}, texture, scaleWidth, scaleHeight, frame);
-        let buttonText = scene.add.text(0, -5, text, { color: '#000000', fontFamily: "Quattrocento", fontSize: fontSize, fontStyle: fontStyle }).setOrigin(0.5);
+        let buttonImg;
+        if (scale) buttonImg = SceneUtils.addImageScale(scene, {x: 0, y: 0}, texture, width, height, frame);
+        else buttonImg = SceneUtils.addImageFilter(scene, {x: 0, y: 0}, texture, width, height, frame);
+        let buttonText = scene.add.text(0, yText, text, { color: '#000000', fontFamily: "Quattrocento", fontSize: fontSize, fontStyle: fontStyle }).setOrigin(0.5);
         
         buttonContainer.add(buttonImg);
         buttonContainer.add(buttonText);
-        container.add(buttonContainer);
+        if (container)
+            container.add(buttonContainer);
 
         return { 
             img: buttonImg,
@@ -74,17 +77,39 @@ export default class SceneUtils {
         };
     }
 
-    static addListenerButtonText(button: Phaser.GameObjects.Image, texture: string, pressedTexture: string, text: Phaser.GameObjects.Text, pos: Pos, pressedPos: Pos, action: Function) {
+    static addButtonIcon(scene: Phaser.Scene, container: Phaser.GameObjects.Container, pos: Pos, textureImg: string, textureIcon: string, yIcon: number, scaleImg: boolean = true, scaleIcon: boolean = true, widthImg?: number, widthIcon?: number, heightImg?: number, heightIcon?: number, frameImg?: number, frameIcon?: number) {
+        let buttonContainer = scene.add.container(pos.x, pos.y);
+        let buttonImg;
+        if (scaleImg) buttonImg = SceneUtils.addImageScale(scene, {x: 0, y: 0}, textureImg, widthImg, heightImg, frameImg);
+        else buttonImg = SceneUtils.addImageFilter(scene, {x: 0, y: 0}, textureImg, widthImg, heightImg, frameImg);
+
+        let buttonIcon;
+        if (scaleIcon) buttonIcon = SceneUtils.addImageScale(scene, {x: 0, y: yIcon}, textureIcon, widthIcon, heightIcon, frameIcon);
+        else buttonIcon = SceneUtils.addImageFilter(scene, {x: 0, y: yIcon}, textureIcon, widthIcon, heightIcon, frameIcon);
+
+        buttonContainer.add(buttonImg);
+        buttonContainer.add(buttonIcon);
+        if (container)
+            container.add(buttonContainer);
+
+        return {
+            img: buttonImg,
+            icon: buttonIcon
+        }
+    }
+
+    static addListenerButtonPos(button: Phaser.GameObjects.Image, texture: string, pressedTexture: string, text: Phaser.GameObjects.Text | Phaser.GameObjects.Image, yPos: number, yTextPressed: number, action: Function) {
+        button.setInteractive();
         button.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             if (pointer.leftButtonDown()) {
                 button.setTexture(pressedTexture);
-                text.setPosition(pressedPos.x, pressedPos.y);
+                text.setPosition(0, yTextPressed);
             }
         });
         button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
             if (pointer.leftButtonReleased()) {
                 button.setTexture(texture);
-                text.setPosition(pos.x, pos.y);
+                text.setPosition(0, yPos);
                 action();
             }
 

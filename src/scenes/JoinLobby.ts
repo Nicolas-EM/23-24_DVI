@@ -36,8 +36,8 @@ export default class Settings extends Phaser.Scene {
         FontLoader.loadFonts(this, (self: Settings) => {
 
             // Cancel button
-            let cancelButton = SceneUtils.addButtonTextScale(self, joinContainer, {x: joinContainer.width - 75, y: joinContainer.height + 45}, "Button_Red_Slide", "CANCEL", 18, "bold", 0.75);
-            SceneUtils.addListenerButtonText(cancelButton.img, "Button_Red_Slides", "Button_Red_Slides_Pressed", cancelButton.txt, {x: 0, y: -2}, {x: 0, y: -5}, () => {
+            let cancelButton = SceneUtils.addButtonText(self, joinContainer, {x: joinContainer.width - 75, y: joinContainer.height + 45}, "Button_Red_Slide", -5, "CANCEL", 18, "bold", true, 0.75);
+            SceneUtils.addListenerButtonPos(cancelButton.img, "Button_Red_Slides", "Button_Red_Slides_Pressed", cancelButton.txt, -5, -3, () => {
                 this.scene.get("menu").scene.resume();
                 this.scene.stop();
             });
@@ -55,8 +55,8 @@ export default class Settings extends Phaser.Scene {
             textContainer.add(self.cursor);
 
             // Join button
-            let joinButton = SceneUtils.addButtonTextScale(self, joinContainer, {x: joinContainer.width + 75, y: joinContainer.height + 45}, "Button_Blue_Slide", "JOIN", 18, "bold", 0.75);
-            SceneUtils.addListenerButtonText(joinButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", joinButton.txt, {x: 0, y: -2}, {x: 0, y: -5}, () => {
+            let joinButton = SceneUtils.addButtonText(self, joinContainer, {x: joinContainer.width + 75, y: joinContainer.height + 45}, "Button_Blue_Slide", -5, "JOIN", 18, "bold", true, 0.75);
+            SceneUtils.addListenerButtonPos(joinButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", joinButton.txt, -5, -3, () => {
                 if (this.lobbyCode.text.length == LOBBY_CODE_LENGTH)
                     Client.joinLobby(this.lobbyCode.text);
             });
