@@ -29,6 +29,7 @@ export default class Boot extends Phaser.Scene {
   // Carga de los assets del juego
   preload() {
     
+
     // Sounds
     this.load.audio('TroopsTheme', Sounds.Themes.Troops);
     this.load.audio('War', Sounds.Themes.War);
@@ -116,7 +117,7 @@ export default class Boot extends Phaser.Scene {
     this.load.spritesheet('Soldier_Purple', Sprites.NPCs.Soldier.Purple, { frameWidth: 192, frameHeight: 192 });
     this.load.spritesheet('Soldier_Yellow', Sprites.NPCs.Soldier.Yellow, { frameWidth: 192, frameHeight: 192 });
     // Villager
-    this.load.spritesheet('Villager_Blue', Sprites.NPCs.Villager.Blue, { frameWidth: 192, frameHeight: 192 });
+    // Blue is loaded in loading screen
     this.load.spritesheet('Villager_Red', Sprites.NPCs.Villager.Red, { frameWidth: 192, frameHeight: 192 });
     this.load.spritesheet('Villager_Purple', Sprites.NPCs.Villager.Purple, { frameWidth: 192, frameHeight: 192 });
     this.load.spritesheet('Villager_Yellow', Sprites.NPCs.Villager.Yellow, { frameWidth: 192, frameHeight: 192 });
@@ -153,6 +154,7 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Button_Red_Slides_Pressed', Sprites.UI.Buttons.Red_Slides_Pressed);
     this.load.image('Button_Red_Slide', Sprites.UI.Buttons.Red_Slides);
     this.load.image('Button_Red', Sprites.UI.Buttons.Red);
+    // Some yellow is loaded in Loading Screen
     this.load.image('Button_Yellow_Big', Sprites.UI.Buttons.Yellow_Big);
     this.load.image('Button_Yellow_Pressed', Sprites.UI.Buttons.Yellow_Pressed);
     this.load.image('Button_Yellow_Slides', Sprites.UI.Buttons.Yellow_Slides);
@@ -189,11 +191,6 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Shop_Pressed', Sprites.UI.Icons.Shop_Pressed);
     this.load.image('Shop', Sprites.UI.Icons.Shop);
     this.load.image('Sound_Off_Disable', Sprites.UI.Icons.Sound_Off_Disable);
-    this.load.image('Sound_Off', Sprites.UI.Icons.Sound_Off);
-    this.load.image('Sound_On', Sprites.UI.Icons.Sound_On);
-    this.load.image('X_Disable', Sprites.UI.Icons.X_Disable);
-    this.load.image('X_Pressed', Sprites.UI.Icons.X_Pressed);
-    this.load.image('X', Sprites.UI.Icons.X);
     this.load.image('RMB', Sprites.UI.Icons.RMB);
     this.load.image('LMB', Sprites.UI.Icons.LMB);
     this.load.multiatlas('Icons');
@@ -271,7 +268,8 @@ export default class Boot extends Phaser.Scene {
   create() {
     this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     animationFactory.createAnimations(this);
-    this.scene.start('menu');
+
+    this.events.emit("bootFinished");
   }
 
 }
