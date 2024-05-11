@@ -33,7 +33,7 @@ export default class Client {
         // --- NPC TARGET ---
         Client.socket.on('npctarget', (npcId: string, position: Phaser.Math.Vector2) => {
             if (Client.scene.scene.isActive('game')) {
-                (<Game>(Client.scene)).setNpcTarget(npcId, position);
+                (<Game>(Client.scene)).setNPCTarget(npcId, position);
             }
         });
 
@@ -117,7 +117,7 @@ export default class Client {
     }
 
     // --- GAME ---
-    static setNpcTarget(npcId: string, position: Phaser.Math.Vector2):void {
+    static setNPCTarget(npcId: string, position: Phaser.Math.Vector2):void {
         Client.socket.emit('npctarget', Client.lobby.code, npcId, position);
     }
 

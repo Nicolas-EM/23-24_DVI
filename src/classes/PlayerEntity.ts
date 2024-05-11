@@ -77,7 +77,9 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     }
 
     protected dieOrDestroy() {
-        (<Game>(this.scene)).removeSelectedEntity(this);
+        // If selected, un-select
+        if ((<Game>(this.scene)).getSelectedEntity() === this)
+            (<Game>(this.scene)).setSelectedEntity(undefined);
     }
 
     destroy() {

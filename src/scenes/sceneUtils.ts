@@ -2,7 +2,6 @@ import * as Sprites from "../../assets/sprites";
 import { Pos } from '../utils';
 import Game from "./Game";
 import Hud from "./Hud";
-import GeneralData from "../magic_numbers/general_data";
 
 export default class SceneUtils {
 
@@ -137,54 +136,6 @@ export default class SceneUtils {
             }
 
         });
-    }
-
-    // --- Camera control ---
-    // Movement by mouse
-    static cameraMovementMouse(scene: Game, delta: number) {
-        let { width, height } = scene.sys.game.canvas;
-        const pointer = scene.input.activePointer.position;
-
-        if (pointer.x === 0 && pointer.y === 0)
-            return;
-
-        if (!scene.isPointerInMap())
-            return;
-
-        // Camera movement
-        if (!scene.isOptionsMenuOpened()) {  // Disable movement if menu opened
-            if (pointer.x >= width - GeneralData.ConfigData.MOVEMENT_OFFSET && pointer.y >= GeneralData.ConfigData.MOVEMENT_OFFSET)
-                scene.cameras.main.scrollX = scene.cameras.main.scrollX + delta / scene.cameras.main.zoom;
-            else if (pointer.x <= GeneralData.ConfigData.MOVEMENT_OFFSET)
-                scene.cameras.main.scrollX = scene.cameras.main.scrollX - delta / scene.cameras.main.zoom;
-
-            if (pointer.y >= height - GeneralData.ConfigData.MOVEMENT_OFFSET)
-                scene.cameras.main.scrollY = scene.cameras.main.scrollY + delta / scene.cameras.main.zoom;
-            else if (pointer.y <= GeneralData.ConfigData.MOVEMENT_OFFSET && pointer.x <= width - GeneralData.ConfigData.MOVEMENT_OFFSET * 2)
-                scene.cameras.main.scrollY = scene.cameras.main.scrollY - delta / scene.cameras.main.zoom;
-        }
-    }
-
-    // Movement by WASD
-    static cameraMovementKeys(scene: Game, delta: number) {
-        if (scene.getCursors().up.isDown)
-            scene.cameras.main.scrollY = scene.cameras.main.scrollY - delta / scene.cameras.main.zoom;
-        else if (scene.getCursors().down.isDown)
-            scene.cameras.main.scrollY = scene.cameras.main.scrollY + delta / scene.cameras.main.zoom;
-
-        if (scene.getCursors().left.isDown)
-            scene.cameras.main.scrollX = scene.cameras.main.scrollX - delta / scene.cameras.main.zoom;
-        else if (scene.getCursors().right.isDown)
-            scene.cameras.main.scrollX = scene.cameras.main.scrollX + delta / scene.cameras.main.zoom;
-    }
-
-    // Zoom
-    static cameraZoom(scene: Game, deltaY: number) {
-        if (!scene.isOptionsMenuOpened())
-            if (deltaY > 0)
-                scene.cameras.main.zoom = Phaser.Math.Clamp(scene.cameras.main.zoom - GeneralData.ConfigData.ZOOM_AMOUNT, GeneralData.ConfigData.MIN_ZOOM, GeneralData.ConfigData.MAX_ZOOM);
-            else if (deltaY < 0)
-                scene.cameras.main.zoom = Phaser.Math.Clamp(scene.cameras.main.zoom + GeneralData.ConfigData.ZOOM_AMOUNT, GeneralData.ConfigData.MIN_ZOOM, GeneralData.ConfigData.MAX_ZOOM);
     }
 
 }
