@@ -63,8 +63,8 @@ export default class Menu extends Phaser.Scene {
 
   addButton(textButton: string, posY: number, actionButton: Function): void {
     FontLoader.loadFonts(this, (self) => {
-      let menuButton = SceneUtils.addButtonText(self, undefined, { x: SceneUtils.getMidX(self), y: posY }, "Button_Blue_Slide", -10, textButton, 25, undefined, true, 1.25);
-      SceneUtils.addListenerButtonPos(menuButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", menuButton.txt, -10, -7, actionButton);
+      let menuButton = SceneUtils.addButtonText(self, undefined, { x: SceneUtils.getMidX(self), y: posY }, "Button_Blue_Slide", -10, textButton, 24, undefined, undefined, true, 1.25);
+      SceneUtils.addListenerButtonPos(menuButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", menuButton.txt, -10, -5, actionButton);
     });
   }
 

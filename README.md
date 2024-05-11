@@ -1,4 +1,5 @@
 # Troops - Game Design Document
+If you already know Troops or you want to give it a try, go [Play Now!](https://troops-prod-yadfj.ondigitalocean.app/)
 ## Introduction
 ### Synopsis
 Troops is a competitive multiplayer RTS game set in the medieval era. Two players clash on an island and must gather and manage their resources to form an army capable of defeating their opponent. The player will attempt to destroy the enemy Town Hall in a fast-paced game filled with thrill, challenging decisions and strategy.

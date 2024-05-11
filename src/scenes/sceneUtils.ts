@@ -59,12 +59,12 @@ export default class SceneUtils {
     }
 
     // --- Buttons ---
-    static addButtonText(scene: Phaser.Scene, container: Phaser.GameObjects.Container, pos: Pos, texture: string, yText: number, text: string, fontSize: number = 16, fontStyle: string = "normal", scale: boolean = true, width?: number, height?: number, frame?: number) {
+    static addButtonText(scene: Phaser.Scene, container: Phaser.GameObjects.Container, pos: Pos, texture: string, yText: number, text: string, fontSize: number = 16, fontStyle: string = "normal", fontColor: string = "#000000", scale: boolean = true, width?: number, height?: number, frame?: number) {
         let buttonContainer = scene.add.container(pos.x, pos.y);
         let buttonImg;
         if (scale) buttonImg = SceneUtils.addImageScale(scene, {x: 0, y: 0}, texture, width, height, frame);
         else buttonImg = SceneUtils.addImageFilter(scene, {x: 0, y: 0}, texture, width, height, frame);
-        let buttonText = scene.add.text(0, yText, text, { color: '#000000', fontFamily: "Quattrocento", fontSize: fontSize, fontStyle: fontStyle }).setOrigin(0.5);
+        let buttonText = scene.add.text(0, yText, text, { color: fontColor, fontFamily: "Quattrocento", fontSize: fontSize, fontStyle: fontStyle }).setOrigin(0.5);
         
         buttonContainer.add(buttonImg);
         buttonContainer.add(buttonText);
@@ -110,6 +110,24 @@ export default class SceneUtils {
             if (pointer.leftButtonReleased()) {
                 button.setTexture(texture);
                 text.setPosition(0, yPos);
+                action();
+            }
+
+        });
+    }
+
+    static addListenerButtonTexture(button: Phaser.GameObjects.Image, texture: string, pressedTexture: string, icon: Phaser.GameObjects.Image, iconTexture: string, iconTexturePressed: string, action: Function) {
+        button.setInteractive();
+        button.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+            if (pointer.leftButtonDown()) {
+                button.setTexture(pressedTexture);
+                icon.setTexture(iconTexturePressed);
+            }
+        });
+        button.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+            if (pointer.leftButtonReleased()) {
+                button.setTexture(texture);
+                icon.setTexture(iconTexture);
                 action();
             }
 
