@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser'
 import Map from "../classes/Map";
-import { PhaserNavMeshPlugin } from "phaser-navMesh";
 import PlayerEntity from '../classes/PlayerEntity';
 import NPC from '../classes/npcs/NPC';
 import ResourceSpawner from '../classes/resources/ResourceSpawner';
@@ -14,47 +13,44 @@ import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
 import Building from '../classes/buildings/Building';
 import { PhaserNavMesh } from "phaser-navMesh";
-import Hud from './Hud';
 import SceneUtils from "./sceneUtils"
 
 
-// MAGIC NUMBER
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 1;
-const ZOOM_AMOUNT = 0.05;
-const MOVEMENT_OFFSET = 10;
-
 export default class Game extends Phaser.Scene {
-  public navMeshPlugin: PhaserNavMeshPlugin;
 
+  // --- Attributes ---
   private p1: Player;
   private p2: Player;
+  // Map
   private pointerInMap = true;
   private mapId: string;
   private _map: Map;
-  private _selectedEntity: PlayerEntity | ResourceSpawner;
-  private cursors: any;
-  private optionsMenuOpened = false;
+  // Selected entity
+  private _selectedEntity: PlayerEntity | ResourceSpawner;  
   private _topLeft: Phaser.GameObjects.Image;
   private _topRight: Phaser.GameObjects.Image;
   private _bottomLeft: Phaser.GameObjects.Image;
   private _bottomRight: Phaser.GameObjects.Image;
+  // Keys available for input
+  private cursors: any;
+  // Settings
+  private optionsMenuOpened = false;
+  // Sound
+  private gameTheme: Phaser.Sound.BaseSound;
+  private warTheme: Phaser.Sound.BaseSound;
+  private attackEventTimer: Phaser.Time.TimerEvent;
 
-  private gameTheme: Phaser.Sound.BaseSound;// Canción WarTheme.mp3
-  private warTheme: Phaser.Sound.BaseSound; // Canción WarTheme.mp3
-  private attackEventTimer: Phaser.Time.TimerEvent; // Temporizador para el evento de ataque
-
-
+  // Constructor
   constructor() {
     super({ key: 'game' });
   }
 
-  // Para pasar atributos de una escena a otra
-  // En este caso, pasamos el ID del mapa
+  // Init
   init(data) {
     this.mapId = data.mapId;
   }
 
+  // Create
   create() {
     
     // Init config
@@ -62,7 +58,7 @@ export default class Game extends Phaser.Scene {
     this.scene.run('settings', { scene: "game" });
     SceneUtils.settingsConfig(this);
 
-    // Reset things to default values
+    // Reset params to default values
     this.optionsMenuOpened = false;
     this._selectedEntity = undefined;
     this.pointerInMap = true;
@@ -77,8 +73,8 @@ export default class Game extends Phaser.Scene {
     // Map
     this._map = new Map(this, this.mapId);
 
-    // Event listener al hacer scroll
-    this.input.on('wheel', this.cameraZoom, this);
+    // Mouse events
+    this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => SceneUtils.cameraZoom(this, deltaY));
     this.input.on('gameout', () => this.pointerInMap = false);
     this.input.on('gameover', () => this.pointerInMap = true);
 
@@ -102,7 +98,6 @@ export default class Game extends Phaser.Scene {
     this.sound.removeAll();
     this.gameTheme = this.sound.add('Game', { volume: 0.3, loop: true });
     this.gameTheme.play();
-
     this.warTheme = null;
     this.attackEventTimer = null;
 
@@ -164,103 +159,23 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  update(time: number, delta: number): void {
-    this.cameraPan(delta);
+  // Update
+  update(time: number, delta: number): void {    
     this.events.emit('update', time, delta);
 
-    if (!this.optionsMenuOpened) { // Disable movement if menu opened 
-      if (this.cursors.up.isDown) {
-        this.cameraMoveUp(delta);
-      }
-      else if (this.cursors.down.isDown) {
-        this.cameraMoveDown(delta);
-      }
-
-      if (this.cursors.left.isDown) {
-        this.cameraMoveLeft(delta);
-      }
-      else if (this.cursors.right.isDown) {
-        this.cameraMoveRight(delta);
-      }
+    // Camera movement
+    if (!this.optionsMenuOpened) {  // Disable movement if menu opened 
+      SceneUtils.cameraMovementMouse(this, delta);
+      SceneUtils.cameraMovementKeys(this, delta);
     }
 
-    // If not NPC, position should not update
-    if (this._selectedEntity && this._selectedEntity instanceof NPC) {
+    // Update corners of the selected entity (if NPC selected)
+    if (this._selectedEntity && this._selectedEntity instanceof NPC)
       this.setCornersPosition();
-    }
-  }
-
-  cameraZoom(pointer, gameObjects, deltaX, deltaY, deltaZ) {
-    if (!this.optionsMenuOpened) {
-      if (deltaY > 0) {
-        this.cameras.main.zoom = Phaser.Math.Clamp(this.cameras.main.zoom - ZOOM_AMOUNT, MIN_ZOOM, MAX_ZOOM);
-      }
-      if (deltaY < 0) {
-        this.cameras.main.zoom = Phaser.Math.Clamp(this.cameras.main.zoom + ZOOM_AMOUNT, MIN_ZOOM, MAX_ZOOM);
-      }
-    }
-  }
-
-  cameraMoveUp(delta) {
-    this.cameras.main.scrollY = this.cameras.main.scrollY - delta / this.cameras.main.zoom;
-  }
-
-  cameraMoveDown(delta) {
-    this.cameras.main.scrollY = this.cameras.main.scrollY + delta / this.cameras.main.zoom;
-  }
-
-  cameraMoveLeft(delta) {
-    this.cameras.main.scrollX = this.cameras.main.scrollX - delta / this.cameras.main.zoom;
-  }
-
-  cameraMoveRight(delta) {
-    this.cameras.main.scrollX = this.cameras.main.scrollX + delta / this.cameras.main.zoom;
-  }
-
-  cameraPan(delta: number) {
-    let { width, height } = this.sys.game.canvas;
-    const pointer = this.input.activePointer.position;
-
-    if (pointer.x === 0 && pointer.y === 0)
-      return;
-
-    if (!this.pointerInMap)
-      return;
-
-    if (!this.optionsMenuOpened) { // Disable movement if menu opened
-      if (pointer.x >= width - MOVEMENT_OFFSET && pointer.y >= MOVEMENT_OFFSET)
-        this.cameraMoveRight(delta);
-      else if (pointer.x <= MOVEMENT_OFFSET)
-        this.cameraMoveLeft(delta);
-
-      if (pointer.y >= height - MOVEMENT_OFFSET)
-        this.cameraMoveDown(delta);
-      else if (pointer.y <= MOVEMENT_OFFSET && pointer.x <= width - MOVEMENT_OFFSET * 2)
-        this.cameraMoveUp(delta);
-    }
-  }
-
-  getP1(): Player {
-    return this.p1;
-  }
-
-  getP2(): Player {
-    return this.p2;
-  }
-
-  getPlayerByColor(color: string): Player {
-    if (this.p1.getColor() === color)
-      return this.p1;
-    else
-      return this.p2;
-  }
+  }  
 
   isSelectedEntityAttackUnit(): boolean {
     return this._selectedEntity instanceof AttackUnit;
-  }
-
-  getSelectedEntity(): PlayerEntity | ResourceSpawner {
-    return this._selectedEntity;
   }
 
   setSelectedEntity(entity: PlayerEntity | ResourceSpawner) {
@@ -347,22 +262,6 @@ export default class Game extends Phaser.Scene {
     new (this.npcConstructor(npcType))(this, x, y, this.getPlayerByColor(ownerColor));
   }
 
-  getAllBuildings(): Building[] {
-    return this.p1.getBuildings().concat(this.p2.getBuildings());
-  }
-
-  getEntityById(entityId: string): PlayerEntity {
-    let entity = this.p1.getPlayerEntityById(entityId);
-    if (entity)
-      return entity;
-    else
-      return this.p2.getPlayerEntityById(entityId);
-  }
-
-  getNavmesh(): PhaserNavMesh {
-    return this._map.navMesh;
-  }
-
   stopWarThemeAndResumeSong() {
     if (this.warTheme.isPlaying) {
       this.tweens.add({
@@ -376,11 +275,7 @@ export default class Game extends Phaser.Scene {
         }
       });
     }
-  }
-
-  getResourceSpawnerById(id: string): ResourceSpawner {
-    return this._map.getResourceSpawnerById(id);
-  }
+  }  
 
   removeResourceSpawner(spawner: ResourceSpawner) {
     this._map.removeResourceSpawner(spawner);
@@ -402,4 +297,57 @@ export default class Game extends Phaser.Scene {
   setOptionsMenuOpened(opened: boolean) {
     this.optionsMenuOpened = opened;
   }
+
+  // --- GETTERS ---
+  getCursors(): any {
+    return this.cursors;
+  }
+
+  isPointerInMap(): boolean {
+    return this.pointerInMap;
+  }
+
+  isOptionsMenuOpened(): boolean {
+    return this.optionsMenuOpened;
+  }
+
+  getNavMesh(): PhaserNavMesh {
+    return this._map.getNavMesh();
+  }
+
+  getSelectedEntity(): PlayerEntity | ResourceSpawner {
+    return this._selectedEntity;
+  }
+
+  getP1(): Player {
+    return this.p1;
+  }
+
+  getP2(): Player {
+    return this.p2;
+  }
+
+  getPlayerByColor(color: string): Player {
+    if (this.p1.getColor() === color)
+      return this.p1;
+    else
+      return this.p2;
+  }
+
+  getResourceSpawnerById(id: string): ResourceSpawner {
+    return this._map.getResourceSpawnerById(id);
+  }
+
+  getAllBuildings(): Building[] {
+    return this.p1.getBuildings().concat(this.p2.getBuildings());
+  }
+
+  getEntityById(entityId: string): PlayerEntity {
+    let entity = this.p1.getPlayerEntityById(entityId);
+    if (entity)
+      return entity;
+    else
+      return this.p2.getPlayerEntityById(entityId);
+  }
+
 }

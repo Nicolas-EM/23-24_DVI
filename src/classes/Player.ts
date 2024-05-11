@@ -3,7 +3,7 @@ import NPC from './npcs/NPC';
 import { Resources } from "../utils";
 import PlayerEntity from './PlayerEntity';
 import Hud from '../scenes/Hud';
-import StartingData from "../magic_numbers/starting_data";
+import GeneralData from "../magic_numbers/general_data";
 import Client from '../client';
 
 
@@ -19,8 +19,8 @@ export default class Player {
 
   // Constructor
   constructor(private _id: string, private _color: string, private _scene: Phaser.Scene) {
-    this._resources = StartingData.InitData.INIT_RESOURCES;
-    this._maxPopulation = StartingData.InitData.MAX_POPULATION;
+    this._resources = GeneralData.InitData.INIT_RESOURCES;
+    this._maxPopulation = GeneralData.InitData.MAX_POPULATION;
   }
 
   // --- Getters ---

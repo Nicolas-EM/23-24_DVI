@@ -56,7 +56,7 @@ export default abstract class NPC extends PlayerEntity {
         }
 
         // Find a path to the target
-        this._path = (this.scene as Game).getNavmesh().findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
+        this._path = (this.scene as Game).getNavMesh().findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
         if (this._path && this._path.length > 0) {
             this._currentTarget = this._path.shift();
         }

@@ -6,8 +6,7 @@ import Sheep from "./resources/Sheep";
 import GoldMine from "./resources/GoldMine";
 import Villager from "./npcs/Villager";
 import Game from '../scenes/Game';
-
-import { PhaserNavMesh } from "phaser-navmesh";
+import { PhaserNavMeshPlugin, PhaserNavMesh } from "phaser-navMesh";
 import Client from '../client';
 import ResourceSpawner from './resources/ResourceSpawner';
 import Tower from './buildings/Tower';
@@ -20,7 +19,8 @@ export default class Map {
 
     // Attributes
     private _map: Phaser.Tilemaps.Tilemap;
-    public navMesh: PhaserNavMesh;
+    private _navMeshPlugin: PhaserNavMeshPlugin;
+    private _navMesh: PhaserNavMesh;
     private spawners: ResourceSpawner[] = [];
 
     // Constructor
@@ -72,7 +72,6 @@ export default class Map {
 
         // Add PlayerEntities
         this._map.getObjectLayer("Buildings")?.objects.forEach(obj => {
-            console.log(typeof(obj));
             // Player 1
             if (obj.type === "Townhall_P1") {
                 const p1 = (<Game>(this.scene)).getP1();
@@ -97,7 +96,7 @@ export default class Map {
         });
 
         const layers = [waterLayer, groundLayer, grassLayer];
-        this.navMesh = (<Game>this.scene).navMeshPlugin.buildMeshFromTilemap("mesh", this._map, layers, (tile) => this.navMeshIsWalkable(tile));
+        this._navMesh = this._navMeshPlugin.buildMeshFromTilemap("mesh", this._map, layers, (tile) => this.navMeshIsWalkable(tile));
 
     }
 
@@ -121,6 +120,11 @@ export default class Map {
         new Villager(this.scene, <number>obj.x, <number>obj.y - 192, player);
         new Villager(this.scene, <number>obj.x + side * 320, <number>obj.y + 64, player);
         new Villager(this.scene, <number>obj.x + side * 64, <number>obj.y + 320, player);
+    }
+
+    // Get navmesh
+    getNavMesh(): PhaserNavMesh {
+        return this._navMesh;
     }
 
     // Check if a tile is walkable (water is not)
