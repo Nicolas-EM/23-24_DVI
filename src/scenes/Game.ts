@@ -11,7 +11,7 @@ import Goblin from '../classes/npcs/Goblin';
 import Soldier from '../classes/npcs/Soldier';
 import Villager from '../classes/npcs/Villager';
 import AttackUnit from '../classes/npcs/AttackUnit';
-import { PhaserNavMesh } from "phaser-navMesh";
+import { PhaserNavMeshPlugin, PhaserNavMesh } from "phaser-navMesh";
 import SceneUtils from "./sceneUtils"
 import GeneralData from "../magic_numbers/general_data";
 
@@ -21,6 +21,7 @@ export default class Game extends Phaser.Scene {
   // --- Attributes ---
   private p1: Player;
   private p2: Player;
+  public navMeshPlugin: PhaserNavMeshPlugin;
   // Map
   private pointerInMap = true;
   private mapId: string;

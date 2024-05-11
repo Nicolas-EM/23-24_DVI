@@ -6,7 +6,7 @@ import Sheep from "./resources/Sheep";
 import GoldMine from "./resources/GoldMine";
 import Villager from "./npcs/Villager";
 import Game from '../scenes/Game';
-import { PhaserNavMeshPlugin, PhaserNavMesh } from "phaser-navMesh";
+import { PhaserNavMesh } from "phaser-navMesh";
 import Client from '../client';
 import ResourceSpawner from './resources/ResourceSpawner';
 import Tower from './buildings/Tower';
@@ -19,7 +19,6 @@ export default class Map {
 
     // Attributes
     private _map: Phaser.Tilemaps.Tilemap;
-    private _navMeshPlugin: PhaserNavMeshPlugin;
     private _navMesh: PhaserNavMesh;
     private spawners: ResourceSpawner[] = [];
 
@@ -96,7 +95,7 @@ export default class Map {
         });
 
         const layers = [waterLayer, groundLayer, grassLayer];
-        this._navMesh = this._navMeshPlugin.buildMeshFromTilemap("mesh", this._map, layers, (tile) => this.navMeshIsWalkable(tile));
+        this._navMesh =  (<Game>this.scene).navMeshPlugin.buildMeshFromTilemap("mesh", this._map, layers, (tile) => this.navMeshIsWalkable(tile));
 
     }
 
