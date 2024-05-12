@@ -13,6 +13,7 @@ export default class Settings extends Phaser.Scene {
     private optionsContainer: Phaser.GameObjects.Container;
     private optionsBackground: Phaser.GameObjects.Rectangle;
     private optionsButton: Phaser.GameObjects.Image;
+    private surrenderButton: {img: Phaser.GameObjects.Image, txt: Phaser.GameObjects.Text};
 
     // Constructor
     constructor() {
@@ -52,13 +53,14 @@ export default class Settings extends Phaser.Scene {
         // Load font
         FontLoader.loadFonts(this, (self) => {
             
-            if (self.sceneBase === "game") {
-                // Surrender button
-                let surrenderButton = SceneUtils.addButtonText(self, self.optionsContainer, { x: -60, y: 115 }, "Button_Red_Slide", -5, "SURRENDER", undefined, undefined, "#FFFFFF", true, 0.7);
-                SceneUtils.addListenerButtonPos(surrenderButton.img, "Button_Red_Slide", "Button_Red_Slides_Pressed", surrenderButton.txt, -5, -2, () => {
-                    Client.surrenderOrLose(Client.getMyColor())
-                });
-            }
+            // Surrender button
+            this.surrenderButton = SceneUtils.addButtonText(self, self.optionsContainer, { x: -60, y: 115 }, "Button_Red_Slide", -5, "SURRENDER", undefined, undefined, "#FFFFFF", true, 0.7);
+            SceneUtils.addListenerButtonPos( this.surrenderButton.img, "Button_Red_Slide", "Button_Red_Slides_Pressed",  this.surrenderButton.txt, -5, -2, () => {
+                Client.surrenderOrLose(Client.getMyColor())
+            });
+            this.surrenderButton.img.setVisible(false);
+            this.surrenderButton.txt.setVisible(false);
+            
 
             // Silence button
             let soundImg = "Sound_On";
@@ -169,6 +171,15 @@ export default class Settings extends Phaser.Scene {
             this.sound.mute = true;
         else
             this.sound.mute = false;
+    }
+
+    // --- SETTERS ---
+    setSceneBase(sceneBase: string) {
+        this.sceneBase = sceneBase;
+        if (sceneBase === "game") {
+            this.surrenderButton.img.setVisible(true);
+            this.surrenderButton.txt.setVisible(true);
+        }
     }
 
 }

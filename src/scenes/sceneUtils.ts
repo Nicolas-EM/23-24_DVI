@@ -1,7 +1,12 @@
 import * as Sprites from "../../assets/sprites";
 import { Pos } from '../utils';
+import EndGame from "./EndGame";
 import Game from "./Game";
 import Hud from "./Hud";
+import JoinLobby from "./JoinLobby";
+import Lobby from "./Lobby";
+import Menu from "./Menu";
+import Settings from "./Settings";
 
 export default class SceneUtils {
 
@@ -26,8 +31,9 @@ export default class SceneUtils {
 
     // Config settings
     static settingsPauseConfig(scene: Phaser.Scene, sceneId: string) {
-        scene.scene.run('settings', { scene: sceneId });
+        (<Settings>scene.scene.get("settings")).setSceneBase(sceneId);
         scene.events.on('menuOpened', () => {
+            console.log("menuOpened recibido", scene);
             scene.scene.pause();
         });
         scene.events.on('menuClosed', () => {
@@ -35,13 +41,27 @@ export default class SceneUtils {
         });
     }
 
-    static settingsConfig(scene: Game | Hud) {
-        scene.scene.get('settings').events.on('menuOpened', () => {
-            scene.setOptionsMenuOpened(true);
-        });
-        scene.scene.get('settings').events.on('menuClosed', () => {
-            scene.setOptionsMenuOpened(false);
-        });
+    // Stop scene
+    static stopScene(scene: Phaser.Scene, sceneId: string) {
+        if (scene.scene.get(sceneId)) {
+            scene.scene.remove(sceneId);
+            scene.scene.add(sceneId, (SceneUtils.getSceneType(sceneId)), false);
+            if (scene.scene.isActive("settings"))
+                scene.scene.bringToTop('settings');
+        }
+    }
+
+    static getSceneType(sceneId: string) {
+        const sceneTypes = {
+            "menu": Menu,
+            "join-lobby": JoinLobby,
+            "lobby": Lobby,
+            "game": Game,
+            "hud": Hud,
+            "endgame": EndGame,
+            "settings": Settings
+        }
+        return sceneTypes[sceneId];
     }
 
     // --- Images ---

@@ -132,7 +132,8 @@ There will be four main tracks:
     - While a villager is selected, right-clicking on a source (mine/tree/sheep) prompts the villager to move there and gather the resource.
     - While a soldier or an archer is selected, right-clicking on an enemy NPC or building prompts the unit to attack.
     - While the Town Hall is selected, the player can left-click on the villager to add it to the spawning queue.
-    - While a tower is selected, the player can left-click on the type of NPC (soldier/archer) that will be added to the spawning queue.- While a goblin hut is selected, the player can left-click on the goblin to add it to the spawning queue.
+    - While a tower is selected, the player can left-click on the type of NPC (soldier/archer) that will be added to the spawning queue.
+    - While a goblin hut is selected, the player can left-click on the goblin to add it to the spawning queue.
 - The mouse can also be used to interact with the UI. The player will be able to open a menu to learn the controls, change the settings of the game (enable/disable sound, fullscreen options) or surrender and exit the current game. Navigating through the main menu and lobby will also require the use of a mouse.
 
 ## Tables and data

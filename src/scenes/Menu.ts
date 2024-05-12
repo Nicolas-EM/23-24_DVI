@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import Client from '../client';
 import { FontLoader } from '../utils';
 import SceneUtils from "./sceneUtils"
+import Lobby from './Lobby';
 
 
 export default class Menu extends Phaser.Scene {
@@ -17,6 +18,9 @@ export default class Menu extends Phaser.Scene {
     // Init config
     Client.setScene(this);
     SceneUtils.setCursor(this);
+    SceneUtils.stopScene(this, "lobby");
+    SceneUtils.stopScene(this, "endgame");
+    this.scene.run('settings', { scene: "menu" });
     SceneUtils.settingsPauseConfig(this, "menu");
 
     // Background
@@ -52,6 +56,10 @@ export default class Menu extends Phaser.Scene {
 
   // --- Aux functions ---
   startLobby(quickPlay: boolean) {
+    // Stop join-lobby if necessary
+    if (this.scene.isActive("join-lobby"))
+      SceneUtils.stopScene(this, "join-lobby");
+    // Start lobby
     this.scene.start('lobby', { quickPlay: quickPlay });
   }
 

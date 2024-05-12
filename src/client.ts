@@ -10,20 +10,13 @@ export default class Client {
     static scene: Phaser.Scene;
 
     static init() {
-        // --- LOBBY CREATED ---
-        Client.socket.on('lobbyCreated', (code, quickPlay) => {
+        // --- LOBBY JOINED ---
+        Client.socket.on('lobbyJoined', (quickPlay) => {
             (<Menu>(Client.scene)).startLobby(quickPlay);
-            Client.joinLobby(code);
         });
 
         // --- UPDATE LOBBY ---
         Client.socket.on('updateLobby', (data: {lobby: LobbyData}) => {
-            if (Client.scene.scene.isActive('join-lobby')) {
-                (Client.scene).scene.stop();
-            }
-            if (!Client.scene.scene.isActive('lobby')) {
-                (Client.scene).scene.start("lobby");
-            }
             Client.lobby = data.lobby;
             Client.waitUntilLobbyScene().then(() => {
                 (<Lobby>(Client.scene)).updateLobby();

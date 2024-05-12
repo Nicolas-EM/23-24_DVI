@@ -43,7 +43,12 @@ export default class Hud extends Phaser.Scene {
 
     // Create
     create() {
-        SceneUtils.settingsConfig(this);
+        this.events.on('menuOpened', () => {
+            this.setOptionsMenuOpened(true);
+        });
+        this.events.on('menuClosed', () => {
+            this.setOptionsMenuOpened(false);
+        });
 
         this.createTopHud();
         this.createBottomHud();
