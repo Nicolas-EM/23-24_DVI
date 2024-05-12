@@ -1,6 +1,5 @@
 export { default as Axe } from './axe.png';
 export { default as Axe_Pressed } from './axe_pressed.png';
-export { default as Hammer } from './hammer.png';
 export { default as Pointer } from './pointer.png';
 export { default as Pointer_Pressed } from './pointer_pressed.png';
 export { default as Selected_Bottom_Left } from './selected_bottom_left.png';

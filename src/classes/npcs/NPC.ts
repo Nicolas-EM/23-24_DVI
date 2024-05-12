@@ -8,19 +8,17 @@ import Client from '../../client';
 
 export default abstract class NPC extends PlayerEntity {
 
+    // Attributes
     protected _path;
     protected _currentTarget;
     protected _movementSpeed: number;
     protected _spawningTime: number;
     protected _spawningCost: Resources;
 
-    /**
-     * @constructor
-     * @param owner is the player who created the entity, not optional.
-     * @returns NPC instance
-     */
+    // Constructor
     constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, frame);
+        
         this._movementSpeed = movementSpeed;
         this._spawningTime = spawningTime;
         this._spawningCost = spawningCost;
@@ -50,6 +48,7 @@ export default abstract class NPC extends PlayerEntity {
         });
     };
 
+    // --- Movement ---
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
         if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
             this._currentTarget = null;
@@ -57,7 +56,7 @@ export default abstract class NPC extends PlayerEntity {
         }
 
         // Find a path to the target
-        this._path = (this.scene as Game).getNavmesh().findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
+        this._path = (this.scene as Game).getNavMesh().findPath(new Phaser.Math.Vector2(this.x, this.y), targetPoint);
         if (this._path && this._path.length > 0) {
             this._currentTarget = this._path.shift();
         }
@@ -71,7 +70,7 @@ export default abstract class NPC extends PlayerEntity {
             this.doMoveAnimation(true);
         }
         else {
-            this.doMoveAnimation();
+            this.doMoveAnimation(false);
         }
         const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
         const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
@@ -85,6 +84,7 @@ export default abstract class NPC extends PlayerEntity {
         this.y += velocityY;
     }
 
+    // --- ATTACKED ---
     dieOrDestroy() {        
         this._owner.removeNPC(this);        
         if (this._owner.getColor() === Client.getMyColor())
@@ -98,6 +98,7 @@ export default abstract class NPC extends PlayerEntity {
         this.destroy();
     }
 
+    // --- Update ---
     update(time: number, deltaTime: number) {
         if (!this.body) return;
 
@@ -113,7 +114,7 @@ export default abstract class NPC extends PlayerEntity {
             if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
         }
         else {
-            if(!this.anims.isPlaying) {
+            if (!this.anims.isPlaying) {
                 this.doIdleAnimation();
             }
         }
@@ -123,16 +124,15 @@ export default abstract class NPC extends PlayerEntity {
         let deathSprite = this.scene.add.sprite(this.x, this.y, "death");
         deathSprite.anims.play("death");
         deathSprite.on("animationcomplete", () => {
-            // nada, ya estaba implementado.. this.destroy();
-            //TODO maybe launch the death event too?
             deathSprite.destroy();
         });
     }
 
-    abstract doMoveAnimation(isLeft?: boolean): void;
+    // --- Animations ---
+    abstract doMoveAnimation(isLeft: boolean);
     abstract doIdleAnimation(): void;
-    //second attribute is optional, means that if this exact animation is already playing, ignores the call.
     public playAnimation(key: string) {
         this.anims.play({ key, repeat: 0 }, true);
     }
+    
 }

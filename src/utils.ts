@@ -1,21 +1,21 @@
 import * as WebFont from 'webfontloader';
 
-// Información de un lobby
-export default interface lobbyData {
+// Lobby data
+export default interface LobbyData {
     code: string;
     players: { id: string, color: string, ready: boolean }[],
     availableColors: ('Red' | 'Blue' | 'Purple' | 'Yellow')[],
     readyPlayers: 0
 }
 
-// Información que tiene un icono en el HUD
+// Info of an icon in HUD
 export interface IconInfo {
     name: string;
     width: number;
     height: number;
 }
 
-// Otra información del HUD
+// Other HUD info
 export interface HudInfo {
     entity: IconInfo,
     info: {
@@ -32,7 +32,7 @@ export interface HudInfo {
     actions: {run: () => void, actionFrame: string}[]
 }
 
-// Array de recursos de un jugador
+// Resources
 export interface Resources {
     wood: number;
     food: number;
@@ -49,4 +49,10 @@ export class FontLoader {
             active: callback(scene)
         });
     }
+}
+
+// Position
+export interface Pos {
+    x: number;
+    y: number;
 }
