@@ -22,7 +22,6 @@ export default class Settings extends Phaser.Scene {
     create() {
 
         // Init config
-        Client.setScene(this);
         SceneUtils.setCursor(this);
         
         // Darken background
@@ -57,8 +56,9 @@ export default class Settings extends Phaser.Scene {
             // Join button
             let joinButton = SceneUtils.addButtonText(self, joinContainer, {x: joinContainer.width + 75, y: joinContainer.height + 45}, "Button_Blue_Slide", -5, "JOIN", 18, "bold", undefined, true, 0.75);
             SceneUtils.addListenerButtonPos(joinButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", joinButton.txt, -5, -3, () => {
-                if (this.lobbyCode.text.length == LOBBY_CODE_LENGTH)
+                if (this.lobbyCode.text.length == LOBBY_CODE_LENGTH) {
                     Client.joinLobby(this.lobbyCode.text);
+                }
             });
 
         });

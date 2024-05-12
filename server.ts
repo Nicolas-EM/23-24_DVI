@@ -53,6 +53,25 @@ function generateLobbyCode(): string {
     return code;
 }
 
+function joinLobby(socket: Socket, lobbyCode: string) {
+    const lobby = lobbies[lobbyCode];
+
+    const color = assignColor(lobby);
+
+    // Add player data to lobby
+    lobby.players.push({
+        id: socket.id,
+        color: color,
+        ready: false
+    });
+
+    // Register player to lobby socket
+    socket.join(lobbyCode);
+
+    // Update all player's lobbies
+    io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+}
+
 function removePlayerFromLobby(socket: Socket) {
     // Find lobbies where the player is present
     for (const lobbyCode in lobbies) {
@@ -108,14 +127,16 @@ io.on('connection', socket => {
 
         if (availableLobby) {
             // Join available lobby
-            socket.emit('lobbyCreated', availableLobby.code, true);
+            joinLobby(socket, availableLobby.code);
+            socket.emit('lobbyJoined', true);
         } else {
             // No available lobbies, create a new one
             const lobbyCode = generateLobbyCode(); // Function to generate a unique lobby code
             lobbies[lobbyCode] = createDefaultLobby();
             lobbies[lobbyCode].code = lobbyCode;
-
-            socket.emit('lobbyCreated', lobbyCode, true);
+            // Join lobby
+            joinLobby(socket, lobbyCode);
+            socket.emit('lobbyJoined', true);
         }
     });
 
@@ -127,7 +148,9 @@ io.on('connection', socket => {
         // Make lobby private
         lobbies[lobbyCode].isPrivate = true;
 
-        socket.emit('lobbyCreated', lobbyCode, false);
+        // Join lobby
+        joinLobby(socket, lobbyCode);
+        socket.emit('lobbyJoined', false);
     });
 
     // ---- JOIN GAME ----
@@ -136,20 +159,9 @@ io.on('connection', socket => {
 
         // If lobby full or doesn't exits, do nothing
         if (lobby && lobby.players.length < MAX_PLAYERS) {
-            const color = assignColor(lobby);
-
-            // Add player data to lobby
-            lobby.players.push({
-                id: socket.id,
-                color: color,
-                ready: false
-            });
-
-            // Register player to lobby socket
-            socket.join(lobbyCode);
-
-            // Update all player's lobbies
-            io.to(lobbyCode).emit('updateLobby', { lobby: lobby });
+            // Join lobby
+            joinLobby(socket, lobbyCode);
+            socket.emit('lobbyJoined', false);
         }
     });
 

@@ -52,6 +52,9 @@ export default class Menu extends Phaser.Scene {
 
   // --- Aux functions ---
   startLobby(quickPlay: boolean) {
+    if (this.scene.isActive("join-lobby"))
+      this.scene.stop("join-lobby");
+    this.scene.stop();
     this.scene.start('lobby', { quickPlay: quickPlay });
   }
 
