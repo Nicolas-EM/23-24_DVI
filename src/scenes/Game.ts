@@ -14,6 +14,7 @@ import AttackUnit from '../classes/npcs/AttackUnit';
 import { PhaserNavMeshPlugin, PhaserNavMesh } from "phaser-navMesh";
 import SceneUtils from "./sceneUtils"
 import GeneralData from "../magic_numbers/general_data";
+import Settings from './Settings';
 
 
 export default class Game extends Phaser.Scene {
@@ -56,13 +57,7 @@ export default class Game extends Phaser.Scene {
 
     // Init config
     Client.setScene(this);
-    this.scene.run('settings', { scene: "game" });
-    SceneUtils.settingsConfig(this);
-
-    // Reset params to default values
-    this.optionsMenuOpened = false;
-    this._selectedEntity = undefined;
-    this.pointerInMap = true;
+    SceneUtils.stopScene(this, "lobby");
 
     // Players
     this.p1 = new Player(Client.lobby.players[0].color, Client.lobby.players[0].color, this);
@@ -70,6 +65,22 @@ export default class Game extends Phaser.Scene {
 
     // Hud
     this.scene.run('hud', { player: (this.p1.getColor() === Client.getMyColor() ? this.p1 : this.p2) });
+    
+    // Settings
+    (<Settings>this.scene.get("settings")).setSceneBase("game");
+    this.events.on('menuOpened', () => {
+      this.setOptionsMenuOpened(true);
+      this.scene.get("hud").events.emit('menuOpened');
+    });
+    this.events.on('menuClosed', () => {
+      this.setOptionsMenuOpened(false);
+      this.scene.get("hud").events.emit('menuClosed');
+    });
+
+    // Reset params to default values
+    this.optionsMenuOpened = false;
+    this._selectedEntity = undefined;
+    this.pointerInMap = true;
 
     // Map
     this._map = new Map(this, this.mapId);

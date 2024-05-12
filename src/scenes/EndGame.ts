@@ -29,6 +29,7 @@ export default class EndGame extends Phaser.Scene {
     // Init config
     Client.setScene(this);
     SceneUtils.setCursor(this);
+    SceneUtils.stopScene(this, "settings");
 
     // Darken background
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.7).setOrigin(0);
@@ -113,10 +114,8 @@ export default class EndGame extends Phaser.Scene {
 
     // Return to home menu
     Client.returnHome();
-    this.scene.stop("game");
-    this.scene.stop("hud");
-    this.scene.stop("settings");
-    this.scene.stop();
+    SceneUtils.stopScene(this, "game");
+    SceneUtils.stopScene(this, "hud");
     this.scene.start('menu');
   }
 

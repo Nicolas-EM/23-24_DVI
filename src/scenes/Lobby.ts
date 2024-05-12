@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import Client from '../client';
 import { FontLoader } from '../utils';
 import SceneUtils from "./sceneUtils"
+import Menu from './Menu';
 
 
 const colors = ['Red', 'Blue', 'Purple', 'Yellow'];
@@ -35,6 +36,7 @@ export default class Lobby extends Phaser.Scene {
     // Init config
     Client.setScene(this);
     SceneUtils.setCursor(this);
+    SceneUtils.stopScene(this, "menu");
     SceneUtils.settingsPauseConfig(this, "lobby");
 
     // Background
@@ -158,13 +160,11 @@ export default class Lobby extends Phaser.Scene {
 
   startGame() {  
     this.isReady = false;
-    this.scene.stop();    
     this.scene.start('game', { mapId: 'desert' });
   }
 
   leaveLobby = () => {   
-    Client.leaveLobby();  
-    this.scene.stop();  
+    Client.leaveLobby();
     this.scene.start('menu');
   }
 
