@@ -73,16 +73,14 @@ export default abstract class NPC extends PlayerEntity {
             this.doMoveAnimation(false);
         }
         const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
-        const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
-        const targetSpeed = distance / elapsedSeconds;
-        const magnitude = Math.min(this._movementSpeed, targetSpeed);
+        const magnitude = (this._movementSpeed / 64 ) / elapsedSeconds;
 
         const velocityX = Math.cos(angle) * magnitude;
         const velocityY = Math.sin(angle) * magnitude;
 
         this.x += velocityX;
         this.y += velocityY;
-    }
+        }
 
     // --- ATTACKED ---
     dieOrDestroy() {        
