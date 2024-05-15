@@ -29,9 +29,7 @@ export default class LoadingScreen extends Phaser.Scene {
         this.load.image('Button_Yellow', Sprites.UI.Buttons.Yellow);
 
         // Trailer
-        if(localStorage.getItem("trailerPlayed") != "played") {
-            this.load.video('trailer', Sprites.Trailer);
-        }
+        this.load.video('trailer', Sprites.Trailer);
 
         this.load.spritesheet('Villager_Blue', Sprites.NPCs.Villager.Blue, { frameWidth: 192, frameHeight: 192 });
     }
@@ -57,8 +55,7 @@ export default class LoadingScreen extends Phaser.Scene {
                 this.startMenu();
         });
 
-        if(!localStorage.getItem("trailerPlayed"))
-            this.playTrailer();
+        this.playTrailer();
     }
 
     playTrailer() {
@@ -67,8 +64,6 @@ export default class LoadingScreen extends Phaser.Scene {
         this.trailer.setScale(0.5);
         this.trailer.setMute(true);
         this.trailer.play();
-
-        localStorage.setItem("trailerPlayed", "played");
 
         const muteX = this.cameras.main.width - 105;
         const muteY = 45;
