@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import LoadingScreen from './scenes/LoadingScreen';
 import Boot from './scenes/Boot';
 import Menu from './scenes/Menu';
 import Lobby from './scenes/Lobby';
@@ -31,7 +32,7 @@ let config: Phaser.Types.Core.GameConfig = {
       },
     ],
   },
-  scene: [Boot, Menu, Lobby, JoinLobby, Game, Hud, Settings, EndGame],  // Scenes
+  scene: [LoadingScreen, Boot, Menu, Lobby, JoinLobby, Game, Hud, Settings, EndGame],
   physics: {
     default: 'arcade',
     arcade: {

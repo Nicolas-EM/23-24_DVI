@@ -6,3 +6,4 @@ export * as NPCs from './npcs';
 export * as Resources from './resources';
 export * as Terrain from './terrain';
 export * as UI from './UI'
+export { default as Trailer } from './trailer.mp4';
