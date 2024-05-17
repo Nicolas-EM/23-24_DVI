@@ -77,7 +77,7 @@ export default class EndGame extends Phaser.Scene {
 
       // Return home button
       let exitButton = self.add.nineslice(0, 5, "Button_Yellow_Slides", undefined, 210, 60, 15, 15, 0, 5).setScale(0.85, 0.85);
-      let exitText = self.add.text(0, 0, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontStyle: "bold", fontSize: 17 }).setOrigin(0.5);
+      let exitText = self.add.text(0, 0, "RETURN HOME", { color: '#000000', fontFamily: "Quattrocento", fontSize: 17 }).setOrigin(0.5);
       let exitContainer = self.add.container(0, 110);
       SceneUtils.addListenerButtonPos(exitButton, "Button_Yellow_Slides", "Button_Yellow_Slides_Pressed", exitText, 0, 2, this.returnHome);
       
