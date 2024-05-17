@@ -16,3 +16,7 @@ nav > div {
     height: 90vh;
 }
 
+.troops-tooltip {
+    --bs-tooltip-bg: #886858;
+    --bs-tooltip-color: var(--bs-white);
+}
