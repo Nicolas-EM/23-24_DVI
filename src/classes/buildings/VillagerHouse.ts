@@ -5,11 +5,13 @@ import BuildingsData from "../../magic_numbers/buildings_data";
 
 export default class VillagerHouse extends Building {
     
+    // Constructor
     constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.VillagerHouse.ICON_INFO };
         iconInfo.name += owner.getColor();
         super(scene, x, y, iconInfo.name, owner, BuildingsData.VillagerHouse.HEALTH, BuildingsData.VillagerHouse.HEALTH, frame);
     
+        // Build hud info
         this._hudInfo = {
             entity: iconInfo,
             info: {

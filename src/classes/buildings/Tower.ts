@@ -1,5 +1,4 @@
 import Client from "../../client";
-import { Resources } from "../../utils";
 import Player from "../Player";
 import Archer from "../npcs/Archer";
 import Soldier from "../npcs/Soldier";
@@ -8,6 +7,7 @@ import BuildingsData from "../../magic_numbers/buildings_data";
 
 export default class TownHall extends SpawnerBuilding {
 
+    // Constructor
     constructor(scene: Phaser.Scene, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Tower.ICON_INFO };
         iconInfo.name += owner.getColor();
