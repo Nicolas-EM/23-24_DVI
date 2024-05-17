@@ -1,34 +1,26 @@
 import * as Phaser from 'phaser';
 import Client from '../client';
-import * as Sprites from "../../assets/sprites";
 import { FontLoader } from '../utils';
+import SceneUtils from "./sceneUtils"
 
 
 export default class Menu extends Phaser.Scene {
   
+  // Constructor
   constructor() {
     super({ key: 'menu' });
   }
 
+  // Create
   create() {
+
+    // Init config
     Client.setScene(this);
-
-    // Cursor
-    this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer_Pressed}), pointer`);
-    });
-    this.input.on("pointerup", (pointer: Phaser.Input.Pointer) => {
-      this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
-    });
-
-    // Settings button
+    SceneUtils.setCursor(this);
+    SceneUtils.stopScene(this, "lobby");
+    SceneUtils.stopScene(this, "endgame");
     this.scene.run('settings', { scene: "menu" });
-    this.events.on('menuOpened', () => {
-      this.scene.pause();
-    });
-    this.events.on('menuClosed', () => {
-      this.scene.resume();
-    });
+    SceneUtils.settingsPauseConfig(this, "menu");
 
     // Background
     this.cameras.main.setBackgroundColor("#47aba9");
@@ -44,9 +36,12 @@ export default class Menu extends Phaser.Scene {
     this.addCloud(3, 810, 510, 0.6);
 
     // Create buttons
-    this.addButton("QUICK PLAY", this.cameras.main.height / 2 - 90, this.quickPlay);
-    this.addButton("CREATE GAME", this.cameras.main.height / 2, this.createLobby);
-    this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, this.joinLobby);
+    this.addButton("QUICK PLAY", this.cameras.main.height / 2 - 90, () => { Client.quickPlay(); });
+    this.addButton("CREATE GAME", this.cameras.main.height / 2, () => { Client.createLobby(); });
+    this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, () => {
+      this.scene.pause();
+      this.scene.run("join-lobby");
+    });
 
     // On resume
     this.events.on("resume", () => {
@@ -58,21 +53,13 @@ export default class Menu extends Phaser.Scene {
       this.sound.add('TroopsTheme', { loop: true, volume: 0.3 }).play();
   }
 
+  // --- Aux functions ---
   startLobby(quickPlay: boolean) {
+    // Stop join-lobby if necessary
+    if (this.scene.isActive("join-lobby"))
+      SceneUtils.stopScene(this, "join-lobby");
+    // Start lobby
     this.scene.start('lobby', { quickPlay: quickPlay });
-  }
-
-  quickPlay() {
-    Client.quickPlay();
-  }
-
-  createLobby() {
-    Client.createLobby();
-  }
-
-  joinLobby = () => {
-    this.scene.pause();
-    this.scene.run("join-lobby");
   }
 
   addCloud(texture: number, posX: number, posY: number, scale: number): void {
@@ -82,31 +69,9 @@ export default class Menu extends Phaser.Scene {
   }
 
   addButton(textButton: string, posY: number, actionButton: Function): void {
-    let menuButton = this.add.image(0, 0, "Button_Blue_Slide").setInteractive();
-    menuButton.scale = 1.25;
-
-    // Add text with font
     FontLoader.loadFonts(this, (self) => {
-      let menuText = self.add.text(0, 0,
-        textButton, { fontFamily: "Quattrocento", color: "#000000", fontSize: 25 })
-        .setOrigin(0.5, 0.9);
-
-      let menuContainer = self.add.container(self.cameras.main.width / 2, posY)
-      menuContainer.add(menuButton);
-      menuContainer.add(menuText);
-      menuButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-        if (pointer.leftButtonDown()) {
-          menuButton.setTexture("Button_Blue_Slides_Pressed");
-          menuText.setPosition(0, 5);
-        }
-      });
-      menuButton.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-        if (pointer.leftButtonReleased()) {
-          menuButton.setTexture("Button_Blue_Slide");
-          menuText.setPosition(0, 0);
-          actionButton();
-        }
-      });
+      let menuButton = SceneUtils.addButtonText(self, undefined, { x: SceneUtils.getMidX(self), y: posY }, "Button_Blue_Slide", -10, textButton, 24, undefined, undefined, true, 1.25);
+      SceneUtils.addListenerButtonPos(menuButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", menuButton.txt, -10, -5, actionButton);
     });
   }
 

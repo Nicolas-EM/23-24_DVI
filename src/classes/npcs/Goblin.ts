@@ -9,39 +9,30 @@ import PlayerEntity from "../PlayerEntity";
 import Soldier from "./Soldier";
 
 export default class Goblin extends AttackUnit {
+    
     static readonly COST: Resources = NPCsData.Goblin.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Goblin.SPAWNING_TIME;
     static readonly ICON: string = NPCsData.Goblin.ICON_INFO.name;
 
+    // Constructor
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Goblin.ICON_INFO };
         iconInfo.name += owner.getColor();
         super(scene, x, y, iconInfo.name, owner, NPCsData.Goblin.HEALTH, NPCsData.Goblin.HEALTH, NPCsData.Goblin.SPAWNING_TIME, NPCsData.Goblin.SPAWNING_COST, NPCsData.Goblin.SPEED, iconInfo, NPCsData.Goblin.ATTACK_RANGE, NPCsData.Goblin.DAMAGE, NPCsData.Goblin.BONUS_DAMAGE, NPCsData.Goblin.ATTACK_COOLDOWN, frame);
     }
 
-    protected attack(attackedEntity: NPC) {
-        throw new Error("Method not implemented.");
+    calculateDamage(target: PlayerEntity) {
+        if (target instanceof Soldier) {
+            return this._damage * 1.5;
+        }
+        return this._damage;
     }
 
-    protected hit(damage: number) {
-        throw new Error("Method not implemented.");
-    }
-
-
+    // --- Animations ---
     doIdleAnimation() {
         this.playAnimation(`goblinIdleRight${this._owner.getColor()}`);
     }
 
-
-    //no se me ocurrio otra manera de separar las diagonales... tal vez me venga la inspiracion 
-    /**
-     * me refiero, si le clicas en diagonal, coge la animacion mas cercana 
-     * a la direccion de la diagonal 
-     * (por ejemplo, si clicas en diagonal arriba-izquierda, coge la animacion de arriba)
-     * no es super eficiente, pero por ahora sirve.
-     * @param isLeft 
-     * @param pointer
-     */
     doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean) {
         let color = this._owner.getColor();
         let animationKey = "";
@@ -92,10 +83,4 @@ export default class Goblin extends AttackUnit {
         }
     }
 
-    calculateDamage(target: PlayerEntity) {
-        if(target instanceof Soldier){
-            return this._damage * 1.5;
-        }
-        return this._damage;
-    }
 }

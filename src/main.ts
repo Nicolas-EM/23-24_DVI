@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import LoadingScreen from './scenes/LoadingScreen';
 import Boot from './scenes/Boot';
 import Menu from './scenes/Menu';
 import Lobby from './scenes/Lobby';
@@ -9,13 +10,9 @@ import Hud from './scenes/Hud';
 import Settings from './scenes/Settings';
 import EndGame from './scenes/EndGame';
 
-/**
- * Inicio del juego en Phaser. Creamos el archivo de configuración del juego y creamos
- * la clase Game de Phaser, encargada de crear e iniciar el juego.
- */
 let config: Phaser.Types.Core.GameConfig = {
   title: 'Troops',
-  parent: "game", // ID canvas
+  parent: "game",  // ID div (canvas)
   type: Phaser.AUTO,
   width: 1000,
   height: 563,
@@ -29,13 +26,13 @@ let config: Phaser.Types.Core.GameConfig = {
     scene: [
       {
         key: "PhaserNavMeshPlugin",
-        plugin: PhaserNavMeshPlugin, // Class that constructs plugins
-        mapping: "navMeshPlugin", // Property mapping to use for the scene, e.g. this.navMeshPlugin
+        plugin: PhaserNavMeshPlugin,
+        mapping: "navMeshPlugin",
         start: true,
       },
     ],
   },
-  scene: [Boot, Menu, Lobby, JoinLobby, Game, Hud, Settings, EndGame],
+  scene: [LoadingScreen, Boot, Menu, Lobby, JoinLobby, Game, Hud, Settings, EndGame],
   physics: {
     default: 'arcade',
     arcade: {

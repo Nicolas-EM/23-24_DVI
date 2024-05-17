@@ -5,7 +5,10 @@ import { IconInfo, Resources } from '../../utils';
 import Client from '../../client';
 import PlayerEntity from '../PlayerEntity';
 
+
 export default abstract class AttackUnit extends NPC {
+
+    // Attributes
     protected _attackRange: number;
     protected _damage: number;
     protected bonus_damage: number;
@@ -13,10 +16,7 @@ export default abstract class AttackUnit extends NPC {
     protected _lastAttackTime: number;
     protected _attackCooldown: number;
 
-    /**
-     * @summary constructor for attacking class (must have offensive abilities)
-     * @returns instance of attackUnit
-     */
+    // Constructor
     constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, iconInfo: IconInfo, attackRange: number, damage: number, bonus_damage: number, attackCooldown: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, spawningTime, spawningCost, movementSpeed, frame);
 
@@ -37,6 +37,10 @@ export default abstract class AttackUnit extends NPC {
         }
     }
 
+    // --- Attack ---
+    abstract doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean): void;
+    abstract calculateDamage(target: PlayerEntity): number;
+    
     getAttackTarget(): string {
         return this._attackTargetId;
     }
@@ -69,21 +73,21 @@ export default abstract class AttackUnit extends NPC {
         super.setMovementTarget(targetPoint);
     }
 
+    // --- Update ---
     update(time: number, delta: number) {
         if (this._attackTargetId) {
             const target = (this.scene as Game).getEntityById(this._attackTargetId);
-
+            
             if (target && !this.entityIsWithinRange(target)) {
                 // Not within range - move towards target
                 this.setMovementTarget(new Phaser.Math.Vector2(target.x, target.y));
-                // Client.setNpcTarget(this._id, new Phaser.Math.Vector2(target.x, target.y));
-            } else {
+            } 
+            else {
                 // Within range - stop moving
                 if(this._path || this._currentTarget) { 
                     this._path = [];
                     this._currentTarget = undefined;
                 }
-                // Client.setNpcTarget(this._id, new Phaser.Math.Vector2(this.x, this.y));
 
                 // If target still alive
                 if (target) {
@@ -108,7 +112,4 @@ export default abstract class AttackUnit extends NPC {
         super.update(time, delta);
     }
     
-    abstract doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean): void;
-
-    abstract calculateDamage(target: PlayerEntity): number;
 }

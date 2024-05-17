@@ -1,7 +1,6 @@
 body {
     background-image: url(../img/background.png);
     background-size: cover;
-    /* cursor: url(../assets/sprites/UI/pointers/pointer.png), auto; */
 }
 
 nav {
@@ -17,3 +16,7 @@ nav > div {
     height: 90vh;
 }
 
+.troops-tooltip {
+    --bs-tooltip-bg: #886858;
+    --bs-tooltip-color: var(--bs-white);
+}
