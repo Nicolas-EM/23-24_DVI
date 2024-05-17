@@ -1,53 +1,52 @@
 import * as Phaser from "phaser";
-import NPC from "./NPC";
 import AttackUnit from "./AttackUnit";
 import Player from "../Player";
 import Game from "../../scenes/Game";
 import { Resources } from "../../utils";
 import NPCsData from "../../magic_numbers/npcs_data";
+import PlayerEntity from "../PlayerEntity";
+import Goblin from "./Goblin";
+
 
 export default class Archer extends AttackUnit {
+
     static readonly COST: Resources = NPCsData.Archer.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Archer.SPAWNING_TIME;
     static readonly ICON: string = NPCsData.Archer.ICON_INFO.name;
 
+    // Constructor
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Archer.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Archer.HEALTH, NPCsData.Archer.HEALTH, NPCsData.Archer.SPAWNING_TIME, NPCsData.Archer.SPAWNING_COST, NPCsData.Archer.VISION_RANGE, NPCsData.Archer.SPEED, iconInfo, NPCsData.Archer.ATTACK_RANGE, NPCsData.Archer.DAMAGE, NPCsData.Archer.ATTACK_COOLDOWN ,frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Archer.HEALTH, NPCsData.Archer.HEALTH, NPCsData.Archer.SPAWNING_TIME, NPCsData.Archer.SPAWNING_COST, NPCsData.Archer.SPEED, iconInfo, NPCsData.Archer.ATTACK_RANGE, NPCsData.Archer.DAMAGE, NPCsData.Archer.BONUS_DAMAGE, NPCsData.Archer.ATTACK_COOLDOWN ,frame);
     }
 
-    protected attack(attackedEntity: NPC) {
-        throw new Error("Method not implemented.");
-    }
-    
-    protected hit(damage: number) {
-        throw new Error("Method not implemented.");
+    calculateDamage(target: PlayerEntity) {
+        if(target instanceof Goblin){
+            return this._damage * 1.5;
+        }
+        return this._damage;
     }
 
+    // --- Animations ---
     doIdleAnimation(){
         this.playAnimation(`archerIdleRight${this._owner.getColor()}`);
     }
 
-    doMoveAnimation(isLeft?: boolean) {
-        if(isLeft){
-            this.flipX = true;
-        }
-        if(!isLeft && this.flipX){
-            this.flipX = false;
-        }
-        if(this.anims.isPlaying){
-            if(this.anims.currentAnim.key !== `archerWalkRight${this._owner.getColor()}`){
+    doMoveAnimation(isLeft: boolean) {
+        this.flipX = isLeft;
+
+        if (this.anims.isPlaying) {
+            if (this.anims.currentAnim.key !== `archerWalkRight${this._owner.getColor()}`) {
                 this.anims.stop();
                 this.playAnimation(`archerWalkRight${this._owner.getColor()}`);
             }
         }
-        else{
+        else {
             this.playAnimation(`archerWalkRight${this._owner.getColor()}`);
         }
     }
 
-    //me vine muy arriba con esta, cuidado
     doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean) {
         let color = this._owner.getColor();
         let animationKey = "";
@@ -90,17 +89,18 @@ export default class Archer extends AttackUnit {
         }
 
         this.anims.pause(this.anims.currentAnim.frames[5]);
-        //create arrow and do animation:
-        let arrow = this.scene.add.sprite(this.x, this.y, "Arrow",0);
+        // Create arrow and do animation:
+        let arrow = this.scene.add.sprite(this.x, this.y, "Arrow", 0);
         arrow.angle = angleDeg;
         this.scene.tweens.add({
             targets: arrow,
             x: position.x,
             y: position.y,
             delay: 150,
-            duration: 400,
+            duration: 240,
             onComplete: () => {
                 arrow.destroy();
+                
             }
         });
         this.anims.resume();
@@ -111,4 +111,5 @@ export default class Archer extends AttackUnit {
 
         this.playAnimation(animationKey);
     }
+
 }

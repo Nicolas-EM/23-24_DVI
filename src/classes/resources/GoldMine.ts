@@ -4,15 +4,20 @@ import Game from "../../scenes/Game";
 import Player from "../Player";
 import NPCsData from "../../magic_numbers/npcs_data";
 
+
 export default class GoldMine extends ResourceSpawner {
+
+    // Attributes
     private activeTimer: Phaser.Time.TimerEvent = undefined;
 
+    // Constructor
     constructor(scene: Game, x: number, y: number, frame?: string | number) {
         super(scene, x, y, ResourcesData.Gold.ICON_INFO.name, ResourcesData.Gold.ICON_INFO, ResourcesData.Gold.ICON, ResourcesData.Gold.CAPACITY, ResourcesData.Gold.RATE, frame);
     
         this._id = `GoldMine_${ResourceSpawner.entityIdIndex++}`;
     }
 
+    // --- Gather ---
     protected addResourceToPlayer(player: Player, amount: number) {
         player.addResources({gold: amount, wood: 0, food: 0});
     }
@@ -37,7 +42,6 @@ export default class GoldMine extends ResourceSpawner {
     }
 
     resetFrame() {
-        console.log("frame reset");
         this.setFrame(0);
         this.activeTimer = undefined;
     }
@@ -46,4 +50,5 @@ export default class GoldMine extends ResourceSpawner {
         const x = this.scene.add.sprite(this.x, this.y, this.texture.key, 2);
         x.setDepth(this.depth);
     }
+
 }

@@ -1,11 +1,12 @@
-// src/animationFactory.ts
-
 export namespace animationFactory {
     export function createAnimations(scene: Phaser.Scene) {
-        //note: we can create only the ones we need for the game (but they're small and no memory issues are expected)
+        // NOTE: We could create only the ones we need for the game but they're small and no memory issues are expected
         const colors = ['Blue', 'Red', 'Yellow', 'Purple'];
 
         colors.forEach((color) => {
+
+            // --- VILLAGER ---
+            // - Idle -
             scene.anims.create({
                 key: `villagerIdle${color}`,
                 frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
@@ -14,7 +15,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //we need to flip this when walking left
+            // - Walk -
             scene.anims.create({
                 key: `villagerWalk${color}`,
                 frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
@@ -23,6 +24,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Gather -
             scene.anims.create({
                 key: `villagerAxe${color}`,
                 frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
@@ -34,35 +36,8 @@ export namespace animationFactory {
 
             });
 
-            scene.anims.create({
-                key: `villagerHammer${color}`,
-                frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
-                    frames: [12, 13, 14, 15, 16, 17],
-                }),
-                frameRate: 8,
-                repeat: 5,
-
-            });
-            
-            //maybe this mneeds to be flipped as well..?
-            // scene.anims.create({
-            //   key: "villagerCarrying",
-            //   frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
-            //     frames: [24, 25, 26, 27, 28, 29],
-            //   }),
-            //   frameRate: 8,
-            //   
-            // });
-            // //also flip this when walking left
-            // scene.anims.create({
-            //   key: "villagerCarryWalk",
-            //   frames: scene.anims.generateFrameNumbers(`Villager_${color}`, {
-            //     frames: [30, 31, 32, 33, 34, 35],
-            //   }),
-            //   frameRate: 8,
-            //   
-            // });
-
+            // --- SOLDIER ---
+            // - Idle -
             scene.anims.create({
                 key: `soldierIdleRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
@@ -71,7 +46,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //note, walk left is the same as this but with setFlipX(true)
+            // - Walk -
             scene.anims.create({
                 key: `soldierWalkRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
@@ -80,7 +55,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //note, left attack is just this one, but call setFlipX(true) to attack left, then disable for normal behaviour.
+            // - Attack Left/Right -
             scene.anims.create({
                 key: `soldierAttackRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
@@ -89,6 +64,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Attack Down -
             scene.anims.create({
                 key: `soldierAttackDown${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
@@ -97,6 +73,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Attack Up -
             scene.anims.create({
                 key: `soldierAttackUp${color}`,
                 frames: scene.anims.generateFrameNumbers(`Soldier_${color}`, {
@@ -105,6 +82,8 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // --- ARCHER ---
+            // - Idle -
             scene.anims.create({
                 key: `archerIdleRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -113,7 +92,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed
+            // - Walk -
             scene.anims.create({
                 key: `archerWalkRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -122,7 +101,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed: down
+            // - Shoot Up -
             scene.anims.create({
                 key: `archerShootUp${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -131,7 +110,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed
+            // - Shoot Diagonal Up Left/Right -
             scene.anims.create({
                 key: `archerShootDiagonalUpRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -140,7 +119,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed
+            // - Shoot Diagonal Left/Right -
             scene.anims.create({
                 key: `archerShootRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -149,7 +128,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed
+            // - Shoot Diagonal Down Left/Right -
             scene.anims.create({
                 key: `archerShootDiagonalDownRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -158,7 +137,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed
+            // - Shoot Down -
             scene.anims.create({
                 key: `archerShootDown${color}`,
                 frames: scene.anims.generateFrameNumbers(`Archer_${color}`, {
@@ -167,7 +146,8 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
-            //flip needed for all
+            // --- GOBLIN ---
+            // - Idle -
             scene.anims.create({
                 key: `goblinIdleRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
@@ -176,6 +156,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Walk -
             scene.anims.create({
                 key: `goblinWalkRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
@@ -184,6 +165,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Attack Left/Right -
             scene.anims.create({
                 key: `goblinAttackRight${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
@@ -192,6 +174,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Attack Down -
             scene.anims.create({
                 key: `goblinAttackDown${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
@@ -200,6 +183,7 @@ export namespace animationFactory {
                 frameRate: 8,
             });
 
+            // - Attack Up -
             scene.anims.create({
                 key: `goblinAttackUp${color}`,
                 frames: scene.anims.generateFrameNumbers(`Goblin_${color}`, {
@@ -209,7 +193,7 @@ export namespace animationFactory {
             });
         });
         
-        //same for all.. no duplicates here. 
+        // --- DEATH ---
         scene.anims.create({
             key: 'death',
             frames: scene.anims.generateFrameNumbers('Death', {
@@ -218,6 +202,19 @@ export namespace animationFactory {
             frameRate: 7,
         });
 
+        // --- FIRE ---
+        scene.anims.create({
+            key: 'fire',
+            frames: scene.anims.generateFrameNumbers('Flame', {
+                frames: [0, 1, 2, 3, 4, 5, 6],
+            }),
+            frameRate: 7,
+            repeat: -1,
+            randomFrame: true
+        });
+
+        // --- RESOURCE SPAWNERS ---
+        // - Tree -
         scene.anims.create({
             key: 'treeIdle',
             frames: scene.anims.generateFrameNumbers('Tree', {
@@ -228,6 +225,7 @@ export namespace animationFactory {
             randomFrame: true
         });
 
+        // - Sheep -
         scene.anims.create({
             key: 'sheepIdle',
             frames: scene.anims.generateFrameNumbers('Sheep', {
@@ -238,6 +236,7 @@ export namespace animationFactory {
             randomFrame: true
         });
 
+        // --- FOAM ---
         scene.anims.create({
             key: 'Foam',
             frames: scene.anims.generateFrameNumbers('Foam', {
@@ -247,6 +246,7 @@ export namespace animationFactory {
             repeat: -1
         });
 
+        // --- ROCK 1 ---
         scene.anims.create({
             key: 'Rock1',
             frames: scene.anims.generateFrameNumbers('Rocks', {
@@ -256,6 +256,7 @@ export namespace animationFactory {
             repeat: -1
         });
 
+        // --- ROCK 2 ---
         scene.anims.create({
             key: 'Rock2',
             frames: scene.anims.generateFrameNumbers('Rocks', {
@@ -265,6 +266,7 @@ export namespace animationFactory {
             repeat: -1
         });
 
+        // --- ROCK 3 ---
         scene.anims.create({
             key: 'Rock3',
             frames: scene.anims.generateFrameNumbers('Rocks', {
@@ -274,6 +276,7 @@ export namespace animationFactory {
             repeat: -1
         });
 
+        // --- ROCK 4 ---
         scene.anims.create({
             key: 'Rock4',
             frames: scene.anims.generateFrameNumbers('Rocks', {

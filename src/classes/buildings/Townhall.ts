@@ -1,6 +1,5 @@
 import Client from "../../client";
 import Game from "../../scenes/Game";
-import { Resources } from "../../utils";
 import Villager from "../npcs/Villager";
 import Player from "../Player";
 import BuildingsData from "../../magic_numbers/buildings_data";
@@ -9,13 +8,12 @@ import SpawnerBuilding from "./SpawnerBuilding";
 
 export default class Townhall extends SpawnerBuilding {
     
-    static readonly COST: Resources = null;
-
+    // Constructor
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...BuildingsData.Townhall.ICON_INFO };
         iconInfo.name += owner.getColor();
 
-        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, null, null, BuildingsData.Townhall.VISION_RANGE, frame);
+        super(scene, x, y, iconInfo.name, owner, BuildingsData.Townhall.HEALTH, BuildingsData.Townhall.HEALTH, frame);
     
         // Build hud info
         this._hudInfo = {
@@ -34,12 +32,12 @@ export default class Townhall extends SpawnerBuilding {
     }
 
     dieOrDestroy() {
-        this._owner.removeBuilding(this);
-        // this.doDeathAnimation();
+        // Townhall destroyed -> End game
         this.scene.time.addEvent({
-            delay: 3000,
+            delay: 3000,  // Wait so user can see its destroy animation
             callback: () => Client.surrenderOrLose(this._owner.getColor()),
             callbackScope: this
-        });      
+        });    
+        super.dieOrDestroy();  
     }
 }

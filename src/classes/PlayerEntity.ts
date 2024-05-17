@@ -5,34 +5,27 @@ import { HudInfo, Resources } from '../utils';
 import * as Sprites from "../../assets/sprites";
 import Client from '../client';
 import AttackUnit from './npcs/AttackUnit';
+import Hud from '../scenes/Hud';
 
 export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
-    // protected attributes:
+
+    // Attributes:
     protected _owner: Player;
     protected _id: string;
     protected _health: number;
     protected _totalHealth: number;
-    protected _visionRange: number;
-    protected _spawningTime: number;
-    protected _spawningCost: Resources;
     protected _hudInfo: HudInfo;
 
     static readonly COST: Resources;
     static readonly SPAWN_TIME_MS: number;
 
-    /**
-     * @constructor
-     * @param owner is the player who created the entity, not optional.
-     * @returns Object
-     */
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, visionRange: number, frame?: string | number) {
+    // Constructor
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, frame?: string | number) {
         super(scene, x, y, texture, frame);
+        
         this._owner = owner;
         this._health = health;
-        this._totalHealth = totalHealth;
-        this._spawningTime = spawningTime;
-        this._spawningCost = spawningCost;
-        this._visionRange = visionRange;
+        this._totalHealth = totalHealth;        
 
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
@@ -46,25 +39,57 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
         this.scene.events.on("update", this.update, this);
     }
 
-    /**
-     * @param damage
-     */
-    onAttackReceived(damage: number, attackUnit: AttackUnit): void {
+    belongsToMe(): boolean {
+        return this._owner.getColor() === Client.getMyColor();
+    }
+
+    // --- Getters ---
+
+    getHudInfo(): HudInfo {
+        return this._hudInfo;
+    };
+    
+    getId(): string {
+        return this._id;
+    }
+
+    getHealth(): number {
+        return this._health;
+    }
+
+    // ----- ATTACKED -----
+    onAttackReceived(damage: number, attackUnit: AttackUnit) {
         this._health -= damage;
+        
+        // Update HUD info
         (this._hudInfo.info as {
             isMine: boolean;
             health: number;
             totalHealth: number;
             damage?: number;
         }).health = this._health;
+        ((<Hud>this.scene.scene.get('hud'))).updateInfo(this, this._health, this._totalHealth);
 
-        if(this._health <= 0 && this.body) {
+        // Die
+        if (this._health <= 0 && this.body) {
             this.dieOrDestroy();
         }
     }
 
-    protected abstract dieOrDestroy();
+    protected dieOrDestroy() {
+        // If selected, un-select
+        if ((<Game>(this.scene)).getSelectedEntity() === this)
+            (<Game>(this.scene)).setSelectedEntity(undefined);
+    }
 
+    destroy() {
+        if (this.scene) this.scene.events.off("update", this.update, this);
+            super.destroy();
+    }
+    // --------------------
+
+
+    // ----- POINTER -----
     private setSwordCursor(icon: any) {
         let entity = (<Game>(this.scene)).getSelectedEntity();
         const isAttackUnit = (<Game>(this.scene)).isSelectedEntityAttackUnit();
@@ -75,11 +100,10 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     }
 
     private onEntityClicked(pointer: Phaser.Input.Pointer): void {
-        if(pointer.rightButtonReleased()) {
+        if (pointer.rightButtonReleased()) {
             this.setSwordCursor(Sprites.UI.Pointers.Sword);
         }
-
-        if (pointer.leftButtonReleased()) {
+        else if (pointer.leftButtonReleased()) {
             (<Game>(this.scene)).setSelectedEntity(this);
         }
     }
@@ -102,25 +126,6 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     private onOut(): void {
         this.scene.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     }
+    // -------------------
 
-    destroy() {
-        if (this.scene) this.scene.events.off("update", this.update, this);
-            super.destroy();
-    }
-
-    belongsToMe(): boolean {
-        return this._owner.getColor() === Client.getMyColor();
-    }
-
-    getHudInfo(): HudInfo {
-        return this._hudInfo;
-    };
-    
-    getId(): string {
-        return this._id;
-    }
-
-    getHealth(): number {
-        return this._health;
-    }
 }

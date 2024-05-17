@@ -5,26 +5,30 @@ import NPC from "./NPC";
 import Game from "../../scenes/Game";
 import { Resources } from "../../utils";
 import NPCsData from "../../magic_numbers/npcs_data";
+import PlayerEntity from "../PlayerEntity";
+import Archer from "./Archer";
 
 export default class Soldier extends AttackUnit {
+
     static readonly COST: Resources = NPCsData.Soldier.SPAWNING_COST;
     static readonly SPAWN_TIME_MS: number = NPCsData.Soldier.SPAWNING_TIME;
     static readonly ICON: string = NPCsData.Soldier.ICON_INFO.name;
 
+    // Constructor
     constructor(scene: Game, x: number, y: number, owner: Player, frame?: string | number) {
         let iconInfo = { ...NPCsData.Soldier.ICON_INFO };
         iconInfo.name += owner.getColor();
-        super(scene, x, y, iconInfo.name, owner, NPCsData.Soldier.HEALTH, NPCsData.Soldier.HEALTH, NPCsData.Soldier.SPAWNING_TIME, NPCsData.Soldier.SPAWNING_COST, NPCsData.Soldier.VISION_RANGE, NPCsData.Soldier.SPEED, iconInfo, NPCsData.Soldier.ATTACK_RANGE, NPCsData.Soldier.DAMAGE, NPCsData.Soldier.ATTACK_COOLDOWN, frame);
+        super(scene, x, y, iconInfo.name, owner, NPCsData.Soldier.HEALTH, NPCsData.Soldier.HEALTH, NPCsData.Soldier.SPAWNING_TIME, NPCsData.Soldier.SPAWNING_COST, NPCsData.Soldier.SPEED, iconInfo, NPCsData.Soldier.ATTACK_RANGE, NPCsData.Soldier.DAMAGE,  NPCsData.Soldier.BONUS_DAMAGE, NPCsData.Soldier.ATTACK_COOLDOWN, frame);
     }
 
-    protected attack(attackedEntity: NPC) {
-        throw new Error("Method not implemented.");
+    calculateDamage(target: PlayerEntity) {
+        if(target instanceof Archer){
+            return this._damage * 1.5;
+        }
+        return this._damage;
     }
 
-    protected hit(damage: number) {
-        throw new Error("Method not implemented.");
-    }
-
+    // --- Animations ---
     doIdleAnimation() {
         this.playAnimation(`soldierIdleRight${this._owner.getColor()}`);
     }
@@ -49,11 +53,7 @@ export default class Soldier extends AttackUnit {
     }
 
     doAttackAnimation(position: Phaser.Math.Vector2, isLeft: boolean) {
-        if (isLeft) {
-            this.flipX = true;
-        } else {
-            this.flipX = false;
-        }
+        this.flipX = isLeft;
 
         let animationKey = "";
 
@@ -84,4 +84,5 @@ export default class Soldier extends AttackUnit {
 
         this.playAnimation(animationKey);
     }
+
 }
