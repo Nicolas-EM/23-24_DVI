@@ -86,7 +86,7 @@ export default class Lobby extends Phaser.Scene {
       });
 
       // Ready button
-      let readyButton = SceneUtils.addButtonText(self, undefined, { x: SceneUtils.getMidX(self), y: 450 }, "Button_Yellow_Slides", -7, "READY", 22, "bold", undefined, true, 0.85);
+      let readyButton = SceneUtils.addButtonText(self, undefined, { x: SceneUtils.getMidX(self), y: 450 }, "Button_Yellow_Slides", -7, "READY", 22, undefined, undefined, true, 0.85);
       readyButton.img.setInteractive();
       readyButton.img.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
         if (pointer.leftButtonDown()) {
