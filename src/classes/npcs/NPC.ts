@@ -14,9 +14,10 @@ export default abstract class NPC extends PlayerEntity {
     protected _movementSpeed: number;
     protected _spawningTime: number;
     protected _spawningCost: Resources;
+    protected _collisionProcessed: boolean = false;
 
     // Constructor
-    constructor(scene: Game, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, frame?: string | number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, frame);
         
         this._movementSpeed = movementSpeed;
@@ -50,6 +51,22 @@ export default abstract class NPC extends PlayerEntity {
     };
 
     // --- Movement ---
+    getMovementSpeed(): number {
+        return this._movementSpeed;
+    }
+
+    getCollisionProcessed(): boolean {
+        return this._collisionProcessed;
+    }
+
+    setCollisionProcessed(collisionProcessed: boolean) {
+        this._collisionProcessed = collisionProcessed;
+    }
+
+    getMovementTarget(): Phaser.Math.Vector2 {
+        return this._currentTarget;
+    }   
+
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
         if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
             this._currentTarget = undefined;

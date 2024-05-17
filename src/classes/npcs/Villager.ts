@@ -86,16 +86,20 @@ export default class Villager extends NPC {
         }
     }
 
+    // --- Movement ---
     getGatherTarget(): string {
         return this._gatherTargetId;
     }
 
     setGatherTarget(resourceSpawner: ResourceSpawner) {
         this._gatherTargetId = resourceSpawner.getId();
+        if (resourceSpawner)
+            this._gatherTargetId = resourceSpawner.getId();
+        else
+            this._gatherTargetId = undefined;
         if (this._gatherTargetId)
             this.setMovementTarget(new Phaser.Math.Vector2(resourceSpawner.x, resourceSpawner.y));
     }
-
 
     private isGatherTargetInRange(gatherTarget: ResourceSpawner): boolean {
         const distance = Phaser.Math.Distance.Between(this.x, this.y, gatherTarget.x, gatherTarget.y);

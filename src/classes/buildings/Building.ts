@@ -2,6 +2,7 @@ import * as Phaser from "phaser"
 import PlayerEntity from "../PlayerEntity";
 import Player from "../Player";
 import AttackUnit from "../npcs/AttackUnit";
+import Game from "../../scenes/Game";
 
 export default abstract class Building extends PlayerEntity {
 
