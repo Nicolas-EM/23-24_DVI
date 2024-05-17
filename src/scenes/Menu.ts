@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import Client from '../client';
 import { FontLoader } from '../utils';
 import SceneUtils from "./sceneUtils"
-import Lobby from './Lobby';
 
 
 export default class Menu extends Phaser.Scene {

@@ -101,7 +101,7 @@ export default class Boot extends Phaser.Scene {
 
     //UI -- Death spritesheet
     this.load.spritesheet('Death', Sprites.NPCs.Dead, { frameWidth: 128, frameHeight: 128 });
-    this.load.spritesheet('Arrow', Sprites.NPCs.Archer.Arrow, { frameWidth: 64, frameHeight: 64 })
+    this.load.spritesheet('Arrow', Sprites.NPCs.Archer.Arrow, { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet('Flame', Sprites.Effects.Fire, { frameWidth: 128, frameHeight: 128 });
     // UI - Banners
     this.load.image('Carved_Big_Shadow', Sprites.UI.Banners.Carved_Big_Shadow);
@@ -117,14 +117,10 @@ export default class Boot extends Phaser.Scene {
     this.load.image('Button_Blue_Slides_Pressed', Sprites.UI.Buttons.Blue_Slides_Pressed);
     this.load.image('Button_Blue_Slide', Sprites.UI.Buttons.Blue_Slides);
     this.load.image('Button_Disable', Sprites.UI.Buttons.Disable);
-    this.load.image('Button_Red_Pressed', Sprites.UI.Buttons.Red_Pressed);
     this.load.image('Button_Red_Slides_Pressed', Sprites.UI.Buttons.Red_Slides_Pressed);
     this.load.image('Button_Red_Slide', Sprites.UI.Buttons.Red_Slides);
-    this.load.image('Button_Red', Sprites.UI.Buttons.Red); 
-    this.load.image('Button_Yellow_Pressed', Sprites.UI.Buttons.Yellow_Pressed);
     this.load.image('Button_Yellow_Slides', Sprites.UI.Buttons.Yellow_Slides);
     this.load.image('Button_Yellow_Slides_Pressed', Sprites.UI.Buttons.Yellow_Slides_Pressed);
-    this.load.image('Button_Yellow', Sprites.UI.Buttons.Yellow);
     this.load.image('Button_Green_Slides', Sprites.UI.Buttons.Green_Slides);
     this.load.image('Button_Green_Slides_Pressed', Sprites.UI.Buttons.Green_Slides_Pressed);
 
@@ -132,8 +128,6 @@ export default class Boot extends Phaser.Scene {
     this.load.spritesheet('Health', Sprites.UI.Icons.Health, { frameWidth: 510, frameHeight: 200 });
     this.load.image('Settings_Pressed', Sprites.UI.Icons.Settings_Pressed);
     this.load.image('Settings', Sprites.UI.Icons.Settings);
-    this.load.image('Sound_Off', Sprites.UI.Icons.Sound_Off);
-    this.load.image('Sound_On', Sprites.UI.Icons.Sound_On);
     this.load.image('X_Pressed', Sprites.UI.Icons.X_Pressed);
     this.load.image('X', Sprites.UI.Icons.X);
     this.load.image('RMB', Sprites.UI.Icons.RMB);
@@ -143,13 +137,10 @@ export default class Boot extends Phaser.Scene {
     // UI - Menu&Lobby
     this.load.spritesheet('Clouds', Sprites.UI.MenuLobby.Clouds, { frameWidth: 512, frameHeight: 256 });
     this.load.image('Texture', Sprites.UI.MenuLobby.Texture);
-    this.load.image('Exit', Sprites.UI.MenuLobby.Exit);
 
     // UI - Pointers
     this.load.image('Axe', Sprites.UI.Pointers.Axe);
     this.load.image('Axe_Pressed', Sprites.UI.Pointers.Axe_Pressed);
-    this.load.image('Pointer', Sprites.UI.Pointers.Pointer);
-    this.load.image('Pointer_Pressed', Sprites.UI.Pointers.Pointer_Pressed);
     this.load.image('Selected_Bottom_Left', Sprites.UI.Pointers.Selected_Bottom_Left);
     this.load.image('Selected_Bottom_Right', Sprites.UI.Pointers.Selected_Botton_Right);
     this.load.image('Selected_Top_Left', Sprites.UI.Pointers.Selected_Top_Left);
@@ -181,6 +172,7 @@ export default class Boot extends Phaser.Scene {
     this.input.setDefaultCursor(`url(${Sprites.UI.Pointers.Pointer}), pointer`);
     animationFactory.createAnimations(this);
 
+    // Warn loading screen
     this.events.emit("bootFinished");
   }
 
