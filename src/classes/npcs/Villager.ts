@@ -92,7 +92,6 @@ export default class Villager extends NPC {
     }
 
     setGatherTarget(resourceSpawner: ResourceSpawner) {
-        this._gatherTargetId = resourceSpawner.getId();
         if (resourceSpawner)
             this._gatherTargetId = resourceSpawner.getId();
         else
