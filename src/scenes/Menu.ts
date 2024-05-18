@@ -40,6 +40,7 @@ export default class Menu extends Phaser.Scene {
     this.addButton("CREATE GAME", this.cameras.main.height / 2, () => { Client.createLobby(); });
     this.addButton("JOIN GAME", this.cameras.main.height / 2 + 90, () => {
       this.scene.pause();
+      SceneUtils.stopScene(this, "join-lobby");
       this.scene.run("join-lobby");
     });
 
@@ -55,10 +56,6 @@ export default class Menu extends Phaser.Scene {
 
   // --- Aux functions ---
   startLobby(quickPlay: boolean) {
-    // Stop join-lobby if necessary
-    if (this.scene.isActive("join-lobby"))
-      SceneUtils.stopScene(this, "join-lobby");
-    // Start lobby
     this.scene.start('lobby', { quickPlay: quickPlay });
   }
 

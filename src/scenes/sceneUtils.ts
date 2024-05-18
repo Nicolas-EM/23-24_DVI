@@ -33,7 +33,6 @@ export default class SceneUtils {
     static settingsPauseConfig(scene: Phaser.Scene, sceneId: string) {
         (<Settings>scene.scene.get("settings")).setSceneBase(sceneId);
         scene.events.on('menuOpened', () => {
-            console.log("menuOpened recibido", scene);
             scene.scene.pause();
         });
         scene.events.on('menuClosed', () => {
