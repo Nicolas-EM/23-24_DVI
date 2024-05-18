@@ -159,14 +159,18 @@ export default class Villager extends NPC {
             this.setGatherTarget(undefined);
         }
 
-        const avoidTime = this.calculateAvoidTime(entity);
+        // Calculate new target
+        let newTarget = this.calculateNewTarget(entity, this.getMovementTarget());
+        const avoidTime = this.calculateAvoidTime(entity, newTarget);
 
         // Wait and return to original target
         this.scene.time.addEvent({
             delay: avoidTime,
             callback: () => {
-                if(this.getProcessingCollision()) {
-                    this.setProcessingCollision(false);
+                this.setProcessingCollision(false);
+                
+                // Don't reset if target has changed by more than 1 tile
+                if(this.getMovementTarget() && Math.abs(newTarget.distance(this.getMovementTarget())) < 64) {
                     this.setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
                     this.setGatherTarget((this.scene as Game).getResourceSpawnerById(oldGatherTarget));
                 }

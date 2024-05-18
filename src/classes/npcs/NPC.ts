@@ -155,10 +155,7 @@ export default abstract class NPC extends PlayerEntity {
 
     protected abstract handleCollision(entity: PlayerEntity);
 
-    protected calculateAvoidTime(entity: PlayerEntity): number {
-        // Calculate new target
-        let newTarget = this.calculateNewTarget(entity, this.getMovementTarget());
-
+    protected calculateAvoidTime(entity: PlayerEntity, newTarget: Phaser.Math.Vector2): number {
         // Start avoidance
         this.setMovementTarget(newTarget);
 
@@ -171,7 +168,7 @@ export default abstract class NPC extends PlayerEntity {
     }
 
     // Calculate new target to avoid a PlayerEntity
-    private calculateNewTarget(collider: PlayerEntity, oldTarget: Phaser.Math.Vector2): Phaser.Math.Vector2 {
+    protected calculateNewTarget(collider: PlayerEntity, oldTarget: Phaser.Math.Vector2): Phaser.Math.Vector2 {
         const npcPhysicsBody = (this.body as Phaser.Physics.Arcade.Body);
         const colliderPhysicsBody = (collider.body as Phaser.Physics.Arcade.Body);
 
