@@ -7,7 +7,7 @@ import SceneUtils from "./sceneUtils"
 const LOBBY_CODE_LENGTH = 6;
 
 
-export default class Settings extends Phaser.Scene {
+export default class JoinLobby extends Phaser.Scene {
 
     // UI Attributes
     private lobbyCode: Phaser.GameObjects.Text;
@@ -32,7 +32,7 @@ export default class Settings extends Phaser.Scene {
         let joinContainer = this.add.container(SceneUtils.getMidX(this), SceneUtils.getMidY(this) - 10);
         joinContainer.add(joinIcon);
 
-        FontLoader.loadFonts(this, (self: Settings) => {
+        FontLoader.loadFonts(this, (self) => {
 
             // Cancel button
             let cancelButton = SceneUtils.addButtonText(self, joinContainer, {x: joinContainer.width - 75, y: joinContainer.height + 45}, "Button_Red_Slide", -5, "CANCEL", 18, "bold", undefined, true, 0.75);
