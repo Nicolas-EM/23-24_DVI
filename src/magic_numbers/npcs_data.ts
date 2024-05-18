@@ -10,7 +10,7 @@ namespace NPCsData {
             height: 200
         }
         public static HEALTH = 100;
-        public static SPEED = 2.5;
+        public static SPEED = 2;
         public static SPAWNING_TIME = 15000;
         public static SPAWNING_COST: Resources = {
             wood: 0,
@@ -28,7 +28,7 @@ namespace NPCsData {
             height: 150
         }
         public static HEALTH = 250;
-        public static SPEED = 2.5;
+        public static SPEED = 2;
         public static DAMAGE = 25;
         public static BONUS_DAMAGE = 1.25;
         public static ATTACK_RANGE = 1; // tiles
@@ -49,7 +49,7 @@ namespace NPCsData {
             height: 150
         }
         public static HEALTH = 150;
-        public static SPEED = 2.5;
+        public static SPEED = 2;
         public static DAMAGE = 20;
         public static BONUS_DAMAGE = 1.25;
         public static ATTACK_RANGE = 10;
@@ -70,7 +70,7 @@ namespace NPCsData {
             height: 150
         }
         public static HEALTH = 175;
-        public static SPEED = 3.75;
+        public static SPEED = 3;
         public static DAMAGE = 17;
         public static BONUS_DAMAGE = 1.25;
         public static ATTACK_RANGE = 1;
