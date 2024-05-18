@@ -58,6 +58,7 @@ export default class JoinLobby extends Phaser.Scene {
             SceneUtils.addListenerButtonPos(joinButton.img, "Button_Blue_Slide", "Button_Blue_Slides_Pressed", joinButton.txt, -5, -3, () => {
                 if (this.lobbyCode.text.length == LOBBY_CODE_LENGTH) {
                     Client.joinLobby(this.lobbyCode.text);
+                    this.scene.stop();
                 }
             });
 
