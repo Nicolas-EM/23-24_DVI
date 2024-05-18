@@ -80,7 +80,7 @@ export default abstract class NPC extends PlayerEntity {
 
         this.x += velocityX;
         this.y += velocityY;
-        }
+    }
 
     // --- ATTACKED ---
     dieOrDestroy() {        

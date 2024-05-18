@@ -19,7 +19,7 @@ export default class Player {
 
   // Constructor
   constructor(private _id: string, private _color: string, private _scene: Phaser.Scene) {
-    this._resources = GeneralData.InitData.INIT_RESOURCES;
+    this._resources = { ...GeneralData.InitData.INIT_RESOURCES };
     this._maxPopulation = GeneralData.InitData.MAX_POPULATION;
   }
 
@@ -111,7 +111,7 @@ export default class Player {
     this._resources.wood -= resources.wood;
     this._resources.food -= resources.food;
 
-    if(this.getColor() === Client.getMyColor())
+    if (this.getColor() === Client.getMyColor())
       (<Hud>(this._scene.scene.get("hud"))).updateResources({ wood: this._resources.wood, food: this._resources.food, gold: this._resources.gold });
   }
 
