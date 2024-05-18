@@ -32,7 +32,7 @@ let config: Phaser.Types.Core.GameConfig = {
       },
     ],
   },
-  scene: [LoadingScreen, Boot, Menu, Lobby, JoinLobby, Game, Hud, Settings, EndGame],
+  scene: [LoadingScreen, Boot, Menu, Settings, JoinLobby, Lobby, Game, Hud, EndGame],
   physics: {
     default: 'arcade',
     arcade: {
