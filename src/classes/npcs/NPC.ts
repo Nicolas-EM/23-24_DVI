@@ -63,7 +63,7 @@ export default abstract class NPC extends PlayerEntity {
         else this._currentTarget = null;
     }
 
-    moveToTarget(elapsedSeconds: number) {
+    moveToTarget(deltaTime: number) {
         const { x, y } = this._currentTarget;
 
         if (x < this.x) {
@@ -73,13 +73,13 @@ export default abstract class NPC extends PlayerEntity {
             this.doMoveAnimation(false);
         }
         const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
-        const magnitude = (this._movementSpeed / 64 ) / elapsedSeconds;
+        const magnitude = this._movementSpeed * deltaTime/ 10;
 
-        const velocityX = Math.cos(angle) * magnitude;
-        const velocityY = Math.sin(angle) * magnitude;
+        const distanceX = Math.cos(angle) * magnitude;
+        const distanceY = Math.sin(angle) * magnitude;
 
-        this.x += velocityX;
-        this.y += velocityY;
+        this.x += distanceX;
+        this.y += distanceY;
     }
 
     // --- ATTACKED ---
@@ -109,7 +109,7 @@ export default abstract class NPC extends PlayerEntity {
                 else this._currentTarget = null;
             }
 
-            if (this._currentTarget) this.moveToTarget(deltaTime / 1000);
+            if (this._currentTarget) this.moveToTarget(deltaTime);
         }
         else {
             if (!this.anims.isPlaying) {
