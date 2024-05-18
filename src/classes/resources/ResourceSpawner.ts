@@ -6,6 +6,7 @@ import Villager from "../npcs/Villager";
 import Player from "../Player";
 import Hud from "../../scenes/Hud";
 
+
 export default abstract class ResourceSpawner extends Phaser.GameObjects.Sprite {
     
     // Attributes
