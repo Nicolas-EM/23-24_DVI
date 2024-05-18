@@ -380,127 +380,10 @@ export default class Game extends Phaser.Scene {
   }
 
   // --- COLLISIONS ---
-  // Check if a collision must be handled
-  checkCollision(npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite): boolean {
-    return (
-      npc instanceof NPC &&  // Always true
-      !npc.getCollisionProcessed() &&  // If collision isn't already being processed
-      (
-        npc instanceof Villager ||  // A villager always collides with other PlayerEntities
-        (
-          npc instanceof AttackUnit &&
-          collider instanceof PlayerEntity &&  // Always true
-          (
-            !(npc as AttackUnit).getAttackTarget() ||  // Attacker has no target
-            (npc as AttackUnit).getAttackTarget() != (collider as PlayerEntity).getId()  // The target is not the one they're colliding with
-          )
-        )
-      )
-    );
-  }
-
-  // Calculate new target to avoid a PlayerEntity
-  calculateNewTarget(npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite, oldTarget: Phaser.Math.Vector2) {
-    
-    // STEP 1: From which side did the NPC collide?
-    let side = "";
-    let diffX = Math.ceil(Math.abs(npc.x - collider.x));
-    let diffY = Math.ceil(Math.abs(npc.y - collider.y));
-    // Left or right
-    if (diffX >= npc.body.width / 2 + collider.body.width / 2) {
-      if (npc.x < collider.x) { side = "LEFT"; }
-      else { side = "RIGHT"; }
-    }
-    // Up or down
-    else {
-      if (npc.y < collider.y) { side = "UP"; }
-      else { side = "DOWN"; }
-    }
-
-    // STEP 2: New direction?
-    let alpha = undefined;
-    if (side == "LEFT" || side == "RIGHT") {
-      if (npc.y > oldTarget.y) { alpha = -1; }  // Go up
-      else { alpha = 1; }  // Go down
-    }
-    else {
-      if (npc.x > oldTarget.x) { alpha = -1; }  // Go left
-      else { alpha = 1; }  // Go right
-    }
-
-    // STEP 3: How much distance?
-    let newX = npc.x;
-    let newY = npc.y;
-    if (side == "LEFT" || side == "RIGHT") {
-      if (npc.y < collider.y) { newY += alpha * (collider.body.height / 2 + alpha * diffY + npc.body.height + 10) }  // 10px extra just in case
-      else { newY += alpha * (collider.body.height / 2 - alpha * diffY + npc.body.height + 10) }  // 10px extra just in case
-    }
-    else {
-      if (npc.x < collider.x) { newX += alpha * (collider.body.width / 2 + alpha * diffX + npc.body.width + 10) }  // 10px extra just in case
-      else { newX += alpha * (collider.body.width / 2 - alpha * diffX + npc.body.width + 10) }  // 10px extra just in case
-    } 
-    
-    return [newX, newY];
-
-  }
-
-
   // Handle collision
   handleCollide = (npc: Phaser.Physics.Arcade.Sprite, collider: Phaser.Physics.Arcade.Sprite) => {
-    if (npc instanceof NPC && this.checkCollision(npc, collider)) {
-
-      // Collision is being processed
-      (npc as NPC).setCollisionProcessed(true);
-
-      // Save old movement target
-      let oldTarget = undefined;
-      if (npc instanceof NPC) {
-        oldTarget = (npc as NPC).getMovementTarget();
-        if (!oldTarget) return; // If not moving do nothing
-      }
-      // Save old gather target if Villager
-      let oldGatherTarget = undefined;
-      if (npc instanceof Villager) {
-        oldGatherTarget = (npc as Villager).getGatherTarget();
-        // Remove attackTarget from unit
-        if (oldGatherTarget) {
-          (npc as Villager).setGatherTarget(undefined);
-        }
-      }
-      // Save old attack target if AttackUnit
-      let oldAttackTarget = undefined;
-      if (npc instanceof AttackUnit) {
-        oldAttackTarget = (npc as AttackUnit).getAttackTarget();
-        // Remove attackTarget from unit
-        if (oldAttackTarget) {
-          (npc as AttackUnit).setAttackTarget(undefined);
-        }
-      }
-
-      // Calculate new target
-      let newTarget = this.calculateNewTarget(npc, collider, oldTarget);
-      (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(newTarget[0], newTarget[1]));
-
-      // Calculate time to avoid entity
-      let npcPosition = new Phaser.Math.Vector2(npc.x, npc.y);
-      let newPosition = new Phaser.Math.Vector2(newTarget[0], newTarget[1]);
-      let dist = Math.abs(npcPosition.distance(newPosition));
-      let avoidTime = (dist / (npc.getMovementSpeed() * 64)) * 1000;
-
-      // Wait and return to original target
-      this.time.addEvent({
-        delay: avoidTime,
-        callback: () => {
-          (npc as NPC).setCollisionProcessed(false);
-          if (npc instanceof NPC)
-            (npc as NPC).setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
-          if (npc instanceof AttackUnit)
-            (npc as AttackUnit).setAttackTarget(oldAttackTarget);
-          if (npc instanceof Villager)
-            (npc as Villager).setGatherTarget(this.getResourceSpawnerById(oldGatherTarget));          
-        },
-        callbackScope: this
-      });
+    if(npc instanceof NPC && collider instanceof PlayerEntity) {
+      npc.collide(collider);
     }
   }
   
@@ -540,5 +423,4 @@ export default class Game extends Phaser.Scene {
     this.scene.pause("settings");
     this.scene.run("endgame", { defeat: defeat, color: (defeat ? Client.getOthersColor() : Client.getMyColor()) });
   }
-
 }

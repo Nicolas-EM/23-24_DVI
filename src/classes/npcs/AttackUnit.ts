@@ -112,4 +112,35 @@ export default abstract class AttackUnit extends NPC {
         super.update(time, delta);
     }
     
+    // --- COLLISION ---
+    collide(entity: PlayerEntity) {
+        // Do not attack if colliding with attack target
+        if(entity.getId() !== this.getAttackTarget()) {
+           super.collide(entity); 
+        }
+    }
+
+    protected handleCollision(entity: PlayerEntity) {
+        // Save old movement target
+        let oldTarget = this.getMovementTarget();
+        if (!oldTarget) return; // If not moving do nothing
+
+        // Save old Attack Target
+        let oldAttackTarget = this.getAttackTarget();
+        if(oldAttackTarget)
+            this.setAttackTarget(undefined);
+
+        const avoidTime = this.calculateAvoidTime(entity);
+
+        // Wait and return to original target
+        this.scene.time.addEvent({
+            delay: avoidTime,
+            callback: () => {
+                this.setProcessingCollision(false);
+                this.setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
+                this.setAttackTarget(oldAttackTarget);
+            },
+            callbackScope: this
+        });
+    }
 }

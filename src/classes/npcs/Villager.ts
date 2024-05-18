@@ -5,6 +5,7 @@ import Player from '../Player';
 import NPC from './NPC';
 import NPCsData from "../../magic_numbers/npcs_data";
 import ResourceSpawner from '../resources/ResourceSpawner';
+import PlayerEntity from '../PlayerEntity';
 
 export default class Villager extends NPC {
 
@@ -106,9 +107,9 @@ export default class Villager extends NPC {
     }
 
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
-        if(this._gatherTargetId) {
+        if (this._gatherTargetId) {
             const target = (this.scene as Game).getResourceSpawnerById(this._gatherTargetId);
-            if(target && Phaser.Math.Distance.Between(targetPoint.x, targetPoint.y, target.x, target.y) > 64) {
+            if (target && Phaser.Math.Distance.Between(targetPoint.x, targetPoint.y, target.x, target.y) > 64) {
                 this._gatherTargetId = undefined;
             }
         }
@@ -118,16 +119,16 @@ export default class Villager extends NPC {
 
     // --- Update ---
     update(time: number, delta: number) {
-        if(this._gatherTargetId) {
+        if (this._gatherTargetId) {
             const gatherTarget = (this.scene as Game).getResourceSpawnerById(this._gatherTargetId);
 
             if (gatherTarget && this.isGatherTargetInRange(gatherTarget)) {
                 // Within range - stop moving
-                if(this._path || this._currentTarget) { 
+                if (this._path || this._currentTarget) {
                     this._path = [];
                     this._currentTarget = undefined;
                 }
-    
+
                 if (gatherTarget) {
                     // Check if enough time has passed since the last gathering or if have never gathered
                     const timeSinceLastAttack = (time - this._lastGatherTime) / 1000;   // in seconds
@@ -145,5 +146,32 @@ export default class Villager extends NPC {
 
         super.update(time, delta);
     }
-    
+
+    // --- COLLISION ---
+    protected handleCollision(entity: PlayerEntity) {
+        // Save old movement target
+        let oldTarget = this.getMovementTarget();
+        if (!oldTarget) return; // If not moving do nothing
+
+        // Save old gather target
+        let oldGatherTarget = this.getGatherTarget();
+        if (oldGatherTarget) {
+            this.setGatherTarget(undefined);
+        }
+
+        const avoidTime = this.calculateAvoidTime(entity);
+
+        // Wait and return to original target
+        this.scene.time.addEvent({
+            delay: avoidTime,
+            callback: () => {
+                if(this.getProcessingCollision()) {
+                    this.setProcessingCollision(false);
+                    this.setMovementTarget(new Phaser.Math.Vector2(oldTarget.x, oldTarget.y));
+                    this.setGatherTarget((this.scene as Game).getResourceSpawnerById(oldGatherTarget));
+                }
+            },
+            callbackScope: this
+        });
+    }
 }

@@ -5,21 +5,22 @@ import Game from '../../scenes/Game';
 import { Resources } from '../../utils';
 import Hud from '../../scenes/Hud';
 import Client from '../../client';
+import Building from '../buildings/Building';
 
 export default abstract class NPC extends PlayerEntity {
 
     // Attributes
-    protected _path;
-    protected _currentTarget;
+    protected _path: Phaser.Math.Vector2[];
+    protected _currentTarget: Phaser.Math.Vector2;
     protected _movementSpeed: number;
     protected _spawningTime: number;
     protected _spawningCost: Resources;
-    protected _collisionProcessed: boolean = false;
+    protected _isProcessingCollision: boolean = false;
 
     // Constructor
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, owner: Player, health: number, totalHealth: number, spawningTime: number, spawningCost: Resources, movementSpeed: number, frame?: string | number) {
         super(scene, x, y, texture, owner, health, totalHealth, frame);
-        
+
         this._movementSpeed = movementSpeed;
         this._spawningTime = spawningTime;
         this._spawningCost = spawningCost;
@@ -55,17 +56,9 @@ export default abstract class NPC extends PlayerEntity {
         return this._movementSpeed;
     }
 
-    getCollisionProcessed(): boolean {
-        return this._collisionProcessed;
-    }
-
-    setCollisionProcessed(collisionProcessed: boolean) {
-        this._collisionProcessed = collisionProcessed;
-    }
-
     getMovementTarget(): Phaser.Math.Vector2 {
         return this._currentTarget;
-    }   
+    }
 
     setMovementTarget(targetPoint: Phaser.Math.Vector2): void {
         if (Phaser.Math.Distance.Between(this.x, this.y, targetPoint.x, targetPoint.y) <= 5) {
@@ -92,18 +85,18 @@ export default abstract class NPC extends PlayerEntity {
         }
 
         const angle = Phaser.Math.Angle.Between(this.x, this.y, x, y);
-        const magnitude = (this._movementSpeed / 64 ) / elapsedSeconds;
+        const magnitude = (this._movementSpeed / 64) / elapsedSeconds;
 
         const velocityX = Math.cos(angle) * magnitude;
         const velocityY = Math.sin(angle) * magnitude;
 
         this.x += velocityX;
         this.y += velocityY;
-        }
+    }
 
     // --- ATTACKED ---
-    dieOrDestroy() {        
-        this._owner.removeNPC(this);        
+    dieOrDestroy() {
+        this._owner.removeNPC(this);
         if (this._owner.getColor() === Client.getMyColor())
             (<Hud>(this.scene.scene.get("hud"))).updatePopulation(this._owner.getNPCs().length, this._owner.getMaxPopulation());
         if (this.anims.isPlaying) {
@@ -151,5 +144,83 @@ export default abstract class NPC extends PlayerEntity {
     public playAnimation(key: string) {
         this.anims.play({ key, repeat: 0 }, true);
     }
-    
+
+    // --- COLLISION ---
+    collide(entity: PlayerEntity) {
+        if (!this._isProcessingCollision) {
+            this.setProcessingCollision(true);
+            this.handleCollision(entity);
+        }
+    }
+
+    protected abstract handleCollision(entity: PlayerEntity);
+
+    protected calculateAvoidTime(entity: PlayerEntity): number {
+        // Calculate new target
+        let newTarget = this.calculateNewTarget(entity, this.getMovementTarget());
+
+        // Start avoidance
+        this.setMovementTarget(newTarget);
+
+        // Calculate time to avoid entity
+        let npcPosition = new Phaser.Math.Vector2(this.x, this.y);
+        let dist = Math.abs(npcPosition.distance(newTarget));
+        let avoidTime = (dist / (this.getMovementSpeed() * 64)) * 1000;
+
+        return avoidTime;
+    }
+
+    // Calculate new target to avoid a PlayerEntity
+    private calculateNewTarget(collider: PlayerEntity, oldTarget: Phaser.Math.Vector2): Phaser.Math.Vector2 {
+        const npcPhysicsBody = (this.body as Phaser.Physics.Arcade.Body);
+        const colliderPhysicsBody = (collider.body as Phaser.Physics.Arcade.Body);
+
+        // STEP 1: From which side did the NPC collide?
+        let side = "";
+        let diffX = Math.ceil(Math.abs(this.x - collider.x));
+        let diffY = Math.ceil(Math.abs(this.y - collider.y));
+        // Left or right
+        if (diffX >= npcPhysicsBody.width / 2 + colliderPhysicsBody.width / 2) {
+            if (this.x < collider.x) { side = "LEFT"; }
+            else { side = "RIGHT"; }
+        }
+        // Up or down
+        else {
+            if (this.y < collider.y) { side = "UP"; }
+            else { side = "DOWN"; }
+        }
+
+        // STEP 2: New direction?
+        let alpha = undefined;
+        if (side == "LEFT" || side == "RIGHT") {
+            if (this.y > oldTarget.y) { alpha = -1; }  // Go up
+            else { alpha = 1; }  // Go down
+        }
+        else {
+            if (this.x > oldTarget.x) { alpha = -1; }  // Go left
+            else { alpha = 1; }  // Go right
+        }
+
+        // STEP 3: How much distance?
+        let newX = this.x;
+        let newY = this.y;
+        if (side == "LEFT" || side == "RIGHT") {
+            if (this.y < collider.y) { newY += alpha * (colliderPhysicsBody.height / 2 + alpha * diffY + npcPhysicsBody.height + 10) }  // 10px extra just in case
+            else { newY += alpha * (colliderPhysicsBody.height / 2 - alpha * diffY + npcPhysicsBody.height + 10) }  // 10px extra just in case
+        }
+        else {
+            if (this.x < collider.x) { newX += alpha * (colliderPhysicsBody.width / 2 + alpha * diffX + npcPhysicsBody.width + 10) }  // 10px extra just in case
+            else { newX += alpha * (colliderPhysicsBody.width / 2 - alpha * diffX + npcPhysicsBody.width + 10) }  // 10px extra just in case
+        }
+
+        return new Phaser.Math.Vector2(newX, newY);
+    }
+
+    getProcessingCollision(): boolean {
+        return this._isProcessingCollision;
+    }
+
+    setProcessingCollision(collisionProcessed: boolean) {
+        this._isProcessingCollision = collisionProcessed;
+    }
 }

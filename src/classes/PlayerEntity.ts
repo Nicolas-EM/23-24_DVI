@@ -128,4 +128,22 @@ export default abstract class PlayerEntity extends Phaser.GameObjects.Sprite {
     }
     // -------------------
 
+    isPositionInside(position: Phaser.Math.Vector2): boolean {
+        if(!position)
+            return;
+        
+        // Calculate the boundaries of the entity
+        const leftBoundary = this.x - (this.body as Phaser.Physics.Arcade.Body).width / 2;
+        const rightBoundary = this.x + (this.body as Phaser.Physics.Arcade.Body).width / 2;
+        const topBoundary = this.y - (this.body as Phaser.Physics.Arcade.Body).height / 2;
+        const bottomBoundary = this.y + (this.body as Phaser.Physics.Arcade.Body).height / 2;
+
+        // Check if the target point is within the boundaries
+        return (
+            position.x >= leftBoundary &&
+            position.x <= rightBoundary &&
+            position.y >= topBoundary &&
+            position.y <= bottomBoundary
+        );
+    }
 }
